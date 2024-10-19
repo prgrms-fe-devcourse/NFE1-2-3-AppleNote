@@ -1,7 +1,8 @@
 {
   "name": "apple_note-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "main": "app.js",
   "scripts": {
     "build": "npx tsc",
     "dev": "nodemon",
@@ -45,5 +46,8 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.8.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

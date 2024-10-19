@@ -2,6 +2,10 @@
   "name": "apple_note",
   "version": "1.0.0",
   "scripts": {
+    "dev:backend": "npm --prefix ./backend run dev",
+    "format:backend": "npm --prefix ./backend run format",
+    "lint:backend": "npm --prefix ./backend run lint",
+    "lint:fix:backend": "npm --prefix ./backend run lint:fix",
     "dev:frontend": "npm --prefix ./frontend run dev",
     "format:frontend": "npm --prefix ./frontend run format",
     "lint:frontend": "npm --prefix ./frontend run lint",
@@ -9,7 +13,6 @@
     "prepare": "husky"
   },
   "license": "MIT",
-  "description": "",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",

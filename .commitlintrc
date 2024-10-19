@@ -1,0 +1,35 @@
+{
+  "extends": [
+    "@commitlint/config-conventional"
+  ],
+  "parserPreset": {
+    "parserOpts": {
+      "headerPattern": "^(?<type>.+):\\s(?<subject>.+)\\s\\(#\\d+\\)$",
+      "headerCorrespondence": [
+        "type",
+        "subject"
+      ]
+    }
+  },
+  "rules": {
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "design",
+        "refactor",
+        "chore",
+        "rename",
+        "comment",
+        "remove",
+        "test",
+        "build",
+        "deploy"
+      ]
+    ]
+  }
+}

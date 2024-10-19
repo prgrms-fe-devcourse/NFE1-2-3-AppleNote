@@ -1,0 +1,17 @@
+{
+  "name": "apple_note",
+  "version": "1.0.0",
+  "scripts": {
+    "format:frontend": "npm --prefix ./frontend run format",
+    "lint:frontend": "npm --prefix ./frontend run lint",
+    "lint:fix:frontend": "npm --prefix ./frontend run lint:fix",
+    "prepare": "husky"
+  },
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "husky": "^9.1.6"
+  }
+}

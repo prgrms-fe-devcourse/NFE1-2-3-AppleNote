@@ -1,0 +1,14 @@
+# 현재 작업 디렉토리 확인
+if [ "$(git diff --cached --name-only | grep '^frontend/')" ]; then
+  echo "Running frontend ESLint..."
+  npm --prefix ./frontend run format || exit 1
+  npm --prefix ./frontend run lint || exit 1
+fi
+
+if [ "$(git diff --cached --name-only | grep '^backend/')" ]; then
+  echo "Running backend ESLint..."
+  npm --prefix ./backend run format || exit 1
+  npm --prefix ./backend run lint || exit 1
+fi
+
+git update-index --again

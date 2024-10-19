@@ -2,6 +2,7 @@
   "name": "apple_note",
   "version": "1.0.0",
   "scripts": {
+    "dev:frontend": "npm --prefix ./frontend run dev",
     "format:frontend": "npm --prefix ./frontend run format",
     "lint:frontend": "npm --prefix ./frontend run lint",
     "lint:fix:frontend": "npm --prefix ./frontend run lint:fix",

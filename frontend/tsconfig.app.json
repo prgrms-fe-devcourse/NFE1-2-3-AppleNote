@@ -25,6 +25,7 @@
       "@assets/*": ["assets/*"],
       "@common/*": ["common/*"],
       "@components/*": ["components/*"],
+      "@mocks/*": ["mocks/*"],
       "@utils/*": ["utils/*"]
     }
   },

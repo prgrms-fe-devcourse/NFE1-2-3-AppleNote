@@ -2,9 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 
-import { CustomThemeProvider } from "@common/styles/ThemeProvider.tsx";
-
-import router from "routes/router.tsx";
+import router from "@routes/router";
+import { CustomThemeProvider } from "@common/styles/ThemeProvider";
 
 const enableMocking = async () => {
   if (process.env.NODE_ENV !== "development" || import.meta.env.VITE_MSW_ENABLED !== "true") {

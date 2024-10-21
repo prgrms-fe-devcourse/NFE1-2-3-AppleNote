@@ -26,8 +26,7 @@
       "@common/*": ["common/*"],
       "@components/*": ["components/*"],
       "@mocks/*": ["mocks/*"],
-      "@pages/*": ["pages/*"],
-      "@utils/*": ["utils/*"]
+      "@routes/*": ["routes/*"]
     }
   },
   "include": ["src"]

@@ -13,7 +13,7 @@ const ErrorPage = () => {
       </div>
     );
   } else {
-    return <div>Oops! something is wrong</div>;
+    return <h1>Oops! something is wrong</h1>;
   }
 };
 

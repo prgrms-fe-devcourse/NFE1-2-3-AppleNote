@@ -1,24 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 
-import ErrorPage from "routes/ErrorPage.tsx";
-import HomePage from "routes/HomePage.tsx";
-import NotFoundPage from "routes/NotFoundPage.tsx";
+import { CustomThemeProvider } from "@common/styles/ThemeProvider.tsx";
 
-const router = createBrowserRouter([
-  // 메인 페이지
-  {
-    path: "/",
-    element: <HomePage />,
-    errorElement: <ErrorPage />,
-  },
-  // 404 페이지
-  {
-    path: "/*",
-    element: <NotFoundPage />,
-  },
-]);
+import router from "routes/router.tsx";
 
 const enableMocking = async () => {
   if (process.env.NODE_ENV !== "development" || import.meta.env.VITE_MSW_ENABLED !== "true") {
@@ -35,7 +21,9 @@ const enableMocking = async () => {
 enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <CustomThemeProvider>
+        <RouterProvider router={router} />
+      </CustomThemeProvider>
     </StrictMode>
   );
 });

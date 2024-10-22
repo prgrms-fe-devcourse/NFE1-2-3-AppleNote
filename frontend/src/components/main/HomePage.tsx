@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import useCustomTheme from "@common/styles/useCustomTheme";
+import Category from "@components/category/Category";
 
 interface HomePageProps {
   data?: null;
@@ -21,6 +22,7 @@ const HomePage: React.FC<HomePageProps> = () => {
         {icon} Hello World {icon}
       </h1>
       <StyledButton onClick={onClickHandler}>Click Me!</StyledButton>
+      <Category />
     </div>
   );
 };

@@ -3,13 +3,22 @@ import styled from "styled-components";
 import { fetchCategories, createCategory, CategoryResponse } from "./categoryApi"; // API 함수 가져오기
 
 const Category: React.FC = () => {
-  // 상태 정의
-  const [categories, setCategories] = useState<CategoryResponse["payload"]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [isInputVisible, setIsInputVisible] = useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  // 상태를 하나의 객체로 통합하여 관리하기 위한 정의
+  const [state, setState] = useState<{
+    categories: CategoryResponse["payload"];
+    loading: boolean;
+    error: string | null;
+    newCategoryName: string;
+    isInputVisible: boolean;
+    isSubmitting: boolean;
+  }>({
+    categories: [],
+    loading: true,
+    error: null,
+    newCategoryName: "",
+    isInputVisible: false,
+    isSubmitting: false,
+  });
 
   // 카테고리 로드
   useEffect(() => {
@@ -17,11 +26,11 @@ const Category: React.FC = () => {
       try {
         const data = await fetchCategories();
 
-        setCategories(data.payload);
+        setState((prev) => ({ ...prev, categories: data.payload }));
       } catch (error) {
-        setError((error as Error).message);
+        setState((prev) => ({ ...prev, error: (error as Error).message }));
       } finally {
-        setLoading(false);
+        setState((prev) => ({ ...prev, loading: false }));
       }
     };
 
@@ -31,38 +40,38 @@ const Category: React.FC = () => {
   // 카테고리 추가 핸들러
   const handleAddCategory = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      if (!newCategoryName) {
-        setError("카테고리 이름을 입력해주세요.");
+      if (!state.newCategoryName) {
+        setState((prev) => ({ ...prev, error: "카테고리 이름을 입력해주세요." }));
 
         return;
       }
 
-      if (isSubmitting) return; // 제출 중일 경우 추가 실행 방지
+      if (state.isSubmitting) return; // 제출 중일 경우 추가 실행 방지
 
-      setIsSubmitting(true); // 제출 시작
+      setState((prev) => ({ ...prev, isSubmitting: true })); // 제출 시작
       try {
-        await createCategory({ name: newCategoryName });
+        await createCategory({ name: state.newCategoryName });
+
         const data = await fetchCategories();
 
-        setCategories(data.payload);
+        setState((prev) => ({ ...prev, categories: data.payload }));
         resetInput(); // 입력 필드 초기화
       } catch (error) {
-        setError((error as Error).message);
+        setState((prev) => ({ ...prev, error: (error as Error).message }));
       } finally {
-        setIsSubmitting(false); // 제출 완료
+        setState((prev) => ({ ...prev, isSubmitting: false })); // 제출 완료
       }
     }
   };
 
   // 입력 필드 초기화 함수
   const resetInput = () => {
-    setNewCategoryName("");
-    setIsInputVisible(false);
+    setState((prev) => ({ ...prev, newCategoryName: "", isInputVisible: false }));
   };
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
-    setIsInputVisible(true);
+    setState((prev) => ({ ...prev, isInputVisible: true }));
   };
 
   // 입력 필드 블러 핸들러
@@ -71,27 +80,27 @@ const Category: React.FC = () => {
   };
 
   // 로딩 또는 에러 처리
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (state.loading) return <div>Loading...</div>;
+  if (state.error) return <div>Error: {state.error}</div>;
 
   return (
     <Container>
       <Title>Categories</Title>
-      <Button disabled={isSubmitting} onClick={handleButtonClick}>
+      <Button disabled={state.isSubmitting} onClick={handleButtonClick}>
         +
       </Button>
-      {isInputVisible && (
+      {state.isInputVisible && (
         <Input
           type="text"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
+          value={state.newCategoryName}
+          onChange={(e) => setState((prev) => ({ ...prev, newCategoryName: e.target.value }))}
           onKeyDown={handleAddCategory}
           onBlur={handleInputBlur}
           placeholder="카테고리 이름 입력"
         />
       )}
       <List>
-        {categories.map((category) => (
+        {state.categories.map((category) => (
           <ListItem key={category.categoryId}>{category.name}</ListItem>
         ))}
       </List>

@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "@common/api/fetch";
+import { httpClient } from "@common/api/fetch"; // httpClient 사용
 
 // 카테고리 응답 타입 정의
 export type CategoryResponse = {
@@ -12,7 +11,7 @@ export type CategoryResponse = {
 
 // 카테고리 데이터를 가져오는 함수
 export const fetchCategories = async (): Promise<CategoryResponse> => {
-  const response = await axios.get(`${BASE_URL}/categories`);
+  const response = await httpClient.get<CategoryResponse>("/categories");
 
   return response.data; // axios의 응답 구조에 맞게 수정
 };
@@ -24,7 +23,7 @@ export type CategoryAddRequest = {
 
 // 카테고리 추가 API 함수
 export const createCategory = async (data: CategoryAddRequest) => {
-  const response = await axios.post(`${BASE_URL}/categories`, data);
+  const response = await httpClient.post("/categories", data);
 
   return response.data; // axios의 응답 구조에 맞게 수정
 };

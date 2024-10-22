@@ -24,8 +24,7 @@
 //     if (error) {
 //       return res.status(401).json(createErrorResponse(401, "Invalid token"));
 //     }
-
-//     req.user = decoded as UserSchemaType;
+//     req.body = decoded as UserSchemaType;
 //     next();
 //   });
 // };

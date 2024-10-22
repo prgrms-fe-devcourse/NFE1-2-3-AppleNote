@@ -7,8 +7,8 @@ export interface IUserService {
   createUser(data: UserSchemaType): Promise<IUser>;
   getUsers(): Promise<IUser[]>;
   getUserByEmail(email: string): Promise<IUser | null>;
-  updateUser(_id: string, data: UserSchemaType): Promise<IUser | null>;
-  deleteUser(_id: string): Promise<boolean>;
+  updateUser(userId: string, data: UserSchemaType): Promise<IUser | null>;
+  deleteUser(userId: string): Promise<boolean>;
 }
 
 export class UserService implements IUserService {

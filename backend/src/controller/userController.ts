@@ -26,17 +26,18 @@ export class UserController {
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
       );
+      const responsePayload = {
+        accessToken: token,
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        bannerImage: newUser.bannerImage || null,
+        profileImage: newUser.profileImage || null,
+      };
 
       return res.status(200).json({
-        message: "Signup successful",
-        payload: {
-          accessToken: token,
-          _id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          bannerImage: newUser.bannerImage || null,
-          profileImage: newUser.profileImage || null,
-        },
+        statusCode: 200,
+        payload: responsePayload,
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Signup failed: ${error}`));
@@ -65,17 +66,18 @@ export class UserController {
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
       );
+      const responsePayload = {
+        accessToken: token,
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        bannerImage: user.bannerImage || null,
+        profileImage: user.profileImage || null,
+      };
 
       return res.status(200).json({
-        message: "Login successful",
-        payload: {
-          accessToken: token,
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          bannerImage: user.bannerImage || null,
-          profileImage: user.profileImage || null,
-        },
+        statusCode: 200,
+        payload: responsePayload,
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Login failed: ${error}`));
@@ -84,7 +86,7 @@ export class UserController {
 
   async read(req: Request, res: Response) {
     try {
-      const user = req.user as UserSchemaType | undefined;
+      const user = req.body as UserSchemaType | undefined;
 
       if (!user) {
         return res.status(401).json({

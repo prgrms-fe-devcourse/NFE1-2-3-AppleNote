@@ -1,7 +1,7 @@
 import Post, { PostSchemaType } from "@src/models/postModel";
 
 export interface IPostService {
-  createUser(data: PostSchemaType): Promise<PostSchemaType>;
+  createPost(data: PostSchemaType): Promise<PostSchemaType>;
   getPosts(): Promise<ExtendedPostSchemaType[]>;
 }
 
@@ -14,7 +14,7 @@ interface ExtendedPostSchemaType extends PostSchemaType {
 }
 
 export class PostService implements IPostService {
-  async createUser(data: PostSchemaType): Promise<PostSchemaType> {
+  async createPost(data: PostSchemaType): Promise<PostSchemaType> {
     const userData = new Post(data);
 
     return await userData.save();

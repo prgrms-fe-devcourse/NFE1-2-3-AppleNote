@@ -12,7 +12,7 @@ export class PostController implements IController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const postData: PostSchemaType = req.body;
-      const post = await this.postService.createUser(postData);
+      const post = await this.postService.createPost(postData);
 
       res.status(201).json({
         statusCode: 201,

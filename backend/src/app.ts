@@ -9,6 +9,8 @@ import favicon from "serve-favicon";
 
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
+import postRoutes from "./routes/postRoutes";
+
 const app = express();
 
 app.use(cors());
@@ -34,7 +36,9 @@ app.get("/", (_req, res) => {
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/posts", postRoutes);
 
+// catch 404 and forward to error handler
 app.use((_req, _res, next) => {
   next(createError(404));
 });

@@ -105,7 +105,7 @@ export default Category;
 const Container = styled.div`
   padding: 0;
   border-radius: 8px;
-  width: 150px;
+  width: 130px;
 `;
 
 const Title = styled.h1`
@@ -117,7 +117,7 @@ const Title = styled.h1`
 const Button = styled.button`
   font-size: 20px;
   padding: 0;
-  width: 150px;
+  width: 130px;
   background-color: #ffffff;
   border-radius: 5px;
 

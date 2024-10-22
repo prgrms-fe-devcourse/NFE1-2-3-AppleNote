@@ -9,9 +9,9 @@ type CategoryAddRequest = {
 
 // 초기 카테고리 데이터 (임시)
 const categories = [
-  { categoryId: "0192aa1b-1e1c-7775-ab3a-99a65a243e0f", name: "IT" },
-  { categoryId: "0192aa1b-7277-7425-849f-eb52f8ca081c", name: "생활" },
-  { categoryId: "d8249a93-ecfd-4f4b-922c-2b034b75c1fe", name: "취미" },
+  { categoryId: "0192aa1b-1e1c-7775-ab3a-99a65a243e0f", name: "Technology" },
+  { categoryId: "0192aa1b-7277-7425-849f-eb52f8ca081c", name: "Schedules" },
+  { categoryId: "d8249a93-ecfd-4f4b-922c-2b034b75c1fe", name: "Diary" },
 ];
 
 // 카테고리 ID 생성 함수

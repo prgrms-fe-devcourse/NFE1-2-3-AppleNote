@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import favicon from "serve-favicon";
 
 import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
 
 const app = express();
@@ -34,7 +35,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/users", userRoutes);
-
+app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
 
 // catch 404 and forward to error handler
@@ -43,11 +44,9 @@ app.use((_req, _res, next) => {
 });
 
 app.use((err: HttpError, req: Request, res: Response) => {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.render("error");
 });

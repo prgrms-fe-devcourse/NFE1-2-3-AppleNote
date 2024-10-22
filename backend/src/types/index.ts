@@ -1,7 +1,10 @@
 export type UserSchemaType = {
   name: string;
+  password: string;
   address: string;
-  email: string;
   description: string;
+  email: string;
   isCompleted?: boolean;
+  bannerImage?: string;
+  profileImage?: string;
 };

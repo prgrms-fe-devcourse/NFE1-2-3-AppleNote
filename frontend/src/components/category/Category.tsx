@@ -1,27 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { BASE_URL } from "@common/api/fetch";
+import styled from "styled-components";
+import { fetchCategories, CategoryResponse } from "./categoryApi"; // CategoryResponse 타입도 가져옴
 
-// API 호출을 위한 fetch 함수
-const fetchCategories = async (): Promise<CategoryResponse> => {
-  const response = await fetch(`${BASE_URL}/categories`);
-
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-
-  return response.json();
-};
-
-// 카테고리 응답 타입 정의
-type CategoryResponse = {
-  statusCode: number;
-  payload: {
-    categoryId: string;
-    name: string;
-  }[];
-};
-
-// 카테고리 리스트 컴포넌트
 const Category: React.FC = () => {
   const [categories, setCategories] = useState<CategoryResponse["payload"]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,15 +32,45 @@ const Category: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1>Categories</h1>
-      <ul>
+    <Container>
+      <Title>Categories</Title>
+      <List>
         {categories.map((category) => (
-          <li key={category.categoryId}>{category.name}</li>
+          <ListItem key={category.categoryId}>{category.name}</ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 
 export default Category;
+
+// 스타일링된 컴포넌트 정의
+const Container = styled.div`
+  padding: 0px;
+  background-color: none;
+  border-radius: 8px;
+  width: 180px;
+`;
+
+const Title = styled.h1`
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+`;
+
+const List = styled.ul`
+  list-style: none;
+  padding: 0;
+  font-size: 16px;
+`;
+
+const ListItem = styled.li`
+  padding: 5px;
+  background-color: none;
+  transition: background-color 0.3s;
+
+  &:hover {
+    opacity: 50%;
+  }
+`;

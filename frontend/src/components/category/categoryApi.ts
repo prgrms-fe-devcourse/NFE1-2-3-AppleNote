@@ -19,3 +19,24 @@ export const fetchCategories = async (): Promise<CategoryResponse> => {
 
   return response.json();
 };
+
+export type CategoryAddRequest = {
+  name: string;
+};
+
+// 카테고리 추가 API 함수
+export const createCategory = async (data: CategoryAddRequest) => {
+  const response = await fetch(`${BASE_URL}/categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data), // 여기에 data가 { name: string } 형태여야 합니다.
+  });
+
+  if (!response.ok) {
+    throw new Error("카테고리 생성에 실패했습니다.");
+  }
+
+  return response.json();
+};

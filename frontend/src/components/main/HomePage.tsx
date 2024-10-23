@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 import useCustomTheme from "@common/styles/useCustomTheme";
 import Category from "@components/category/Category";
+import Header from "@components/main/Header";
 
 interface HomePageProps {
   data?: null;
@@ -18,6 +19,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 
   return (
     <div>
+      <Header />
       <h1>
         {icon} Hello World {icon}
       </h1>

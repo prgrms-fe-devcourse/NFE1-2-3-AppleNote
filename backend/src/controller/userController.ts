@@ -27,7 +27,6 @@ export class UserController {
           name: newUser.name,
           email: newUser.email,
           userId: newUser.userId,
-          password: newUser.password,
         },
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN }
@@ -66,7 +65,7 @@ export class UserController {
       }
 
       const token = jwt.sign(
-        { name: user.name, email: user.email, userId: user.userId, password: user.password },
+        { name: user.name, email: user.email, userId: user.userId },
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -103,7 +102,6 @@ export class UserController {
   // 나의 정보 조회
   async readMine(req: Request, res: Response) {
     try {
-      console.log(req);
       const user = req.user as IUserWithId | undefined;
 
       if (!user) {
@@ -131,7 +129,13 @@ export class UserController {
   async update(req: Request, res: Response) {
     try {
       const { oldPassword, newPassword } = req.body;
-      const user = req.user as IUserWithId | undefined;
+
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
+      }
+      const user = await this.userService.getUserbyId(userId);
 
       // user가 정의되어 있고 비밀번호가 존재하는지 확인
       if (!user || !user.password || !(await bcrypt.compare(oldPassword, user.password))) {
@@ -149,7 +153,7 @@ export class UserController {
       };
 
       // 비밀번호 업데이트
-      await this.userService.updateUser(user.userId, updateData);
+      await this.userService.updateUser(userId, updateData);
 
       return res.status(200).json({
         statusCode: 200,
@@ -162,16 +166,26 @@ export class UserController {
 
   // 회원탈퇴
   async delete(req: Request, res: Response) {
-    const _id = req.params.id;
-
     try {
-      const isDeleted = await this.userService.deleteUser(_id);
+      const userId = req.user?.userId;
 
-      if (!isDeleted) {
-        return res.status(404).json({ message: "User not found" });
+      // userId가 undefined일 경우 400 Bad Request 응답
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
       }
 
-      return res.status(200).json({ message: "Deleted successfully" });
+      // 사용자 삭제 메서드 호출
+      const isDeleted = await this.userService.deleteUser(userId);
+
+      // 삭제가 성공했는지 확인
+      if (!isDeleted) {
+        return res.status(404).json(createErrorResponse(404, "User not found"));
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        payload: "isRemove: true",
+      });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Delete failed: ${error}`));
     }

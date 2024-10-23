@@ -5,12 +5,17 @@ import { IPostService } from "@src/service/postService";
 import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { PostError } from "@src/utils/Error";
+import { validators } from "@src/utils/validators";
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
 
   async create(req: Request, res: Response) {
     try {
+      if (!validators.checkContentType(req.headers["content-type"], "multipart/form-data")) {
+        return res.status(422).json(createErrorResponse(422, "The content-type is invalid."));
+      }
+
       const postData: PostSchemaType = req.body;
       const post = await this.postService.createPost(postData);
 

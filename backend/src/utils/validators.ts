@@ -13,4 +13,10 @@ export const validators = {
 
     return hasAllKeys && !hasInvalidKeys;
   },
+  checkContentType: (
+    inputValue: string = "",
+    expectedType: "multipart/form-data" | "application/json"
+  ) => {
+    return typeof inputValue === "string" && inputValue.startsWith(expectedType);
+  },
 };

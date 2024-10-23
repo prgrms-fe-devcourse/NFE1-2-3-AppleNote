@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchCategories, createCategory, CategoryResponse } from "./categoryApi"; // API 함수 가져오기
+import { fetchCategories, createCategory, CategoryResponse, updateCategory } from "./categoryApi"; // API 함수 가져오기
 import { FaCog } from "react-icons/fa";
+import { CiEdit } from "react-icons/ci";
 
 const Category: React.FC = () => {
   // 상태를 하나의 객체로 통합하여 관리하기 위한 정의
@@ -12,6 +13,9 @@ const Category: React.FC = () => {
     newCategoryName: string;
     isInputVisible: boolean;
     isSubmitting: boolean;
+    isEditing: string | null; // 수정 중인 카테고리 ID
+    editCategoryName: string;
+    cogClicked: boolean; // 수정 모드인지 확인
   }>({
     categories: [],
     loading: true,
@@ -19,6 +23,9 @@ const Category: React.FC = () => {
     newCategoryName: "",
     isInputVisible: false,
     isSubmitting: false,
+    isEditing: null, // 수정 모드
+    editCategoryName: "",
+    cogClicked: false, // 수정 모드인지 확인
   });
 
   // 카테고리 로드
@@ -80,6 +87,56 @@ const Category: React.FC = () => {
     resetInput(); // 입력 필드 초기화
   };
 
+  const handleCogClick = () => {
+    setState((prev) => ({ ...prev, cogClicked: !prev.cogClicked }));
+  };
+
+  const handleEditCategory = (categoryId: string, newName: string) => {
+    // 해당 카테고리 수정 로직 추가
+    setState((prev) => ({
+      ...prev,
+      isEditing: categoryId,
+      editCategoryName: newName,
+    }));
+  };
+
+  const handleEditKeyPress = async (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    categoryId: string
+  ) => {
+    if (event.key === "Enter" && state.editCategoryName) {
+      try {
+        // 서버에 카테고리 수정 요청
+        await updateCategory({
+          categoryId,
+          name: state.editCategoryName, // 수정된 이름을 전송
+        });
+
+        // 수정 후 로컬 상태 업데이트
+        const updatedCategories = state.categories.map((category) =>
+          category.categoryId === categoryId
+            ? { ...category, name: state.editCategoryName }
+            : category
+        );
+
+        // 수정 완료 후 수정 모드 해제
+        setState((prev) => ({
+          ...prev,
+          categories: updatedCategories,
+          isEditing: null,
+          editCategoryName: "",
+        }));
+      } catch (error) {
+        console.error("카테고리 수정 중 오류 발생:", error);
+        setState((prev) => ({ ...prev, error: "카테고리 수정 중 오류가 발생했습니다." }));
+      }
+    }
+  };
+
+  const handleEditBlur = () => {
+    setState((prev) => ({ ...prev, isEditing: null }));
+  };
+
   // 로딩 또는 에러 처리
   if (state.loading) return <div>Loading...</div>;
   if (state.error) return <div>Error: {state.error}</div>;
@@ -88,7 +145,7 @@ const Category: React.FC = () => {
     <Container>
       <Header>
         <Title>Categories</Title>
-        <CogIcon />
+        <CogIcon onClick={handleCogClick} />
       </Header>
       <Button disabled={state.isSubmitting} onClick={handleButtonClick}>
         +
@@ -105,7 +162,25 @@ const Category: React.FC = () => {
       )}
       <List>
         {state.categories.map((category) => (
-          <ListItem key={category.categoryId}>{category.name}</ListItem>
+          <ListItem key={category.categoryId}>
+            {state.isEditing === category.categoryId ? (
+              <Input
+                type="text"
+                value={state.editCategoryName}
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, editCategoryName: e.target.value }))
+                }
+                onKeyDown={(e) => handleEditKeyPress(e, category.categoryId)}
+                onBlur={handleEditBlur}
+              />
+            ) : (
+              <span>{category.name}</span>
+            )}
+            {state.cogClicked && !state.isEditing && (
+              <EditButton
+                onClick={() => handleEditCategory(category.categoryId, category.name)}></EditButton>
+            )}
+          </ListItem>
         ))}
       </List>
     </Container>
@@ -168,9 +243,22 @@ const List = styled.ul`
 const ListItem = styled.li`
   padding: 5px;
   transition: background-color 0.3s;
+  display: flex;
 
   &:hover {
     opacity: 0.5;
     cursor: pointer;
+  }
+`;
+
+const EditButton = styled(CiEdit)`
+  margin-left: 10px;
+  border: none;
+  background-color: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ccc;
   }
 `;

@@ -27,3 +27,16 @@ export const createCategory = async (data: CategoryAddRequest) => {
 
   return response.data; // axios의 응답 구조에 맞게 수정
 };
+
+// 카테고리 수정 요청 타입 정의
+export type CategoryUpdateRequest = {
+  name: string;
+  categoryId: string; // URL에 사용할 카테고리 ID
+};
+
+export const updateCategory = async (data: CategoryUpdateRequest) => {
+  const { categoryId, ...updateData } = data; // categoryId를 URL에 사용하고 나머지 데이터를 body에 전달
+  const response = await httpClient.put(`${BASE_URL}/categories/${categoryId}`, updateData);
+
+  return response.data; // axios의 응답 구조에 맞게 수정
+};

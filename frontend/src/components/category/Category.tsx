@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchCategories, createCategory, CategoryResponse } from "./categoryApi"; // API 함수 가져오기
+import { FaCog } from "react-icons/fa";
 
 const Category: React.FC = () => {
   // 상태를 하나의 객체로 통합하여 관리하기 위한 정의
@@ -85,7 +86,10 @@ const Category: React.FC = () => {
 
   return (
     <Container>
-      <Title>Categories</Title>
+      <Header>
+        <Title>Categories</Title>
+        <CogIcon />
+      </Header>
       <Button disabled={state.isSubmitting} onClick={handleButtonClick}>
         +
       </Button>
@@ -117,10 +121,21 @@ const Container = styled.div`
   width: 130px;
 `;
 
+const Header = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const Title = styled.h1`
   font-size: 20px;
   font-weight: 600;
   text-align: center;
+  margin-right: 5px;
+`;
+
+const CogIcon = styled(FaCog)`
+  margin-top: 5px; /* 아이콘을 아래로 10px 내림 */
+  cursor: pointer;
 `;
 
 const Button = styled.button`
@@ -156,5 +171,6 @@ const ListItem = styled.li`
 
   &:hover {
     opacity: 0.5;
+    cursor: pointer;
   }
 `;

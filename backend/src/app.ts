@@ -10,6 +10,7 @@ import favicon from "serve-favicon";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
+import { verifyToken } from "./middleware/middleware";
 
 const app = express();
 
@@ -34,7 +35,7 @@ app.get("/", (_req, res) => {
   });
 });
 
-app.use("/users", userRoutes);
+app.use("/users", verifyToken, userRoutes);
 app.use("/auth", authRoutes);
 app.use("/posts", postRoutes);
 

@@ -1,10 +1,8 @@
 import { Schema, Types, model } from "mongoose";
 
-export interface PostSchemaType {
-  title: string;
-  content: string;
-  images: string[];
-  authorId: Types.ObjectId;
+import { PostType } from "@src/types/post";
+export interface PostSchemaType extends PostType {
+  authorId?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
 }

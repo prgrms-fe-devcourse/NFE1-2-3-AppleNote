@@ -6,19 +6,25 @@
     "format:backend": "npm --prefix ./backend run format",
     "lint:backend": "npm --prefix ./backend run lint",
     "lint:fix:backend": "npm --prefix ./backend run lint:fix",
+    "type-check:backend": "npm --prefix ./backend run type-check",
     "dev:frontend": "npm --prefix ./frontend run dev",
     "format:frontend": "npm --prefix ./frontend run format",
     "lint:frontend": "npm --prefix ./frontend run lint",
     "lint:fix:frontend": "npm --prefix ./frontend run lint:fix",
+    "type-check:frontend": "npm --prefix ./frontend run type-check",
     "prepare": "husky"
   },
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
-    "husky": "^9.1.6"
-  },
-  "dependencies": {
-    "eslint": "^9.13.0"
+    "@types/express": "^4.17.21",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.6",
+    "typescript-eslint": "^8.11.0"
   }
 }

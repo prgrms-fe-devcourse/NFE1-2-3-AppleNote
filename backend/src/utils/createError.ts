@@ -6,3 +6,8 @@ export const createErrorResponse = (statusCode: ErrorStatus, message: string) =>
     message,
   },
 });
+
+export const createSuccessResponse = <P>(statusCode: ErrorStatus, payload: P) => ({
+  statusCode,
+  payload,
+});

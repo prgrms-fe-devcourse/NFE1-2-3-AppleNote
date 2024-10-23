@@ -174,7 +174,7 @@ const Category: React.FC = () => {
                 onBlur={handleEditBlur}
               />
             ) : (
-              <span>{category.name}</span>
+              <CategoryName>{category.name}</CategoryName>
             )}
             {state.cogClicked && !state.isEditing && (
               <EditButton
@@ -245,11 +245,11 @@ const ListItem = styled.li`
   display: flex;
   align-items: center; // 수직 정렬
   justify-content: space-between; // 여백을 자동으로 분배
+`;
 
-  &:hover {
-    opacity: 0.5;
-    cursor: pointer;
-  }
+const CategoryName = styled.span`
+  flex-grow: 1; // 가능한 공간을 모두 차지하게 설정
+  word-wrap: break-word; // 단어 줄바꿈
 `;
 
 const EditButton = styled(CiEdit)`

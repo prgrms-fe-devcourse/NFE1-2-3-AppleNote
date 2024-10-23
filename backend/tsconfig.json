@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["es2018", "dom"],
+    "typeRoots": ["./src/types"],
     "target": "ES6",
     "module": "commonjs",
     "strict": true,

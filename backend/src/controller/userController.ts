@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IUserService } from "@src/service/userService";
+import { IUserService, IUserWithId } from "@src/service/userService";
 import { UserSchemaType } from "@src/types";
 import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
@@ -28,7 +28,7 @@ export class UserController {
       );
       const responsePayload = {
         accessToken: token,
-        _id: newUser._id,
+        userId: newUser.userId,
         name: newUser.name,
         email: newUser.email,
         bannerImage: newUser.bannerImage || null,
@@ -47,28 +47,27 @@ export class UserController {
   async login(req: Request, res: Response): Promise<Response> {
     try {
       const { email, password } = req.body;
-      const user = await this.userService.getUserByEmail(email);
+      const user = (await this.userService.getUserByEmail(email)) as IUserWithId | null;
 
-      // 사용자 존재 여부 확인
-      if (!user) {
+      if (!user || !user.password) {
         return res.status(404).json({ message: "User not found" });
       }
-      // 비밀번호 비교
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
         return res.status(401).json({ message: "Invalid password" });
       }
 
-      // JWT 토큰 발급
       const token = jwt.sign(
         { name: user.name, email: user.email },
         process.env.JWT_SECRET as string,
-        { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+        { expiresIn: process.env.JWT_EXPIRES_IN }
       );
+
       const responsePayload = {
         accessToken: token,
-        _id: user._id,
+        userId: user.userId, // 이제 userId 사용 가능
         name: user.name,
         email: user.email,
         bannerImage: user.bannerImage || null,

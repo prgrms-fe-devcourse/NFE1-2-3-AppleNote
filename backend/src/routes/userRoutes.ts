@@ -9,7 +9,9 @@ const userService = new UserService();
 const userController = new UserController(userService);
 
 //user
+
 route.get("/", verifyToken, userController.read.bind(userController));
+route.get("/me", verifyToken, userController.read.bind(userController));
 route.put("/:id", userController.update.bind(userController));
 route.delete("/:id", userController.delete.bind(userController));
 

@@ -160,6 +160,7 @@ export class UserController {
     }
   }
 
+  // 회원탈퇴
   async delete(req: Request, res: Response) {
     const _id = req.params.id;
 

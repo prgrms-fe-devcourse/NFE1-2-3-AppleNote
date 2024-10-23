@@ -84,6 +84,9 @@ const Title = styled.div`
 
 const Wrapper = styled.div`
   width: 600px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 export default CreatePostPage;

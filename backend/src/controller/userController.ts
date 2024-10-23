@@ -23,9 +23,14 @@ export class UserController {
 
       // JWT 토큰 발급
       const token = jwt.sign(
-        { name: newUser.name, email: newUser.email, userId: newUser.userId },
+        {
+          name: newUser.name,
+          email: newUser.email,
+          userId: newUser.userId,
+          password: newUser.password,
+        },
         process.env.JWT_SECRET as string,
-        { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+        { expiresIn: process.env.JWT_EXPIRES_IN }
       );
       const responsePayload = {
         accessToken: token,
@@ -51,7 +56,7 @@ export class UserController {
       const user = (await this.userService.getUserByEmail(email)) as IUserWithId | null;
 
       if (!user || !user.password) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json(createErrorResponse(404, "User not found"));
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -61,7 +66,7 @@ export class UserController {
       }
 
       const token = jwt.sign(
-        { name: user.name, email: user.email, userId: user.userId },
+        { name: user.name, email: user.email, userId: user.userId, password: user.password },
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
@@ -98,13 +103,11 @@ export class UserController {
   // 나의 정보 조회
   async readMine(req: Request, res: Response) {
     try {
-      const user = req.body as IUserWithId | undefined;
+      console.log(req);
+      const user = req.user as IUserWithId | undefined;
 
       if (!user) {
-        return res.status(401).json({
-          statusCode: 401,
-          message: "User not found.",
-        });
+        return res.status(401).json(createErrorResponse(404, "User not found"));
       }
 
       const responsePayload = {
@@ -124,19 +127,34 @@ export class UserController {
       return res.status(500).json(createErrorResponse(500, `User read failed: ${error}`));
     }
   }
-
+  //비밀번호 변경
   async update(req: Request, res: Response) {
-    const _id = req.params.id;
-    const updateData = req.body;
-
     try {
-      const updatedUser = await this.userService.updateUser(_id, updateData);
+      const { oldPassword, newPassword } = req.body;
+      const user = req.user as IUserWithId | undefined;
 
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
+      // user가 정의되어 있고 비밀번호가 존재하는지 확인
+      if (!user || !user.password || !(await bcrypt.compare(oldPassword, user.password))) {
+        return res.status(404).json(createErrorResponse(404, "Password is not correct"));
       }
 
-      return res.status(200).json({ message: "Updated successfully", payload: updatedUser });
+      // 새 비밀번호 해시화
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      const updateData: UserSchemaType = {
+        name: user.name || "",
+        email: user.email || "",
+        description: user.description || "",
+        password: hashedNewPassword,
+      };
+
+      // 비밀번호 업데이트
+      await this.userService.updateUser(user.userId, updateData);
+
+      return res.status(200).json({
+        statusCode: 200,
+        payload: "isChange : true",
+      });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Update failed: ${error}`));
     }

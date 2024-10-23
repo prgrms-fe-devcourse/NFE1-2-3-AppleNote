@@ -189,7 +189,6 @@ const Category: React.FC = () => {
 
 export default Category;
 
-// 스타일링된 컴포넌트 정의
 const Container = styled.div`
   padding: 0;
   border-radius: 8px;
@@ -244,6 +243,8 @@ const ListItem = styled.li`
   padding: 5px;
   transition: background-color 0.3s;
   display: flex;
+  align-items: center; // 수직 정렬
+  justify-content: space-between; // 여백을 자동으로 분배
 
   &:hover {
     opacity: 0.5;
@@ -253,9 +254,10 @@ const ListItem = styled.li`
 
 const EditButton = styled(CiEdit)`
   margin-left: 10px;
-  border: none;
-  background-color: none;
-  border-radius: 5px;
+  width: 24px; // 버튼 너비 고정
+  height: 24px; // 버튼 높이 고정
+  min-width: 24px; // 최소 너비 설정
+  min-height: 24px; // 최소 높이 설정
   cursor: pointer;
 
   &:hover {

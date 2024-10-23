@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 
-import { PostSchemaType } from "@src/models/postModel";
 import { IPostService } from "@src/service/postService";
 import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { PostError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
+import { FormDataPost } from "@src/types/post";
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
@@ -16,7 +16,15 @@ export class PostController implements IController {
         return res.status(422).json(createErrorResponse(422, "The content-type is invalid."));
       }
 
-      const postData: PostSchemaType = req.body;
+      const { title, content, category } = req.body;
+      const files = req.files;
+      const isValidField = !title || !content || !category || !files;
+
+      if (isValidField) {
+        return res.status(422).json(createErrorResponse(422, "Invalid request field."));
+      }
+
+      const postData: FormDataPost = { title, category, content, images: files };
       const post = await this.postService.createPost(postData);
 
       return res.status(201).json(createSuccessResponse(201, post));

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+// TODO: 다른곳에 위치하기
 export type UserSchemaType = {
   name: string;
   password: string;

@@ -1,23 +1,29 @@
-import Post, { PostSchemaType } from "@src/models/postModel";
-import { PostError } from "@src/utils/Error";
-import { validators } from "@src/utils/validators";
 import { Types } from "mongoose";
 
+import Post, { PostSchemaType } from "@src/models/postModel";
+import { FormDataPost } from "@src/types/post";
+import { PostError } from "@src/utils/Error";
+import { validators } from "@src/utils/validators";
+
 export interface IPostService {
-  createPost(data: PostSchemaType): Promise<PostSchemaType>;
+  createPost(data: FormDataPost): Promise<PostSchemaType>;
   getPosts(): Promise<PostSchemaType[]>;
   deletePost(postId: string): Promise<void>;
 }
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
-  async createPost(data: PostSchemaType): Promise<PostSchemaType & { postId: Types.ObjectId }> {
+  async createPost(data: FormDataPost): Promise<PostSchemaType & { postId: Types.ObjectId }> {
     if (!validators.keys(data, ["title", "content", "images", "category"])) {
       throw new PostError("Invalid request field.");
     }
 
     // TODO: 카테고리 id 조인하기
-    const postData = new Post({ ...data, authorId: "652ea2f6c8a4fca1b8b9d6e2" });
+    const postData = new Post({
+      ...data,
+      images: ["test.url"],
+      authorId: "652ea2f6c8a4fca1b8b9d6e2",
+    });
 
     const post = await postData.save();
 

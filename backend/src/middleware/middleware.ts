@@ -1,4 +1,4 @@
-import { UserSchemaType } from "@src/types";
+import { IUserWithId } from "@src/models/userModel";
 import { createErrorResponse } from "@src/utils/createError";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
@@ -24,7 +24,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     if (error) {
       return res.status(401).json(createErrorResponse(401, "Invalid token"));
     }
-    req.body = decoded as UserSchemaType;
+    req.body = decoded as IUserWithId;
     next();
 
     return;

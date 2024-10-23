@@ -1,9 +1,6 @@
-import User, { IUser } from "@src/models/userModel";
+import User, { IUser, IUserWithId } from "@src/models/userModel";
 import { UserSchemaType } from "@src/types";
 
-export interface IUserWithId extends Partial<IUser> {
-  userId: string;
-}
 export interface IUserService {
   createUser(data: UserSchemaType): Promise<IUserWithId>;
   getUsers(): Promise<IUser[]>;

@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IUserService, IUserWithId } from "@src/service/userService";
 import { UserSchemaType } from "@src/types";
 import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
+import { IUserService } from "@src/service/userService";
+import { IUserWithId } from "@src/models/userModel";
 
 export class UserController {
   constructor(private userService: IUserService) {}
@@ -22,7 +23,7 @@ export class UserController {
 
       // JWT 토큰 발급
       const token = jwt.sign(
-        { name: newUser.name, email: newUser.email },
+        { name: newUser.name, email: newUser.email, userId: newUser.userId },
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
       );
@@ -60,14 +61,14 @@ export class UserController {
       }
 
       const token = jwt.sign(
-        { name: user.name, email: user.email },
+        { name: user.name, email: user.email, userId: user.userId },
         process.env.JWT_SECRET as string,
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
       const responsePayload = {
         accessToken: token,
-        userId: user.userId, // 이제 userId 사용 가능
+        userId: user.userId,
         name: user.name,
         email: user.email,
         bannerImage: user.bannerImage || null,
@@ -83,9 +84,21 @@ export class UserController {
     }
   }
 
-  async read(req: Request, res: Response) {
+  // 전체 사용자 조회
+  async read(_req: Request, res: Response) {
     try {
-      const user = req.body as UserSchemaType | undefined;
+      const users = await this.userService.getUsers();
+
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error", error });
+    }
+  }
+
+  // 나의 정보 조회
+  async readMine(req: Request, res: Response) {
+    try {
+      const user = req.body as IUserWithId | undefined;
 
       if (!user) {
         return res.status(401).json({
@@ -96,6 +109,7 @@ export class UserController {
 
       const responsePayload = {
         accessToken: req.headers.authorization?.split(" ")[1],
+        userId: user.userId,
         name: user.name,
         email: user.email,
         bannerImage: user.bannerImage || null,

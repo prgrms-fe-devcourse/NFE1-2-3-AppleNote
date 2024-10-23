@@ -9,6 +9,10 @@ export interface IUser {
   profileImage: string | null;
 }
 
+//IUser 확장 인터페이스
+export interface IUserWithId extends Partial<IUser> {
+  userId: string;
+}
 const userSchema = new mongoose.Schema<IUser>({
   name: { type: String, required: true },
   password: { type: String, required: true },

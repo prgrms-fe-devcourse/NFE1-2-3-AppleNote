@@ -9,5 +9,6 @@ const postController = new PostController(postService);
 //posts
 route.get("/", postController.read.bind(postController));
 route.post("/", postController.create.bind(postController));
+route.delete("/:postId", postController.delete.bind(postController));
 
 export default route;

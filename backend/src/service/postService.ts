@@ -1,8 +1,11 @@
 import Post, { PostSchemaType } from "@src/models/postModel";
+import { PostError } from "@src/utils/Error";
+import { validators } from "@src/utils/validators";
 
 export interface IPostService {
   createPost(data: PostSchemaType): Promise<PostSchemaType>;
   getPosts(): Promise<ExtendedPostSchemaType[]>;
+  deletePost(postId: string): Promise<void>;
 }
 
 // TODO: 타입 분리
@@ -36,5 +39,17 @@ export class PostService implements IPostService {
     }));
 
     return mappedPosts;
+  }
+
+  async deletePost(postId: string) {
+    if (!validators.isObjectId(postId)) {
+      throw new PostError("Invalid postId");
+    }
+
+    const deletedPost = await Post.findByIdAndDelete(postId);
+
+    if (!deletedPost) {
+      throw new PostError("Failed to delete post item");
+    }
   }
 }

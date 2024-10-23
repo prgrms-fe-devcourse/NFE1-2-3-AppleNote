@@ -6,6 +6,5 @@
     "source.formatDocument": "explicit",
     "source.fixAll.eslint": "explicit"
   },
-  "files.eol": "\n",
-  "compile-hero.disable-compile-files-on-did-save-code": true
+  "files.eol": "\n"
 }

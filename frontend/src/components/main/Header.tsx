@@ -1,34 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import searchIcon from "@assets/icons/search-icon.svg";
 import settingsIcon from "@assets/icons/settings.svg";
+import { fetchUserData } from "./headerApi";
 
-const Header: React.FC = () => (
-  <StyledHeader>
-    <LogoSection>
-      <Logo src="/logo.png" alt="AppleNote Logo" />
-    </LogoSection>
+// 기본 프로필 이미지 경로
+const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
-    <MenuSection>
-      <HomeLink href="/">Home</HomeLink> {/* 추후 더 많은 링크 추가 가능 */}
-    </MenuSection>
+const Header: React.FC = () => {
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
-    <SearchAndIconsSection>
-      <SearchBarWrapper>
-        <SearchInput placeholder="검색어를 입력하세요" />
-        <SearchButton aria-label="Search">
-          <IconImage src={searchIcon} alt="Search Icon" />
-        </SearchButton>
-      </SearchBarWrapper>
+  // 사용자 정보 API 호출 및 프로필 이미지 설정
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const data = await fetchUserData();
 
-      <ProfileIcon src="/profile-placeholder.png" alt="Profile Icon" />
-      <SettingsButton aria-label="Settings">
-        <IconImage src={settingsIcon} alt="Settings Icon" />
-      </SettingsButton>
-    </SearchAndIconsSection>
-  </StyledHeader>
-);
+        setProfileImage(data.profileImage);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  return (
+    <StyledHeader>
+      <LogoSection>
+        <Logo src="/logo.png" alt="AppleNote Logo" />
+      </LogoSection>
+
+      <MenuSection>
+        <HomeLink href="/">Home</HomeLink> {/* 추후 더 많은 링크 추가 가능 */}
+      </MenuSection>
+
+      <SearchAndIconsSection>
+        <SearchBarWrapper>
+          <SearchInput placeholder="검색어를 입력하세요" />
+          <SearchButton aria-label="Search">
+            <IconImage src={searchIcon} alt="Search Icon" />
+          </SearchButton>
+        </SearchBarWrapper>
+
+        <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
+        <SettingsButton aria-label="Settings">
+          <IconImage src={settingsIcon} alt="Settings Icon" />
+        </SettingsButton>
+      </SearchAndIconsSection>
+    </StyledHeader>
+  );
+};
 
 const StyledHeader = styled.header`
   display: flex;

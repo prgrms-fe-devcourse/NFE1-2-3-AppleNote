@@ -6,10 +6,12 @@
     "format:backend": "npm --prefix ./backend run format",
     "lint:backend": "npm --prefix ./backend run lint",
     "lint:fix:backend": "npm --prefix ./backend run lint:fix",
+    "type-check:backend": "npm --prefix ./backend run type-check",
     "dev:frontend": "npm --prefix ./frontend run dev",
     "format:frontend": "npm --prefix ./frontend run format",
     "lint:frontend": "npm --prefix ./frontend run lint",
     "lint:fix:frontend": "npm --prefix ./frontend run lint:fix",
+    "type-check:frontend": "npm --prefix ./frontend run type-check",
     "prepare": "husky"
   },
   "license": "MIT",

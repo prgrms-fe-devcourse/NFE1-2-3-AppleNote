@@ -15,7 +15,11 @@ export class PostController implements IController {
       const post = await this.postService.createPost(postData);
 
       return res.status(201).json(createSuccessResponse(201, post));
-    } catch {
+    } catch (error) {
+      if (error instanceof PostError) {
+        return res.status(422).json(createErrorResponse(422, error.message));
+      }
+
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
   }

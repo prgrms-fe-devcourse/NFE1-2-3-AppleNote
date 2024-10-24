@@ -7,7 +7,8 @@ interface HorizontalPostCardProps {
 }
 
 // 날짜 형식 변환 함수 (영문 전체 월명 표기)
-const formatDate = (dateString: Date) => {
+const formatDate = (dateString?: Date) => {
+  if (!dateString) return "Invalid date"; // 유효성 검사
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long", // 'January', 'February', 등 전체 월명 표시
@@ -18,14 +19,18 @@ const formatDate = (dateString: Date) => {
 };
 
 const HorizontalPostCard: React.FC<HorizontalPostCardProps> = ({ post }) => {
+  const thumbnailSrc = post.images?.[0] || "/default-thumbnail.png"; // 유효성 검사
+  const categoryName = post.category?.[0]?.name || ""; // 유효성 검사
+  const formattedDate = formatDate(post.createAt);
+
   return (
     <Card>
-      <Thumbnail src={post.images[0]} alt={post.title} />
+      <Thumbnail src={thumbnailSrc} alt={post.title} />
       <Content>
-        <Title>{post.title}</Title>
-        {post.category.length > 0 && <Category>{post.category[0].name}</Category>}
-        <CreateDate>{formatDate(post.createAt)}</CreateDate>
-        <Description>{post.content}</Description>
+        <Title>{post.title || "Untitled Post"}</Title> {/* 유효성 검사 */}
+        {categoryName && <Category>{categoryName}</Category>}
+        <CreateDate>{formattedDate}</CreateDate>
+        <Description>{post.content || "No content available"}</Description> {/* 유효성 검사 */}
       </Content>
     </Card>
   );

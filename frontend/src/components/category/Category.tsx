@@ -249,7 +249,9 @@ const ListItem = styled.li`
 
 const CategoryName = styled.span`
   flex-grow: 1; // 가능한 공간을 모두 차지하게 설정
-  word-wrap: break-word; // 단어 줄바꿈
+  word-wrap: break-word; // 단어 줄바꿈 설정
+  white-space: normal; // 줄바꿈을 허용하도록 설정
+  overflow-wrap: break-word; // 단어가 너무 길 경우 줄바꿈
 `;
 
 const EditButton = styled(CiEdit)`

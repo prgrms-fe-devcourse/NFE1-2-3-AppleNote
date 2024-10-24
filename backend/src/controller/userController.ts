@@ -13,7 +13,12 @@ export class UserController {
   async create(req: Request, res: Response) {
     try {
       const userData: UserSchemaType = req.body;
+      //이메일 형식 검증
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+      if (!emailRegex.test(userData.email)) {
+        return res.status(400).json(createErrorResponse(400, "Invalid email format"));
+      }
       // 비밀번호 해시화
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       const newUser = await this.userService.createUser({
@@ -102,7 +107,12 @@ export class UserController {
   // 나의 정보 조회
   async readMine(req: Request, res: Response) {
     try {
-      const user = req.user;
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
+      }
+      const user = await this.userService.getUserById(userId);
 
       if (!user) {
         return res.status(401).json(createErrorResponse(404, "User not found"));
@@ -110,7 +120,7 @@ export class UserController {
 
       const responsePayload = {
         accessToken: req.headers.authorization?.split(" ")[1],
-        userId: user.userId,
+        userId: userId,
         name: user.name,
         email: user.email,
         bannerImage: user.bannerImage || null,
@@ -157,7 +167,7 @@ export class UserController {
 
       return res.status(200).json({
         statusCode: 200,
-        payload: "isChange : true",
+        payload: { isChange: true },
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Update failed: ${error}`));
@@ -184,7 +194,7 @@ export class UserController {
 
       return res.status(200).json({
         statusCode: 200,
-        payload: "isRemove: true",
+        payload: { isRemove: true },
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Delete failed: ${error}`));

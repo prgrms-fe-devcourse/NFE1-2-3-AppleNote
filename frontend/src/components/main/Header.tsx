@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
-import { FaSearch } from "react-icons/fa";
-import { FaCog } from "react-icons/fa";
+import { FaSearch, FaCog, FaPen } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
 
@@ -33,6 +31,10 @@ const Header: React.FC = () => {
     navigate("/");
   };
 
+  const handleUploadClick = () => {
+    navigate("/create-post");
+  };
+
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>
@@ -47,7 +49,13 @@ const Header: React.FC = () => {
           </SearchButton>
         </SearchBarWrapper>
 
+        <UploadButton onClick={handleUploadClick} aria-label="Upload">
+          <FaPen />
+          <UploadText>Upload</UploadText>
+        </UploadButton>
+
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
+
         <SettingsButton aria-label="Settings">
           <FaCog />
         </SettingsButton>
@@ -109,6 +117,28 @@ const SearchButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+`;
+
+/* Upload 버튼 */
+const UploadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+/* Upload 텍스트 */
+const UploadText = styled.span`
+  font-size: 1rem;
 `;
 
 /* 프로필 아이콘 및 설정 버튼 */

@@ -85,7 +85,7 @@ const MoreButton = styled.button`
   letter-spacing: -0.5rem;
 
   &:hover {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 `;
 

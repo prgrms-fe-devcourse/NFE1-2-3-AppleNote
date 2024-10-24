@@ -4,7 +4,7 @@ import { UserSchemaType } from "@src/types";
 export interface IUserService {
   createUser(data: UserSchemaType): Promise<IUserWithId>;
   getUsers(): Promise<IUser[]>;
-  getUserbyId(id: string): Promise<IUser | null>;
+  getUserById(id: string): Promise<IUser | null>;
   getUserByEmail(email: string): Promise<IUserWithId | null>;
   updateUser(userId: string, data: UserSchemaType): Promise<IUser | null>;
   deleteUser(userId: string): Promise<boolean>;
@@ -37,7 +37,7 @@ export class UserService implements IUserService {
     return await User.find();
   }
 
-  async getUserbyId(id: string): Promise<IUser | null> {
+  async getUserById(id: string): Promise<IUser | null> {
     return await User.findById(id);
   }
 

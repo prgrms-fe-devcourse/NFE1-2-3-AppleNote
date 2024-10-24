@@ -13,7 +13,12 @@ export class UserController {
   async create(req: Request, res: Response) {
     try {
       const userData: UserSchemaType = req.body;
+      //이메일 형식 검증
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+      if (!emailRegex.test(userData.email)) {
+        return res.status(400).json(createErrorResponse(400, "Invalid email format"));
+      }
       // 비밀번호 해시화
       const hashedPassword = await bcrypt.hash(userData.password, 10);
       const newUser = await this.userService.createUser({
@@ -157,7 +162,7 @@ export class UserController {
 
       return res.status(200).json({
         statusCode: 200,
-        payload: "isChange : true",
+        payload: { isChange: true },
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Update failed: ${error}`));
@@ -184,7 +189,7 @@ export class UserController {
 
       return res.status(200).json({
         statusCode: 200,
-        payload: "isRemove: true",
+        payload: { isRemove: true },
       });
     } catch (error) {
       return res.status(500).json(createErrorResponse(500, `Delete failed: ${error}`));

@@ -102,7 +102,7 @@ export class UserController {
   // 나의 정보 조회
   async readMine(req: Request, res: Response) {
     try {
-      const user = req.user as IUserWithId | undefined;
+      const user = req.user;
 
       if (!user) {
         return res.status(401).json(createErrorResponse(404, "User not found"));
@@ -135,7 +135,7 @@ export class UserController {
       if (!userId) {
         return res.status(400).json(createErrorResponse(400, "User ID is required"));
       }
-      const user = await this.userService.getUserbyId(userId);
+      const user = await this.userService.getUserById(userId);
 
       // user가 정의되어 있고 비밀번호가 존재하는지 확인
       if (!user || !user.password || !(await bcrypt.compare(oldPassword, user.password))) {

@@ -15,9 +15,6 @@ const CreatePostPage: React.FC = () => {
     }
   };
 
-  // eslint-disable-next-line no-console
-  console.log(title, content);
-
   return (
     <Wrapper>
       <Title>제목</Title>
@@ -33,7 +30,14 @@ const CreatePostPage: React.FC = () => {
       <ContentText onChange={(e) => setContent(e.target.value)} />
 
       <ButtonWrapper>
-        <Button>확인</Button>
+        <Button
+          onClick={() => {
+            // API 추후 적용 예정 + 페이지 이동
+            // eslint-disable-next-line no-console
+            console.log(title, image, content);
+          }}>
+          확인
+        </Button>
         <Button>삭제</Button>
         <Button>임시저장</Button>
         <Button>미리보기</Button>

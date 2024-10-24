@@ -4,6 +4,7 @@ import useCustomTheme from "@common/styles/useCustomTheme";
 import Category from "@components/category/Category";
 import Header from "@components/main/Header";
 import Banner from "@components/main/Banner";
+import LatestPosts from "@components/main/LatestPosts";
 
 interface HomePageProps {
   data?: null;
@@ -22,6 +23,7 @@ const HomePage: React.FC<HomePageProps> = () => {
     <div>
       <Header />
       <Banner />
+      <LatestPosts />
       <h1>
         {icon} Hello World {icon}
       </h1>

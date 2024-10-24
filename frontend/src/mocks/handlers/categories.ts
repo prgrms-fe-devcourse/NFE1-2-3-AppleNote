@@ -20,7 +20,7 @@ const generateCategoryId = (): string => {
 // MSW 핸들러 설정
 export const handlers = [
   // 카테고리 목록 조회 핸들러
-  http.get("/categories", async () => {
+  http.get("http://localhost:3000/categories", async () => {
     return HttpResponse.json({
       statusCode: 200,
       payload: categories,
@@ -28,7 +28,7 @@ export const handlers = [
   }),
 
   // 카테고리 추가 핸들러
-  http.post("/categories", async ({ request }) => {
+  http.post("http://localhost:3000/categories", async ({ request }) => {
     let data: CategoryAddRequest | null = null;
 
     // 요청에서 JSON 데이터 파싱

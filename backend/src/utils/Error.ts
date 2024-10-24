@@ -5,7 +5,12 @@ export class PostError extends Error {
 
   constructor(message: string, statusCode: ErrorStatus) {
     super(message);
-    this.name = "PostError";
+
+    this.name = this.constructor.name; // "PostError"
     this.statusCode = statusCode;
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 }

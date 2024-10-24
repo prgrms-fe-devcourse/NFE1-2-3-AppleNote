@@ -17,6 +17,11 @@ route.post(
   upload.array("images", IMAGE_MAX_COUNT),
   postController.create.bind(postController)
 );
+route.patch(
+  "/:postId",
+  upload.array("images", IMAGE_MAX_COUNT),
+  postController.update.bind(postController)
+);
 route.delete("/:postId", postController.delete.bind(postController));
 
 export default route;

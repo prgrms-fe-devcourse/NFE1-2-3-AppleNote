@@ -40,8 +40,29 @@ export class PostController implements IController {
     }
   }
 
-  async update(_req: Request, res: Response) {
-    return res.status(200).json(createSuccessResponse(200, { good: true }));
+  async update(req: Request, res: Response) {
+    try {
+      const { title, content } = req.body;
+      const files = req.files;
+      const post = await this.postService.updatePost({
+        postId: req.params.postId,
+        header: req.headers["content-type"],
+        user: {
+          userId: "652ea2f6c8a4fca1b8b9d6e2",
+        }, // 임시
+        data: { title, content, images: files },
+      });
+
+      return res.status(200).json(createSuccessResponse(200, post));
+    } catch (error) {
+      if (error instanceof PostError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
+      return res.status(500).json(createErrorResponse(500, "Internal server error"));
+    }
   }
 
   // TODO: 사용자 유저의 포스트만 삭제 가능하도록 구현하기

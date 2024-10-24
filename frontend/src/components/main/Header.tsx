@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import searchIcon from "@assets/icons/search-icon.svg";
-import settingsIcon from "@assets/icons/settings.svg";
+import { FaSearch } from "react-icons/fa";
+import { FaCog } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
 
@@ -43,13 +43,13 @@ const Header: React.FC = () => {
         <SearchBarWrapper>
           <SearchInput placeholder="검색어를 입력하세요" />
           <SearchButton aria-label="Search">
-            <IconImage src={searchIcon} alt="Search Icon" />
+            <FaSearch />
           </SearchButton>
         </SearchBarWrapper>
 
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
         <SettingsButton aria-label="Settings">
-          <IconImage src={settingsIcon} alt="Settings Icon" />
+          <FaCog />
         </SettingsButton>
       </SearchAndIconsSection>
     </StyledHeader>
@@ -60,8 +60,6 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #f5f5f5;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   gap: 1rem;
 `;
 
@@ -130,11 +128,6 @@ const SettingsButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
-`;
-
-const IconImage = styled.img`
-  width: 24px;
-  height: 24px;
 `;
 
 export default Header;

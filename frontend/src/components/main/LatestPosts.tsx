@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-// import { useNavigate } from "react-router-dom"; // 네비게이션 임시 주석 처리
-import { fetchLatestPosts, Post } from "./latestPostsApi";
+import { useNavigate } from "react-router-dom";
+import { fetchLatestPosts, Post } from "./postApi";
 
 const LatestPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  // const navigate = useNavigate(); // 네비게이션 함수 주석 처리
+  const navigate = useNavigate();
 
   // 최신 포스트 가져오기
   useEffect(() => {
@@ -27,11 +27,16 @@ const LatestPosts: React.FC = () => {
   //   navigate(`/posts/${postId}`); // 클릭 시 상세 페이지로 이동 (추후 활성화)
   // };
 
+  // MoreButton 클릭 핸들러
+  const handleMoreButtonClick = () => {
+    navigate("/posts"); // 전체 포스트 목록 페이지로 이동
+  };
+
   return (
     <Container>
       <Header>
         <Title>LATEST POSTS</Title>
-        <MoreButton onClick={() => console.log("View more posts clicked")}>&gt;&gt;</MoreButton>
+        <MoreButton onClick={handleMoreButtonClick}>&gt;&gt;</MoreButton>
       </Header>
       <PostsGrid>
         {posts.map((post) => (

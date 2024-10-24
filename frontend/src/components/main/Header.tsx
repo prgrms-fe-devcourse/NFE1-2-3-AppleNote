@@ -4,12 +4,14 @@ import styled from "styled-components";
 import searchIcon from "@assets/icons/search-icon.svg";
 import settingsIcon from "@assets/icons/settings.svg";
 import { fetchUserData } from "./headerApi";
+import { useNavigate } from "react-router-dom";
 
 // 기본 프로필 이미지 경로
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
 const Header: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // 사용자 정보 API 호출 및 프로필 이미지 설정
   useEffect(() => {
@@ -26,15 +28,16 @@ const Header: React.FC = () => {
     getUserData();
   }, []);
 
+  // 로고 클릭 시 홈으로 이동하는 함수
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   return (
     <StyledHeader>
-      <LogoSection>
+      <LogoSection onClick={handleLogoClick}>
         <Logo src="/logo.png" alt="AppleNote Logo" />
       </LogoSection>
-
-      <MenuSection>
-        <HomeLink href="/">Home</HomeLink> {/* 추후 더 많은 링크 추가 가능 */}
-      </MenuSection>
 
       <SearchAndIconsSection>
         <SearchBarWrapper>
@@ -66,29 +69,15 @@ const StyledHeader = styled.header`
 const LogoSection = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer; /* 클릭 가능하도록 설정 */
 `;
 
+/* 로고 크기 유지 */
 const Logo = styled.img`
   width: 198px;
   height: 70px;
-`;
-
-/* 메뉴 링크 섹션 */
-const MenuSection = styled.nav`
-  margin-left: 1rem;
-  display: flex;
-  align-items: center;
-`;
-
-const HomeLink = styled.a`
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  color: black;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  max-width: 100%; /* 화면 너비에 맞게 조정 */
+  object-fit: contain; /* 비율 유지하며 이미지 조정 */
 `;
 
 /* 검색창 및 아이콘 섹션 */

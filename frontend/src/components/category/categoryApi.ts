@@ -40,3 +40,10 @@ export const updateCategory = async (data: CategoryUpdateRequest) => {
 
   return response.data; // axios의 응답 구조에 맞게 수정
 };
+
+// 카테고리 삭제 API 호출 함수
+export const deleteCategory = async (categoryId: string) => {
+  const response = await httpClient.delete(`${BASE_URL}/categories/${categoryId}`);
+
+  return response.data; // 성공 시 응답 데이터 반환
+};

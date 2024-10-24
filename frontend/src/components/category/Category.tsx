@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchCategories, createCategory, CategoryResponse, updateCategory } from "./categoryApi"; // API 함수 가져오기
-import { FaCog } from "react-icons/fa";
+import {
+  fetchCategories,
+  createCategory,
+  CategoryResponse,
+  updateCategory,
+  deleteCategory,
+} from "./categoryApi"; // API 함수 가져오기
+import { FaCog, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 const Category: React.FC = () => {
-  // 상태를 하나의 객체로 통합하여 관리하기 위한 정의
-  const [state, setState] = useState<{
+  // 상태 타입을 분리하여 정의
+  type CategoryState = {
     categories: CategoryResponse["payload"];
     loading: boolean;
     error: string | null;
@@ -16,7 +23,10 @@ const Category: React.FC = () => {
     isEditing: string | null; // 수정 중인 카테고리 ID
     editCategoryName: string;
     cogClicked: boolean; // 수정 모드인지 확인
-  }>({
+  };
+
+  // 상태를 useState로 관리할 때 타입 적용
+  const [state, setState] = useState<CategoryState>({
     categories: [],
     loading: true,
     error: null,
@@ -133,6 +143,25 @@ const Category: React.FC = () => {
     }
   };
 
+  const handleDeleteCategory = async (categoryId: string) => {
+    if (window.confirm("이 카테고리를 삭제하시겠습니까?")) {
+      try {
+        const data = await deleteCategory(categoryId); // API 호출
+
+        if (data.payload.isRemove) {
+          // 삭제 성공 시 상태 업데이트
+          setState((prev) => ({
+            ...prev,
+            categories: prev.categories.filter((category) => category.categoryId !== categoryId),
+          }));
+        }
+      } catch (error) {
+        // 에러 처리
+        console.error("카테고리 삭제 중 오류 발생:", error);
+        setState((prev) => ({ ...prev, error: "카테고리 삭제 중 오류가 발생했습니다." }));
+      }
+    }
+  };
   const handleEditBlur = () => {
     setState((prev) => ({ ...prev, isEditing: null }));
   };
@@ -177,8 +206,14 @@ const Category: React.FC = () => {
               <CategoryName>{category.name}</CategoryName>
             )}
             {state.cogClicked && !state.isEditing && (
-              <EditButton
-                onClick={() => handleEditCategory(category.categoryId, category.name)}></EditButton>
+              <>
+                <EditButton onClick={() => handleEditCategory(category.categoryId, category.name)}>
+                  <CiEdit />
+                </EditButton>
+                <DeleteButton onClick={() => handleDeleteCategory(category.categoryId)}>
+                  <FaTrash />
+                </DeleteButton>
+              </>
             )}
           </ListItem>
         ))}
@@ -261,8 +296,22 @@ const EditButton = styled(CiEdit)`
   min-width: 24px; // 최소 너비 설정
   min-height: 24px; // 최소 높이 설정
   cursor: pointer;
+  stroke-width: 0.5;
 
   &:hover {
-    background-color: #ccc;
+    opacity: 0.5;
+  }
+`;
+
+const DeleteButton = styled(MdDeleteOutline)`
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 24px; // 버튼 너비 고정
+  height: 24px; // 버튼 높이 고정
+  min-width: 24px; // 최소 너비 설정
+  min-height: 24px; // 최소 높이 설정
+  &:hover {
+    opacity: 0.7;
   }
 `;

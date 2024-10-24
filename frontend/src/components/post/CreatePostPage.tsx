@@ -31,9 +31,25 @@ const CreatePostPage: React.FC = () => {
 
       <Title>본문</Title>
       <ContentText onChange={(e) => setContent(e.target.value)} />
+
+      <ButtonWrapper>
+        <Button>확인</Button>
+        <Button>삭제</Button>
+        <Button>임시저장</Button>
+        <Button>미리보기</Button>
+      </ButtonWrapper>
     </Wrapper>
   );
 };
+
+const Button = styled.div`
+  cursor: pointer;
+`;
+const ButtonWrapper = styled.div`
+  display: inline-flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
 
 const ImageWrapper = styled.div`
   width: 100%;

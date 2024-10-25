@@ -11,6 +11,7 @@ import { FaCog, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 
+// 컴포넌트의 상태 유형 정의
 type CategoryState = {
   categories: CategoryResponse["payload"];
   loading: boolean;
@@ -22,6 +23,7 @@ type CategoryState = {
   cogClicked: boolean;
 };
 
+// 상태 초기값 설정
 const initialState: CategoryState = {
   categories: [],
   loading: true,
@@ -33,6 +35,7 @@ const initialState: CategoryState = {
   cogClicked: false,
 };
 
+// Reducer에서 사용할 액션의 종류 및 형태를 정의
 type Action =
   | { type: "SET_CATEGORIES"; payload: CategoryResponse["payload"] }
   | { type: "SET_LOADING"; payload: boolean }
@@ -42,6 +45,7 @@ type Action =
   | { type: "TOGGLE_INPUT_VISIBLE"; payload: boolean }
   | { type: "SET_EDITING"; payload: { id: string | null; name: string } };
 
+// Reducer 함수: 각 액션에 따라 상태 업데이트
 const reducer = (state: CategoryState, action: Action): CategoryState => {
   switch (action.type) {
     case "SET_CATEGORIES":
@@ -70,13 +74,14 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
 const Category: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // API 호출에서 발생하는 에러 처리 함수
   const handleApiError = (error: unknown) => {
     const errorMessage = (error as Error).message || "에러가 발생했습니다.";
 
     dispatch({ type: "SET_ERROR", payload: errorMessage });
   };
 
-  // 카테고리 로드
+  // 카테고리 데이터를 로드하고 상태를 업데이트하는 함수
   const reloadCategories = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
@@ -91,9 +96,10 @@ const Category: React.FC = () => {
   };
 
   useEffect(() => {
-    reloadCategories();
+    reloadCategories(); // 컴포넌트가 처음 렌더링될 때 카테고리 로드
   }, []);
 
+  // 새 카테고리를 추가하는 함수: Enter 키 입력 시 실행
   const handleAddCategory = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && state.newCategoryName) {
       try {
@@ -107,23 +113,28 @@ const Category: React.FC = () => {
     }
   };
 
+  // 카테고리 추가 입력 필드 표시 토글
   const handleButtonClick = () => {
     dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: true });
   };
 
+  // 입력 필드 외 클릭 시 취소
   const handleInputBlur = () => {
     dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: "" });
     dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: false });
   };
 
+  // 설정 아이콘 클릭 시 토글
   const handleCogClick = () => {
     dispatch({ type: "TOGGLE_COG_CLICKED" });
   };
 
+  // 카테고리 수정 모드로 전환
   const handleEditCategory = (categoryId: string, newName: string) => {
     dispatch({ type: "SET_EDITING", payload: { id: categoryId, name: newName } });
   };
 
+  // 수정 중 Enter 키 입력 시 카테고리 업데이트 실행
   const handleEditKeyPress = async (
     event: React.KeyboardEvent<HTMLInputElement>,
     categoryId: string
@@ -142,6 +153,7 @@ const Category: React.FC = () => {
     }
   };
 
+  // 카테고리 삭제 함수
   const handleDeleteCategory = async (categoryId: string) => {
     if (window.confirm("이 카테고리를 삭제하시겠습니까?")) {
       try {
@@ -153,6 +165,7 @@ const Category: React.FC = () => {
     }
   };
 
+  // 수정 모드 해제
   const handleEditBlur = () => {
     dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
   };

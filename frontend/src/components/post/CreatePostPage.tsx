@@ -27,7 +27,7 @@ const CreatePostPage: React.FC = () => {
       <ImageWrapper>
         <ImageInput type="file" accept="image/*" onChange={handleImageUpload} />
         {!image && <PlaceholderText>이미지 추가하기</PlaceholderText>}
-        {image && <PreviewImage src={image} alt="Uploaded preview" />}
+        {image && <Image src={image} alt="Uploaded preview" />}
       </ImageWrapper>
 
       <Title>본문</Title>
@@ -92,12 +92,27 @@ const CreatePostPage: React.FC = () => {
           <ModalWrapper
             onClick={(e) => {
               e.stopPropagation();
-            }}></ModalWrapper>
+            }}>
+            {title !== "" && <PreviewTitle>{title}</PreviewTitle>}
+            {image && <PreviewImg src={image} />}
+            {content !== "" && <PreviewContent>{content}</PreviewContent>}
+          </ModalWrapper>
         </ModalOverlay>
       )}
     </Wrapper>
   );
 };
+
+const PreviewContent = styled.div``;
+const PreviewImg = styled.img`
+  width: 600px;
+  height: 300px;
+  object-fit: cover;
+`;
+const PreviewTitle = styled.div`
+  font-size: 30px;
+  font-weight: 900;
+`;
 
 const ModalWrapper = styled.div`
   background: white;
@@ -146,7 +161,7 @@ const ImageInput = styled.input`
   z-index: 2;
 `;
 
-const PreviewImage = styled.img`
+const Image = styled.img`
   width: 100%;
   height: 300px;
   object-fit: cover;

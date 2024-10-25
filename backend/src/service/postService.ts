@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 import Post, { PostSchemaType } from "@src/models/postModel";
 import { FormDataPost } from "@src/types/post";
-import { PostError } from "@src/utils/Error";
+import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
 
@@ -37,18 +37,18 @@ export class PostService implements IPostService {
   async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
-      throw new PostError("The content-type is invalid.", 400);
+      throw new ServiceError("The content-type is invalid.", 400);
     }
 
     // TODO: 올바르지 않은 필드 포함시 에러 발생시키기
     // 필드검증
     if (!validators.keys(data, ["title", "content", "images", "category"])) {
-      throw new PostError("Invalid request field.", 422);
+      throw new ServiceError("Invalid request field.", 422);
     }
 
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
-      throw new PostError("The request does not have valid user information.", 403);
+      throw new ServiceError("The request does not have valid user information.", 403);
     }
 
     // TODO: 카테고리 id 조인하기
@@ -75,7 +75,7 @@ export class PostService implements IPostService {
   async getPosts({ user }: GetPostsArg): Promise<GetPostReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
-      throw new PostError("The request does not have valid user information.", 403);
+      throw new ServiceError("The request does not have valid user information.", 403);
     }
 
     const posts = await Post.find({ authorId: user.userId }).lean();
@@ -95,29 +95,29 @@ export class PostService implements IPostService {
   async updatePost({ header, user, data, postId }: UpdatePostArg): Promise<UpdatePostReturn> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
-      throw new PostError("Invalid postId", 404);
+      throw new ServiceError("Invalid postId", 404);
     }
 
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
-      throw new PostError("The content-type is invalid.", 400);
+      throw new ServiceError("The content-type is invalid.", 400);
     }
 
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
-      throw new PostError("The request does not have valid user information.", 403);
+      throw new ServiceError("The request does not have valid user information.", 403);
     }
 
     const updatedPost = await Post.findByIdAndUpdate(postId, validators.cleanedValue(data), {
       new: true,
       runValidators: true,
     }).catch(() => {
-      throw new PostError("Failed to update post item", 404);
+      throw new ServiceError("Failed to update post item", 404);
     });
 
     // 포스트 검증
     if (!updatedPost) {
-      throw new PostError("Failed to update post item", 404);
+      throw new ServiceError("Failed to update post item", 404);
     }
 
     return {
@@ -133,19 +133,19 @@ export class PostService implements IPostService {
   async deletePost({ postId, user }: DeletePostArg): Promise<void> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
-      throw new PostError("Invalid postId", 404);
+      throw new ServiceError("Invalid postId", 404);
     }
 
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
-      throw new PostError("The request does not have valid user information.", 403);
+      throw new ServiceError("The request does not have valid user information.", 403);
     }
 
     const deletedPost = await Post.findOneAndDelete({ _id: postId, authorId: user.userId });
 
     // 포스트 검증
     if (!deletedPost) {
-      throw new PostError("Failed to delete post item", 404);
+      throw new ServiceError("Failed to delete post item", 404);
     }
   }
 }

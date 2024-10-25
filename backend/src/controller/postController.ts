@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { IPostService } from "@src/service/postService";
 import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
-import { PostError } from "@src/utils/Error";
+import { ServiceError } from "@src/utils/Error";
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
@@ -20,7 +20,7 @@ export class PostController implements IController {
 
       return res.status(201).json(createSuccessResponse(201, post));
     } catch (error) {
-      if (error instanceof PostError) {
+      if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
@@ -53,7 +53,7 @@ export class PostController implements IController {
 
       return res.status(200).json(createSuccessResponse(200, post));
     } catch (error) {
-      if (error instanceof PostError) {
+      if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
@@ -72,7 +72,7 @@ export class PostController implements IController {
 
       return res.status(200).json(createSuccessResponse(200, { isRemove: true }));
     } catch (error) {
-      if (error instanceof PostError) {
+      if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));

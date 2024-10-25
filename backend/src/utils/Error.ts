@@ -1,12 +1,12 @@
 import { StatusCode } from "@src/types";
 
-export class PostError extends Error {
+export class ServiceError extends Error {
   statusCode: StatusCode;
 
   constructor(message: string, statusCode: StatusCode) {
     super(message);
 
-    this.name = this.constructor.name; // "PostError"
+    this.name = this.constructor.name; // "ServiceError"
     this.statusCode = statusCode;
 
     if (Error.captureStackTrace) {

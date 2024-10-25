@@ -1,13 +1,13 @@
-import { ErrorStatus } from "@src/types/errorStatus";
+import { StatusCode } from "@src/types";
 
-export const createErrorResponse = (statusCode: ErrorStatus, message: string) => ({
+export const createErrorResponse = (statusCode: StatusCode, message: string) => ({
   error: {
     statusCode,
     message,
   },
 });
 
-export const createSuccessResponse = <P>(statusCode: ErrorStatus, payload: P) => ({
+export const createSuccessResponse = <P>(statusCode: StatusCode, payload: P) => ({
   statusCode,
   payload,
 });

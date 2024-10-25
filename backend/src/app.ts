@@ -11,6 +11,7 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
 import { verifyToken } from "./middleware/middleware";
+import { createErrorResponse } from "./utils/createError";
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use(
   rateLimit({
     windowMs: 5 * 60 * 1000, // 5분 간격
     max: 100, // 15분 동안 최대 100개의 요청
-    message: { error: "Too many requests, please try again later." },
+    message: createErrorResponse(429, "Too many requests, please try again later."),
   })
 );
 

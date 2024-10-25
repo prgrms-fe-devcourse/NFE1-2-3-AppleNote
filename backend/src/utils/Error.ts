@@ -1,9 +1,9 @@
-import { ErrorStatus } from "@src/types/errorStatus";
+import { StatusCode } from "@src/types";
 
 export class PostError extends Error {
-  statusCode: ErrorStatus;
+  statusCode: StatusCode;
 
-  constructor(message: string, statusCode: ErrorStatus) {
+  constructor(message: string, statusCode: StatusCode) {
     super(message);
 
     this.name = this.constructor.name; // "PostError"

@@ -20,7 +20,7 @@ const generateCategoryId = (): string => {
 // MSW 핸들러 설정
 export const handlers = [
   // 카테고리 목록 조회 핸들러
-  http.get("http://localhost:3000/categories", async () => {
+  http.get("/categories", async () => {
     return HttpResponse.json({
       statusCode: 200,
       payload: categories,
@@ -28,7 +28,7 @@ export const handlers = [
   }),
 
   // 카테고리 추가 핸들러
-  http.post("http://localhost:3000/categories", async ({ request }) => {
+  http.post("/categories", async ({ request }) => {
     let data: CategoryAddRequest | null = null;
 
     // 요청에서 JSON 데이터 파싱
@@ -106,6 +106,29 @@ export const handlers = [
     return HttpResponse.json({
       statusCode: 200,
       payload: { message: "카테고리가 성공적으로 수정되었습니다." },
+    });
+  }),
+
+  // 카테고리 삭제 핸들러
+  http.delete("/categories/:categoryId", async ({ params }) => {
+    // params로 받은 categoryId에 해당하는 카테고리를 찾기
+    const categoryIndex = categories.findIndex(
+      (category) => category.categoryId === params.categoryId
+    );
+
+    if (categoryIndex === -1) {
+      return HttpResponse.json(
+        { error: { statusCode: 404, message: "해당 카테고리를 찾을 수 없습니다." } },
+        { status: 404 }
+      );
+    }
+
+    // 카테고리 삭제
+    categories.splice(categoryIndex, 1); // 해당 인덱스의 카테고리 삭제
+
+    return HttpResponse.json({
+      statusCode: 200,
+      payload: { isRemove: true },
     });
   }),
 ];

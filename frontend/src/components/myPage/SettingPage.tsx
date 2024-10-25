@@ -1,7 +1,24 @@
 import Banner from "@components/main/Banner";
 import styled from "styled-components";
 import edit from "@assets/icons/edit.svg";
+import { deleteUser } from "./userApi";
 const SettingPage = () => {
+  const changePw = () => {};
+  const signout = async () => {
+    try {
+      const isDeleted = await deleteUser(); // 회원 탈퇴 API 호출
+
+      if (isDeleted) {
+        alert("회원탈퇴 완료"); // 모달창 혹은 alert로 변경 예정
+      } else {
+        alert("회원 탈퇴에 실패했습니다."); // 모달창 혹은 alert로 변경 예정
+      }
+    } catch {
+      alert("회원 탈퇴 중 오류 발생"); // 모달창 혹은 alert로 변경 예정
+    }
+  };
+  const logout = () => {};
+
   return (
     <>
       <Banner />
@@ -23,9 +40,9 @@ const SettingPage = () => {
 
             <UserEmail>유저 이메일</UserEmail>
 
-            <Button>비밀번호 수정</Button>
-            <Button>회원 탈퇴</Button>
-            <Button>로그아웃</Button>
+            <Button onClick={changePw}>비밀번호 변경</Button>
+            <Button onClick={signout}>회원 탈퇴</Button>
+            <Button onClick={logout}>로그아웃</Button>
           </UserProfile>
         </ProfileWrapper>
       </Wrapper>

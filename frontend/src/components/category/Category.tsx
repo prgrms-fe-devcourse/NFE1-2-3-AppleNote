@@ -35,7 +35,7 @@ const initialState: CategoryState = {
   cogClicked: false,
 };
 
-// Reducer에서 사용할 액션의 종류 및 형태를 정의
+// Reducer에서 사용할 액션의 종류 및 형태 정의
 type Action =
   | { type: "SET_CATEGORIES"; payload: CategoryResponse["payload"] }
   | { type: "SET_LOADING"; payload: boolean }

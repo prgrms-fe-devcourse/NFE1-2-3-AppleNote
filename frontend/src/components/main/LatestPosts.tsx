@@ -22,10 +22,10 @@ const LatestPosts: React.FC = () => {
     getPosts();
   }, []);
 
-  // 포스트 클릭 핸들러 (주석 처리)
-  // const handlePostClick = (postId: string) => {
-  //   navigate(`/posts/${postId}`); // 클릭 시 상세 페이지로 이동 (추후 활성화)
-  // };
+  // 포스트 클릭 핸들러
+  const handlePostClick = (postId: string) => {
+    navigate(`/posts/${postId}`);
+  };
 
   // MoreButton 클릭 핸들러
   const handleMoreButtonClick = () => {
@@ -40,16 +40,14 @@ const LatestPosts: React.FC = () => {
       </Header>
       <PostsGrid>
         {posts.map((post) => (
-          <PostCard
-            key={post.postId}
-            // onClick={() => handlePostClick(post.postId)} // 추후 활성화
-          >
+          <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
             <Thumbnail src={post.images[0]} alt={post.title} />
             <PostTitle>{post.title}</PostTitle>
             <PostContent>{post.content}</PostContent>
           </PostCard>
         ))}
       </PostsGrid>
+      <Divider />
     </Container>
   );
 };
@@ -127,6 +125,12 @@ const PostContent = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const Divider = styled.hr`
+  margin: 7rem 0;
+  border: none;
+  border-top: 1px solid #000;
 `;
 
 export default LatestPosts;

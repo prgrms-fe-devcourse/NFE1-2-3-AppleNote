@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
-import searchIcon from "@assets/icons/search-icon.svg";
-import settingsIcon from "@assets/icons/settings.svg";
+import { FaSearch, FaCog, FaPen } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
 
@@ -33,6 +31,10 @@ const Header: React.FC = () => {
     navigate("/");
   };
 
+  const handleUploadClick = () => {
+    navigate("/create-post");
+  };
+
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>
@@ -43,13 +45,19 @@ const Header: React.FC = () => {
         <SearchBarWrapper>
           <SearchInput placeholder="검색어를 입력하세요" />
           <SearchButton aria-label="Search">
-            <IconImage src={searchIcon} alt="Search Icon" />
+            <FaSearch />
           </SearchButton>
         </SearchBarWrapper>
 
+        <UploadButton onClick={handleUploadClick} aria-label="Upload">
+          <FaPen />
+          <UploadText>Upload</UploadText>
+        </UploadButton>
+
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
+
         <SettingsButton aria-label="Settings">
-          <IconImage src={settingsIcon} alt="Settings Icon" />
+          <FaCog />
         </SettingsButton>
       </SearchAndIconsSection>
     </StyledHeader>
@@ -60,8 +68,6 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #f5f5f5;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   gap: 1rem;
 `;
 
@@ -113,6 +119,28 @@ const SearchButton = styled.button`
   cursor: pointer;
 `;
 
+/* Upload 버튼 */
+const UploadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+/* Upload 텍스트 */
+const UploadText = styled.span`
+  font-size: 1rem;
+`;
+
 /* 프로필 아이콘 및 설정 버튼 */
 const ProfileIcon = styled.img`
   width: 40px;
@@ -130,11 +158,6 @@ const SettingsButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
-`;
-
-const IconImage = styled.img`
-  width: 24px;
-  height: 24px;
 `;
 
 export default Header;

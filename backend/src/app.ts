@@ -10,6 +10,7 @@ import favicon from "serve-favicon";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
 import { verifyToken } from "./middleware/middleware";
 import { createErrorResponse } from "./utils/createError";
 
@@ -39,6 +40,7 @@ app.get("/", (_req, res) => {
 app.use("/users", verifyToken, userRoutes);
 app.use("/auth", authRoutes);
 app.use("/posts", verifyToken, postRoutes);
+app.use("/categories", categoryRoutes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

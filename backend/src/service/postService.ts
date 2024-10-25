@@ -34,6 +34,7 @@ type CreatePostReturn = PostSchemaType & { postId: Types.ObjectId };
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
+  // TODO: 카테고리 없는 경우도 고려하기
   async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
@@ -66,6 +67,8 @@ export class PostService implements IPostService {
       content: post.content,
       images: post.images,
       authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
       category: [],
     };
   }
@@ -85,6 +88,8 @@ export class PostService implements IPostService {
       content: post.content,
       images: post.images,
       authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
       category: [],
     }));
 
@@ -126,6 +131,8 @@ export class PostService implements IPostService {
       content: updatedPost.content,
       images: updatedPost.images,
       authorId: updatedPost.authorId,
+      createdAt: updatedPost.createdAt,
+      updatedAt: updatedPost.updatedAt,
     };
   }
 

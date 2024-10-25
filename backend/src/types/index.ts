@@ -10,7 +10,7 @@ export type UserSchemaType = {
   profileImage?: string;
 };
 
-export type StatusCode = 200 | 201 | 400 | 401 | 403 | 404 | 422 | 429 | 500;
+export type StatusCode = 200 | 201 | 400 | 401 | 403 | 404 | 409 | 422 | 429 | 500;
 
 type ControllerResponse = Promise<Response<unknown, Record<string, unknown>> | undefined>;
 

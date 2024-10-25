@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
+  const [previewModalOpen, setPreviewModalOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -48,7 +49,12 @@ const CreatePostPage: React.FC = () => {
           삭제
         </Button>
         <Button>임시저장</Button>
-        <Button>미리보기</Button>
+        <Button
+          onClick={() => {
+            setPreviewModalOpen(true);
+          }}>
+          미리보기
+        </Button>
       </ButtonWrapper>
 
       {deleteModalOpen && (
@@ -76,6 +82,17 @@ const CreatePostPage: React.FC = () => {
               </Button>
             </ButtonWrapper>
           </ModalWrapper>
+        </ModalOverlay>
+      )}
+      {previewModalOpen && (
+        <ModalOverlay
+          onClick={() => {
+            setPreviewModalOpen(false);
+          }}>
+          <ModalWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+            }}></ModalWrapper>
         </ModalOverlay>
       )}
     </Wrapper>

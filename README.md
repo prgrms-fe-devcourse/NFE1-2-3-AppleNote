@@ -19,22 +19,38 @@ Apple Note는 사용자가 개인 블로그를 작성하고 관리할 수 있는
 
 ```bash
   git clone https://github.com/prgrms-fe-devcourse/NFE1_2_3_AppleNote.git
+
   cd NFE1_2_3_AppleNote
 ```
 
-2. 각 환경에서 필요한 패키지를 설치합니다. (`frontend`, `backend`)
+2. Root 환경에서 필요한 패키지를 설치합니다.
 
 ```bash
   npm install
 ```
 
-3. .env 파일을 생성하고 필요한 환경 변수를 설정합니다. `.env` 파일의 예시는 `.env.template` 파일을 참조하세요.
-
-4. prepare 스크립트를 실행합니다.
+3. prepare 스크립트를 실행합니다.
 
 ```bash
   npm run prepare
 ```
+
+4. 각 환경에서 작업할 환경으로 이동합니다. (`frontend`, `backend`)
+
+```bash
+  cd frontend, backend
+```
+
+5. 각 환경에서 필요한 패키지를 설치합니다. (`frontend`, `backend`)
+
+```bash
+  npm install
+```
+
+6. .env 파일을 생성하고 필요한 환경 변수를 설정합니다.
+
+> [!TIP]  
+> `.env` 파일의 예시는 `.env.template` 파일을 참조하세요.
 
 ---
 

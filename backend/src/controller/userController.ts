@@ -13,11 +13,20 @@ export class UserController {
   async create(req: Request, res: Response) {
     try {
       const userData: UserSchemaType = req.body;
+
       //이메일 형식 검증
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!emailRegex.test(userData.email)) {
         return res.status(400).json(createErrorResponse(400, "Invalid email format"));
+      }
+
+      //비밀번호 형식 검증
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+
+      if (!passwordRegex.test(userData.password)) {
+        return res.status(400).json(createErrorResponse(400, "Invalid password format"));
       }
       // 비밀번호 해시화
       const hashedPassword = await bcrypt.hash(userData.password, 10);

@@ -63,12 +63,12 @@ export class PostController implements IController {
     }
   }
 
-  // TODO: 사용자 유저의 포스트만 삭제 가능하도록 구현하기
   async delete(req: Request, res: Response) {
     try {
-      const postId = req.params.postId;
-
-      await this.postService.deletePost(postId);
+      await this.postService.deletePost({
+        postId: req.params.postId,
+        user: req.user,
+      });
 
       return res.status(200).json(createSuccessResponse(200, { isRemove: true }));
     } catch (error) {

@@ -10,7 +10,7 @@ export interface IPostService {
   createPost(arg: CreatePostArg): Promise<CreatePostReturn>;
   getPosts(arg: GetPostsArg): Promise<GetPostReturn>;
   updatePost(arg: UpdatePostArg): Promise<UpdatePostReturn>;
-  deletePost(postId: string): Promise<void>;
+  deletePost(arg: DeletePostArg): Promise<void>;
 }
 
 type RequestUser = IUserWithId | undefined;
@@ -26,6 +26,7 @@ type CreatePostArg = {
   user: RequestUser;
 };
 type UpdatePostArg = CreatePostArg & { postId: string };
+type DeletePostArg = GetPostsArg & { postId: string };
 
 type GetPostReturn = PostSchemaType[];
 type UpdatePostReturn = PostSchemaType & { postId: Types.ObjectId };
@@ -114,6 +115,7 @@ export class PostService implements IPostService {
       throw new PostError("Failed to update post item", 404);
     });
 
+    // 포스트 검증
     if (!updatedPost) {
       throw new PostError("Failed to update post item", 404);
     }
@@ -127,13 +129,21 @@ export class PostService implements IPostService {
     };
   }
 
-  async deletePost(postId: string | undefined): Promise<void> {
+  // DONE: 사용자 유저의 포스트만 삭제 가능하도록 구현하기 [V]
+  async deletePost({ postId, user }: DeletePostArg): Promise<void> {
+    // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new PostError("Invalid postId", 404);
     }
 
-    const deletedPost = await Post.findByIdAndDelete(postId);
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new PostError("The request does not have valid user information.", 403);
+    }
 
+    const deletedPost = await Post.findOneAndDelete({ _id: postId, authorId: user.userId });
+
+    // 포스트 검증
     if (!deletedPost) {
       throw new PostError("Failed to delete post item", 404);
     }

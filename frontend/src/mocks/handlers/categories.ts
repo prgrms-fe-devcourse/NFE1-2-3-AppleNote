@@ -13,30 +13,14 @@ const categories = [
 ];
 
 // 카테고리 ID 생성 함수
-const generateCategoryId = (): string => Math.random().toString(36).substring(2, 15);
-
-// 공통 JSON 파싱 및 검증 함수
-const parseAndValidateRequest = async (request: Request): Promise<CategoryAddRequest | null> => {
-  try {
-    const data = (await request.json()) as CategoryAddRequest;
-
-    if (typeof data.name !== "string") throw new Error("필수 필드가 누락되었습니다.");
-
-    return data;
-  } catch {
-    return null;
-  }
-};
-
-// 공통 에러 응답 함수
-const sendErrorResponse = (status: number, message: string) => {
-  return HttpResponse.json({ error: { statusCode: status, message } }, { status });
+const generateCategoryId = (): string => {
+  return Math.random().toString(36).substring(2, 15);
 };
 
 // MSW 핸들러 설정
 export const handlers = [
   // 카테고리 목록 조회 핸들러
-  http.get("http://localhost:3000/categories", async () => {
+  http.get("/categories", async () => {
     return HttpResponse.json({
       statusCode: 200,
       payload: categories,
@@ -44,7 +28,7 @@ export const handlers = [
   }),
 
   // 카테고리 추가 핸들러
-  http.post("http://localhost:3000/categories", async ({ request }) => {
+  http.post("/categories", async ({ request }) => {
     let data: CategoryAddRequest | null = null;
 
     // 요청에서 JSON 데이터 파싱
@@ -76,20 +60,47 @@ export const handlers = [
 
     return HttpResponse.json({
       statusCode: 201,
-      payload: { categoryId: newCategory.categoryId },
+      payload: {
+        categoryId: newCategory.categoryId,
+      },
     });
   }),
 
   // 카테고리 수정 핸들러
   http.put("/categories/:categoryId", async ({ params, request }) => {
-    const data = await parseAndValidateRequest(request);
+    let data: CategoryAddRequest | null = null;
 
-    if (!data) return sendErrorResponse(422, "잘못된 요청입니다.");
+    // 요청에서 JSON 데이터 파싱
+    try {
+      data = (await request.json()) as CategoryAddRequest;
+    } catch {
+      return HttpResponse.json(
+        { error: { statusCode: 400, message: "잘못된 JSON 형식입니다." } },
+        { status: 400 }
+      );
+    }
 
-    const categoryIndex = categories.findIndex((cat) => cat.categoryId === params.categoryId);
+    // 데이터 검증: 필수 필드 및 형식 체크
+    if (typeof data.name !== "string") {
+      return HttpResponse.json(
+        { error: { statusCode: 422, message: "필수 필드가 누락되었습니다." } },
+        { status: 422 }
+      );
+    }
 
-    if (categoryIndex === -1) return sendErrorResponse(404, "해당 카테고리를 찾을 수 없습니다.");
+    // params로 받은 categoryId에 해당하는 카테고리를 찾기
+    const categoryIndex = categories.findIndex(
+      (category) => category.categoryId === params.categoryId
+    );
 
+    if (categoryIndex === -1) {
+      return HttpResponse.json(
+        { error: { statusCode: 404, message: "해당 카테고리를 찾을 수 없습니다." } },
+        { status: 404 }
+      );
+    }
+
+    // 카테고리 이름 업데이트
     categories[categoryIndex].name = data.name;
 
     return HttpResponse.json({
@@ -100,12 +111,24 @@ export const handlers = [
 
   // 카테고리 삭제 핸들러
   http.delete("/categories/:categoryId", async ({ params }) => {
-    const categoryIndex = categories.findIndex((cat) => cat.categoryId === params.categoryId);
+    // params로 받은 categoryId에 해당하는 카테고리를 찾기
+    const categoryIndex = categories.findIndex(
+      (category) => category.categoryId === params.categoryId
+    );
 
-    if (categoryIndex === -1) return sendErrorResponse(404, "해당 카테고리를 찾을 수 없습니다.");
+    if (categoryIndex === -1) {
+      return HttpResponse.json(
+        { error: { statusCode: 404, message: "해당 카테고리를 찾을 수 없습니다." } },
+        { status: 404 }
+      );
+    }
 
-    categories.splice(categoryIndex, 1);
+    // 카테고리 삭제
+    categories.splice(categoryIndex, 1); // 해당 인덱스의 카테고리 삭제
 
-    return HttpResponse.json({ statusCode: 200, payload: { isRemove: true } });
+    return HttpResponse.json({
+      statusCode: 200,
+      payload: { isRemove: true },
+    });
   }),
 ];

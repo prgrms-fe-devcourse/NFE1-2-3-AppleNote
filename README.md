@@ -19,6 +19,7 @@ Apple Note는 사용자가 개인 블로그를 작성하고 관리할 수 있는
 
 ```bash
   git clone https://github.com/prgrms-fe-devcourse/NFE1_2_3_AppleNote.git
+  cd NFE1_2_3_AppleNote
 ```
 
 2. 각 환경에서 필요한 패키지를 설치합니다. (`frontend`, `backend`)

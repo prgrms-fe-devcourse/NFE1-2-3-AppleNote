@@ -37,7 +37,7 @@ app.get("/", (_req, res) => {
 
 app.use("/users", verifyToken, userRoutes);
 app.use("/auth", authRoutes);
-app.use("/posts", postRoutes);
+app.use("/posts", verifyToken, postRoutes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

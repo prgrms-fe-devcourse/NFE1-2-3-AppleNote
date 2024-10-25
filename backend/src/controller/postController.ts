@@ -30,9 +30,9 @@ export class PostController implements IController {
     }
   }
 
-  async read(_req: Request, res: Response) {
+  async read(req: Request, res: Response) {
     try {
-      const posts = await this.postService.getPosts();
+      const posts = await this.postService.getPosts({ user: req.user });
 
       return res.status(200).json(createSuccessResponse(200, posts));
     } catch {
@@ -47,9 +47,7 @@ export class PostController implements IController {
       const post = await this.postService.updatePost({
         postId: req.params.postId,
         header: req.headers["content-type"],
-        user: {
-          userId: "652ea2f6c8a4fca1b8b9d6e2",
-        }, // 임시
+        user: req.user,
         data: { title, content, images: files },
       });
 

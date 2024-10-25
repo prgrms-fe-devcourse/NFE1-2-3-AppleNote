@@ -52,8 +52,14 @@ const CreatePostPage: React.FC = () => {
       </ButtonWrapper>
 
       {deleteModalOpen && (
-        <ModalOverlay>
-          <ModalWrapper>
+        <ModalOverlay
+          onClick={() => {
+            setDeleteModalOpen(false);
+          }}>
+          <ModalWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+            }}>
             <div>삭제하시겠습니까?</div>
             <ButtonWrapper>
               <Button

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import styled from "styled-components";
 import {
   fetchCategories,
@@ -11,103 +11,117 @@ import { FaCog, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 
+type CategoryState = {
+  categories: CategoryResponse["payload"];
+  loading: boolean;
+  error: string | null;
+  newCategoryName: string;
+  isInputVisible: boolean;
+  isEditing: string | null;
+  editCategoryName: string;
+  cogClicked: boolean;
+};
+
+const initialState: CategoryState = {
+  categories: [],
+  loading: true,
+  error: null,
+  newCategoryName: "",
+  isInputVisible: false,
+  isEditing: null,
+  editCategoryName: "",
+  cogClicked: false,
+};
+
+type Action =
+  | { type: "SET_CATEGORIES"; payload: CategoryResponse["payload"] }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "TOGGLE_COG_CLICKED" }
+  | { type: "SET_NEW_CATEGORY_NAME"; payload: string }
+  | { type: "TOGGLE_INPUT_VISIBLE"; payload: boolean }
+  | { type: "SET_EDITING"; payload: { id: string | null; name: string } };
+
+const reducer = (state: CategoryState, action: Action): CategoryState => {
+  switch (action.type) {
+    case "SET_CATEGORIES":
+      return { ...state, categories: action.payload };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+    case "SET_ERROR":
+      return { ...state, error: action.payload };
+    case "TOGGLE_COG_CLICKED":
+      return { ...state, cogClicked: !state.cogClicked };
+    case "SET_NEW_CATEGORY_NAME":
+      return { ...state, newCategoryName: action.payload };
+    case "TOGGLE_INPUT_VISIBLE":
+      return { ...state, isInputVisible: action.payload };
+    case "SET_EDITING":
+      return {
+        ...state,
+        isEditing: action.payload.id,
+        editCategoryName: action.payload.name,
+      };
+    default:
+      return state;
+  }
+};
+
 const Category: React.FC = () => {
-  // 상태 타입을 분리하여 정의
-  type CategoryState = {
-    categories: CategoryResponse["payload"];
-    loading: boolean;
-    error: string | null;
-    newCategoryName: string;
-    isInputVisible: boolean;
-    isSubmitting: boolean;
-    isEditing: string | null; // 수정 중인 카테고리 ID
-    editCategoryName: string;
-    cogClicked: boolean; // 수정 모드인지 확인
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const handleApiError = (error: unknown) => {
+    const errorMessage = (error as Error).message || "에러가 발생했습니다.";
+
+    dispatch({ type: "SET_ERROR", payload: errorMessage });
   };
 
-  // 상태를 useState로 관리할 때 타입 적용
-  const [state, setState] = useState<CategoryState>({
-    categories: [],
-    loading: true,
-    error: null,
-    newCategoryName: "",
-    isInputVisible: false,
-    isSubmitting: false,
-    isEditing: null, // 수정 모드
-    editCategoryName: "",
-    cogClicked: false, // 수정 모드인지 확인
-  });
-
   // 카테고리 로드
+  const reloadCategories = async () => {
+    dispatch({ type: "SET_LOADING", payload: true });
+    try {
+      const data = await fetchCategories();
+
+      dispatch({ type: "SET_CATEGORIES", payload: data.payload });
+    } catch (error) {
+      handleApiError(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
+    }
+  };
+
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await fetchCategories();
-
-        setState((prev) => ({ ...prev, categories: data.payload }));
-      } catch (error) {
-        setState((prev) => ({ ...prev, error: (error as Error).message }));
-      } finally {
-        setState((prev) => ({ ...prev, loading: false }));
-      }
-    };
-
-    loadCategories();
+    reloadCategories();
   }, []);
 
-  // 카테고리 추가 핸들러
   const handleAddCategory = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      if (!state.newCategoryName) {
-        setState((prev) => ({ ...prev, error: "카테고리 이름을 입력해주세요." }));
-
-        return;
-      }
-
-      if (state.isSubmitting) return; // 제출 중일 경우 추가 실행 방지
-
-      setState((prev) => ({ ...prev, isSubmitting: true })); // 제출 시작
+    if (event.key === "Enter" && state.newCategoryName) {
       try {
         await createCategory({ name: state.newCategoryName });
-
-        const data = await fetchCategories();
-
-        setState((prev) => ({ ...prev, categories: data.payload }));
-        resetInput(); // 입력 필드 초기화
+        await reloadCategories();
+        dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: "" });
+        dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: false });
       } catch (error) {
-        setState((prev) => ({ ...prev, error: (error as Error).message }));
-      } finally {
-        setState((prev) => ({ ...prev, isSubmitting: false })); // 제출 완료
+        handleApiError(error);
       }
     }
   };
 
-  // 입력 필드 초기화 함수
-  const resetInput = () => {
-    setState((prev) => ({ ...prev, newCategoryName: "", isInputVisible: false }));
-  };
-
-  // 버튼 클릭 핸들러
   const handleButtonClick = () => {
-    setState((prev) => ({ ...prev, isInputVisible: true }));
+    dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: true });
   };
 
-  // 입력 필드 블러 핸들러
   const handleInputBlur = () => {
-    resetInput(); // 입력 필드 초기화
+    dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: "" });
+    dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: false });
   };
 
   const handleCogClick = () => {
-    setState((prev) => ({ ...prev, cogClicked: !prev.cogClicked }));
+    dispatch({ type: "TOGGLE_COG_CLICKED" });
   };
 
   const handleEditCategory = (categoryId: string, newName: string) => {
-    // 해당 카테고리 수정 로직 추가
-    setState((prev) => ({
-      ...prev,
-      isEditing: categoryId,
-      editCategoryName: newName,
-    }));
+    dispatch({ type: "SET_EDITING", payload: { id: categoryId, name: newName } });
   };
 
   const handleEditKeyPress = async (
@@ -116,29 +130,14 @@ const Category: React.FC = () => {
   ) => {
     if (event.key === "Enter" && state.editCategoryName) {
       try {
-        // 서버에 카테고리 수정 요청
         await updateCategory({
           categoryId,
-          name: state.editCategoryName, // 수정된 이름을 전송
+          name: state.editCategoryName,
         });
-
-        // 수정 후 로컬 상태 업데이트
-        const updatedCategories = state.categories.map((category) =>
-          category.categoryId === categoryId
-            ? { ...category, name: state.editCategoryName }
-            : category
-        );
-
-        // 수정 완료 후 수정 모드 해제
-        setState((prev) => ({
-          ...prev,
-          categories: updatedCategories,
-          isEditing: null,
-          editCategoryName: "",
-        }));
+        await reloadCategories();
+        dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
       } catch (error) {
-        console.error("카테고리 수정 중 오류 발생:", error);
-        setState((prev) => ({ ...prev, error: "카테고리 수정 중 오류가 발생했습니다." }));
+        handleApiError(error);
       }
     }
   };
@@ -146,27 +145,18 @@ const Category: React.FC = () => {
   const handleDeleteCategory = async (categoryId: string) => {
     if (window.confirm("이 카테고리를 삭제하시겠습니까?")) {
       try {
-        const data = await deleteCategory(categoryId); // API 호출
-
-        if (data.payload.isRemove) {
-          // 삭제 성공 시 상태 업데이트
-          setState((prev) => ({
-            ...prev,
-            categories: prev.categories.filter((category) => category.categoryId !== categoryId),
-          }));
-        }
+        await deleteCategory(categoryId);
+        await reloadCategories();
       } catch (error) {
-        // 에러 처리
-        console.error("카테고리 삭제 중 오류 발생:", error);
-        setState((prev) => ({ ...prev, error: "카테고리 삭제 중 오류가 발생했습니다." }));
+        handleApiError(error);
       }
     }
   };
+
   const handleEditBlur = () => {
-    setState((prev) => ({ ...prev, isEditing: null }));
+    dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
   };
 
-  // 로딩 또는 에러 처리
   if (state.loading) return <div>Loading...</div>;
   if (state.error) return <div>Error: {state.error}</div>;
 
@@ -176,14 +166,14 @@ const Category: React.FC = () => {
         <Title>Categories</Title>
         <CogIcon onClick={handleCogClick} />
       </Header>
-      <Button disabled={state.isSubmitting} onClick={handleButtonClick}>
+      <Button disabled={state.loading} onClick={handleButtonClick}>
         +
       </Button>
       {state.isInputVisible && (
         <Input
           type="text"
           value={state.newCategoryName}
-          onChange={(e) => setState((prev) => ({ ...prev, newCategoryName: e.target.value }))}
+          onChange={(e) => dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: e.target.value })}
           onKeyDown={handleAddCategory}
           onBlur={handleInputBlur}
           placeholder="카테고리 이름 입력"
@@ -197,7 +187,10 @@ const Category: React.FC = () => {
                 type="text"
                 value={state.editCategoryName}
                 onChange={(e) =>
-                  setState((prev) => ({ ...prev, editCategoryName: e.target.value }))
+                  dispatch({
+                    type: "SET_EDITING",
+                    payload: { id: category.categoryId, name: e.target.value },
+                  })
                 }
                 onKeyDown={(e) => handleEditKeyPress(e, category.categoryId)}
                 onBlur={handleEditBlur}

@@ -36,7 +36,7 @@ const sendErrorResponse = (status: number, message: string) => {
 // MSW 핸들러 설정
 export const handlers = [
   // 카테고리 목록 조회 핸들러
-  http.get("/categories", async () => {
+  http.get("http://localhost:3000/categories", async () => {
     return HttpResponse.json({
       statusCode: 200,
       payload: categories,
@@ -44,13 +44,34 @@ export const handlers = [
   }),
 
   // 카테고리 추가 핸들러
-  http.post("/categories", async ({ request }) => {
-    const data = await parseAndValidateRequest(request);
+  http.post("http://localhost:3000/categories", async ({ request }) => {
+    let data: CategoryAddRequest | null = null;
 
-    if (!data) return sendErrorResponse(422, "잘못된 요청입니다.");
+    // 요청에서 JSON 데이터 파싱
+    try {
+      data = (await request.json()) as CategoryAddRequest;
+    } catch {
+      return HttpResponse.json(
+        { error: { statusCode: 400, message: "잘못된 JSON 형식입니다." } },
+        { status: 400 }
+      );
+    }
 
-    const newCategory = { categoryId: generateCategoryId(), name: data.name };
+    // 데이터 검증: 필수 필드 및 형식 체크
+    if (typeof data.name !== "string") {
+      return HttpResponse.json(
+        { error: { statusCode: 422, message: "필수 필드가 누락되었습니다." } },
+        { status: 422 }
+      );
+    }
 
+    // 새로운 카테고리 생성
+    const newCategory = {
+      categoryId: generateCategoryId(),
+      name: data.name,
+    };
+
+    // 새로운 카테고리 목록에 추가
     categories.push(newCategory);
 
     return HttpResponse.json({

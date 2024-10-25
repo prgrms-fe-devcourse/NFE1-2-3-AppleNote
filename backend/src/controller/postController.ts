@@ -4,33 +4,26 @@ import { IPostService } from "@src/service/postService";
 import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { PostError } from "@src/utils/Error";
-import { validators } from "@src/utils/validators";
-import { FormDataPost } from "@src/types/post";
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
 
   async create(req: Request, res: Response) {
     try {
-      if (!validators.checkContentType(req.headers["content-type"], "multipart/form-data")) {
-        return res.status(422).json(createErrorResponse(422, "The content-type is invalid."));
-      }
-
       const { title, content, category } = req.body;
       const files = req.files;
-      const isValidField = !title || !content || !category || !files;
-
-      if (isValidField) {
-        return res.status(422).json(createErrorResponse(422, "Invalid request field."));
-      }
-
-      const postData: FormDataPost = { title, category, content, images: files };
-      const post = await this.postService.createPost(postData);
+      const post = await this.postService.createPost({
+        header: req.headers["content-type"],
+        user: req.user,
+        data: { title, category, content, images: files },
+      });
 
       return res.status(201).json(createSuccessResponse(201, post));
     } catch (error) {
       if (error instanceof PostError) {
-        return res.status(422).json(createErrorResponse(422, error.message));
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
       }
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
@@ -47,10 +40,32 @@ export class PostController implements IController {
     }
   }
 
-  async update(_req: Request, res: Response) {
-    return res.status(200).json(createSuccessResponse(200, { good: true }));
+  async update(req: Request, res: Response) {
+    try {
+      const { title, content } = req.body;
+      const files = req.files;
+      const post = await this.postService.updatePost({
+        postId: req.params.postId,
+        header: req.headers["content-type"],
+        user: {
+          userId: "652ea2f6c8a4fca1b8b9d6e2",
+        }, // 임시
+        data: { title, content, images: files },
+      });
+
+      return res.status(200).json(createSuccessResponse(200, post));
+    } catch (error) {
+      if (error instanceof PostError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
+      return res.status(500).json(createErrorResponse(500, "Internal server error"));
+    }
   }
 
+  // TODO: 사용자 유저의 포스트만 삭제 가능하도록 구현하기
   async delete(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
@@ -60,7 +75,9 @@ export class PostController implements IController {
       return res.status(200).json(createSuccessResponse(200, { isRemove: true }));
     } catch (error) {
       if (error instanceof PostError) {
-        return res.status(404).json(createErrorResponse(404, error.message));
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
       }
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));

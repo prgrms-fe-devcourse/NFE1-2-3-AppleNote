@@ -1,7 +1,8 @@
 import { ChangeEvent } from "react";
 import { IconType } from "react-icons";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { FaRegSquare } from "react-icons/fa6";
+import ThemeToggleButton from "@common/utils/ThemeToggleButton";
 
 type IconOptions = {
   size: number;
@@ -16,11 +17,6 @@ interface InputProps {
   onChange?: (value: string) => void;
 }
 
-const defaultIconOptions: IconOptions = {
-  size: 24,
-  color: "#1C1C1C80",
-};
-
 /**
  * AuthInput 컴포넌트
  *
@@ -33,6 +29,13 @@ const defaultIconOptions: IconOptions = {
  *
  */
 const AuthInput: React.FC<InputProps> = (props) => {
+  const theme = useTheme();
+
+  const defaultIconOptions: IconOptions = {
+    size: 24,
+    color: `${theme.text.secondary}80`,
+  };
+
   const {
     Icon = FaRegSquare,
     iconOptions = defaultIconOptions,
@@ -46,16 +49,19 @@ const AuthInput: React.FC<InputProps> = (props) => {
   };
 
   return (
-    <InputContainer>
-      <Icon {...iconOptions} />
-      <Input placeholder={placeholder} value={value} onChange={onChangeHandler} />
-    </InputContainer>
+    <>
+      <ThemeToggleButton />
+      <InputContainer>
+        <Icon {...iconOptions} />
+        <Input placeholder={placeholder} value={value} onChange={onChangeHandler} />
+      </InputContainer>
+    </>
   );
 };
 
 const InputContainer = styled.div`
   align-items: center;
-  background-color: #f8f8f8;
+  background-color: ${({ theme }) => `${theme.background.secondary}`};
   border: none;
   border-radius: 10px;
   display: flex;
@@ -69,15 +75,15 @@ const InputContainer = styled.div`
 const Input = styled.input`
   background-color: transparent;
   border: none;
-  color: "#1C1C1C80";
+  color: ${({ theme }) => `${theme.text.secondary}`};
   font-size: 16px;
   line-height: 24px;
   outline: none;
-  padding-top: 4px;
+  margin-top: 4px;
   width: 100%;
 
   &::placeholder {
-    color: rgba(28, 28, 28, 0.5);
+    color: ${({ theme }) => `${theme.text.secondary}80`};
   }
 
   &:focus {

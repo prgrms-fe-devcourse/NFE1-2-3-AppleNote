@@ -63,8 +63,8 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-color: ${({ theme }) => theme.bgColor};
-        color: ${({ theme }) => theme.textColor};
+        background-color: ${({ theme }) => theme.background};
+        color: ${({ theme }) => theme.textPrimary};
         transition: background-color 0.3s ease;
     }
 `;

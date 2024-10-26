@@ -34,8 +34,8 @@ const StyledButton = styled.button`
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  background-color: ${({ theme }) => theme.buttonBgColor};
-  color: ${({ theme }) => theme.buttonTextColor};
+  background-color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.background};
   transition:
     background-color 0.3s ease,
     color 0.3s ease;

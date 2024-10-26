@@ -2,7 +2,6 @@ import { ChangeEvent } from "react";
 import { IconType } from "react-icons";
 import styled, { useTheme } from "styled-components";
 import { FaRegSquare } from "react-icons/fa6";
-import ThemeToggleButton from "@common/utils/ThemeToggleButton";
 
 type IconOptions = {
   size: number;
@@ -49,13 +48,10 @@ const AuthInput: React.FC<InputProps> = (props) => {
   };
 
   return (
-    <>
-      <ThemeToggleButton />
-      <InputContainer>
-        <Icon {...iconOptions} />
-        <Input placeholder={placeholder} value={value} onChange={onChangeHandler} />
-      </InputContainer>
-    </>
+    <InputContainer>
+      <Icon {...iconOptions} />
+      <Input placeholder={placeholder} value={value} onChange={onChangeHandler} />
+    </InputContainer>
   );
 };
 

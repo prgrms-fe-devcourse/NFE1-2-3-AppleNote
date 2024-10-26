@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+
 import AppLayout from "@components/main/AppLayout";
 import ErrorPage from "routes/ErrorPage.tsx";
 import HomePage from "@components/main/HomePage";
@@ -6,6 +7,7 @@ import NotFoundPage from "routes/NotFoundPage.tsx";
 import CreatePostPage from "@components/post/CreatePostPage";
 import PostListPage from "@components/main/PostListPage";
 import SettingPage from "@components/myPage/SettingPage";
+import Login from "@components/auth/Login";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],
   },
+  { path: "/login", element: <Login /> }, // 로그인 페이지
   { path: "/*", element: <NotFoundPage /> }, // 404 페이지
 ]);
 

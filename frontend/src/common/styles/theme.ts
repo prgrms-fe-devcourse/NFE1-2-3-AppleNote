@@ -7,19 +7,34 @@ declare module "styled-components" {
 }
 
 interface CustomTheme {
-  background: string;
-  textPrimary: string;
-  textSecondary: string;
+  background: {
+    primary: string;
+    secondary: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+  };
 }
 
 export const lightTheme: DefaultTheme = {
-  background: "#ffffff",
-  textPrimary: "#000000",
-  textSecondary: "#1C1C1C",
+  background: {
+    primary: "#ffffff",
+    secondary: "#f8f8f8",
+  },
+  text: {
+    primary: "#000000",
+    secondary: "#1C1C1C",
+  },
 };
 
 export const darkTheme: DefaultTheme = {
-  background: "#121212",
-  textPrimary: "##FFFFFF",
-  textSecondary: "#E0E0E0",
+  background: {
+    primary: "#121212",
+    secondary: "#1E1E1E",
+  },
+  text: {
+    primary: "#FFFFFF",
+    secondary: "#E0E0E0",
+  },
 };

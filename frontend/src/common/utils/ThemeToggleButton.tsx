@@ -1,31 +1,18 @@
-import styled from "styled-components";
 import useCustomTheme from "@common/styles/useCustomTheme";
-import Category from "@components/category/Category";
-import LatestPosts from "@components/main/LatestPosts";
 
-interface HomePageProps {
-  data?: null;
-}
+import styled from "styled-components";
 
-const HomePage: React.FC<HomePageProps> = () => {
+/**
+ * 테마 테스트용 컴포넌트
+ */
+const ThemeToggleButton = () => {
   const { toggleTheme, themeType } = useCustomTheme();
-
-  const icon = themeType === "light" ? "🍎" : "🍏";
 
   const onClickHandler = () => {
     toggleTheme();
   };
 
-  return (
-    <div>
-      <LatestPosts />
-      <h1>
-        {icon} Hello World {icon}
-      </h1>
-      <StyledButton onClick={onClickHandler}>Click Me!</StyledButton>
-      <Category />
-    </div>
-  );
+  return <StyledButton onClick={onClickHandler}>{themeType}</StyledButton>;
 };
 
 const StyledButton = styled.button`
@@ -49,4 +36,4 @@ const StyledButton = styled.button`
   }
 `;
 
-export default HomePage;
+export default ThemeToggleButton;

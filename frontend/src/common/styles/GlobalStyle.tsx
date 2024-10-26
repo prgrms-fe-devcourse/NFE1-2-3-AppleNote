@@ -1,6 +1,10 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 
-export const GlobalStyle = createGlobalStyle`
+interface BodyProps {
+  readonly isThemeChanging: boolean;
+}
+
+export const GlobalStyle = createGlobalStyle<BodyProps>`
     /*
     Josh's Custom CSS Reset
     https://www.joshwcomeau.com/css/custom-css-reset/
@@ -63,8 +67,14 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-color: ${({ theme }) => theme.background};
-        color: ${({ theme }) => theme.textPrimary};
-        transition: background-color 0.3s ease;
+        background-color: ${({ theme }) => theme.background.primary};
+        color: ${({ theme }) => theme.text.primary};
+         ${({ isThemeChanging }) =>
+           isThemeChanging &&
+           css`
+             transition:
+               background-color 0.3s ease,
+               color 0.3s ease;
+           `}
     }
 `;

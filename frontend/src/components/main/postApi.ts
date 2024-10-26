@@ -1,4 +1,4 @@
-import { httpClient, BASE_URL } from "@common/api/fetch";
+import { httpClient } from "@common/api/fetch";
 
 // 포스트 타입 정의
 export interface Post {
@@ -14,7 +14,7 @@ export interface Post {
 
 // 최신 포스트 3개 가져오기
 export const fetchLatestPosts = async (): Promise<Post[]> => {
-  const response = await httpClient.get<{ payload: Post[] }>(`${BASE_URL}/posts`);
+  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
 
   // 최신순 정렬 후 3개만 반환
   return response.data.payload
@@ -24,7 +24,7 @@ export const fetchLatestPosts = async (): Promise<Post[]> => {
 
 // 전체 포스트 목록 가져오기 (페이지네이션 적용)
 export const fetchPostsByPage = async (page: number, postsPerPage: number): Promise<Post[]> => {
-  const response = await httpClient.get<{ payload: Post[] }>(`${BASE_URL}/posts`);
+  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
 
   // 최신순 정렬 후 페이지에 맞는 포스트 반환
   const sortedPosts = response.data.payload.sort(
@@ -39,7 +39,7 @@ export const fetchPostsByPage = async (page: number, postsPerPage: number): Prom
 // 특정 카테고리별 포스트 목록 가져오기
 export const fetchPostsByCategoryId = async (categoryId: string): Promise<Post[]> => {
   const response = await httpClient.get<{ payload: { posts: Post[] } }>(
-    `${BASE_URL}/categories/${categoryId}`,
+    `/categories/${categoryId}`,
     {
       headers: {
         "Content-Type": "application/json",

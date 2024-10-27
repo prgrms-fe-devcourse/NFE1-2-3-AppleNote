@@ -56,7 +56,7 @@ const Email = () => {
         <AuthInput Icon={FaRegUser} placeholder="Email" />
       </EmailInputContainer>
       <CheckButtonContainer>
-        <AuthButton label="Check" />
+        <AuthButton label="Check" fontSize={18} />
       </CheckButtonContainer>
     </EmailContainer>
   );

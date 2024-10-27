@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 interface ButtonProps {
-  label: string;
-  onClick?: () => void;
   disabled?: boolean;
+  fontSize?: number;
+  onClick?: () => void;
+  label: string;
 }
 
 /**
@@ -14,15 +15,15 @@ interface ButtonProps {
  * @param props.onClick - 클릭 시 호출되는 콜백 함수
  * @param props.disabled - 버튼 비활성화 여부
  */
-const AuthButton: React.FC<ButtonProps> = ({ label, onClick, disabled }) => {
+const AuthButton: React.FC<ButtonProps> = ({ label, onClick, disabled, fontSize = 20 }) => {
   return (
-    <Button onClick={onClick} disabled={disabled}>
+    <Button onClick={onClick} disabled={disabled} $size={fontSize}>
       {label}
     </Button>
   );
 };
 
-const Button = styled.button`
+const Button = styled.button<{ $size?: number }>`
   outline: none;
   cursor: pointer;
   width: 100%;
@@ -31,7 +32,8 @@ const Button = styled.button`
   border: ${({ theme }) => `2px solid ${theme.text.secondary}`};
   border-radius: 10px;
   color: ${({ theme }) => `${theme.text.secondary}`};
-  font-size: 20px;
+  font-size: ${({ $size }) => `${$size}px`};
+
   font-weight: 600;
   transition:
     background-color 0.2s,

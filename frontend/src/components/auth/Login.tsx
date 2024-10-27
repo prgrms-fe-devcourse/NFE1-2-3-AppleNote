@@ -3,10 +3,10 @@ import { FaRegUser } from "react-icons/fa6";
 import { FaKey } from "react-icons/fa6";
 
 import { AuthFormContainer, AuthPageLayout } from "./Layout";
-import Checkbox from "@common/components/CheckBox";
 import AuthButton from "./Button";
 import { AuthTitle, AuthSubTitle } from "./Header";
 import { AuthInput, AuthInputContainer } from "./Input";
+import Checkbox from "@common/components/Checkbox";
 
 const Login = () => {
   return (

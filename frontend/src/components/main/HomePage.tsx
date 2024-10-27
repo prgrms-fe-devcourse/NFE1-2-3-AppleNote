@@ -44,8 +44,15 @@ const HomePage: React.FC<HomePageProps> = () => {
     <CategoryContext.Provider value={{ selectedCategoryId, setSelectedCategoryId }}>
       <Container>
         <LatestPosts />
-        <CategoryLatestPosts />
-        <Category /> {/* Category 컴포넌트에서 클릭 시 선택된 카테고리 ID 설정 */}
+        <ContentWrapper>
+          <ContentRow>
+            <CategoryLatestPosts />
+            <CategoryWrapper>
+              <Category />
+            </CategoryWrapper>
+          </ContentRow>
+        </ContentWrapper>
+
         <h1>
           {icon} Hello World {icon}
         </h1>
@@ -57,6 +64,32 @@ const HomePage: React.FC<HomePageProps> = () => {
 
 const Container = styled.div`
   padding: 2rem;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const ContentRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* 모바일에서는 수직 정렬 */
+    gap: 1rem;
+  }
+`;
+
+const CategoryWrapper = styled.div`
+  min-width: 220px;
+  padding-top: 150px;
+  box-sizing: border-box;
+  padding-left: 1rem;
 `;
 
 const StyledButton = styled.button`

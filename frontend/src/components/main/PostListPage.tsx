@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { fetchPostsByPage, fetchPostsByCategoryId, Post } from "./postApi";
 import Category from "../category/Category";
 import PaginationComponent from "./PaginationComponent";
@@ -8,7 +8,13 @@ import HorizontalPostCard from "./HorizontalPostCard";
 import CategorySection from "./CategorySection";
 
 const PostListPage: React.FC = () => {
-  const { categoryName, categoryId } = useParams<{ categoryName?: string; categoryId?: string }>();
+  const { categoryId: paramCategoryId } = useParams<{ categoryId?: string }>();
+  const location = useLocation();
+
+  // State 또는 URL 파라미터로부터 categoryId와 categoryName 설정
+  const categoryId = location.state?.categoryId || paramCategoryId || null;
+  const categoryName = location.state?.categoryName || "전체 포스트";
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,24 +24,19 @@ const PostListPage: React.FC = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        let fetchedPosts: Post[];
+        const fetchedPosts = categoryId
+          ? await fetchPostsByCategoryId(categoryId) // 카테고리별 포스트 로드
+          : await fetchPostsByPage(1, Number.MAX_SAFE_INTEGER); // 전체 포스트 로드
 
-        if (categoryId) {
-          // 특정 카테고리의 포스트 가져오기
-          fetchedPosts = await fetchPostsByCategoryId(categoryId);
-        } else {
-          // 전체 포스트 가져오기
-          fetchedPosts = await fetchPostsByPage(currentPage, postsPerPage);
-        }
+        setTotalPosts(fetchedPosts.length); // 전체 포스트 수 설정
 
-        setPosts(fetchedPosts);
+        // 현재 페이지에 해당하는 포스트만 슬라이스
+        const paginatedPosts = fetchedPosts.slice(
+          (currentPage - 1) * postsPerPage,
+          currentPage * postsPerPage
+        );
 
-        // 전체 포스트 수 업데이트
-        const totalFetchedPosts = categoryId
-          ? await fetchPostsByCategoryId(categoryId)
-          : await fetchPostsByPage(1, Number.MAX_SAFE_INTEGER);
-
-        setTotalPosts(totalFetchedPosts.length);
+        setPosts(paginatedPosts);
       } catch (error) {
         console.error("Failed to load posts:", error);
       }
@@ -46,7 +47,7 @@ const PostListPage: React.FC = () => {
 
   return (
     <Container>
-      <CategorySection title={categoryName || "전체 포스트"} />
+      <CategorySection title={categoryName} />
       <ContentWrapper>
         <HorizontalPostGrid>
           {posts.map((post) => (
@@ -76,7 +77,12 @@ const Container = styled.div`
 const ContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
+  margin-top: 80px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 const HorizontalPostGrid = styled.div`
@@ -88,6 +94,10 @@ const HorizontalPostGrid = styled.div`
 
 const CategoryWrapper = styled.div`
   width: 20%;
+  box-sizing: border-box;
+  position: sticky; /* 스크롤 시 고정 */
+  top: 20px; /* 화면 상단에서 떨어진 위치 */
+  align-self: flex-start; /* 상단에 정렬 */
 `;
 
 export default PostListPage;

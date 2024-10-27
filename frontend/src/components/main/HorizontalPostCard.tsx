@@ -44,13 +44,17 @@ const HorizontalPostCard: React.FC<HorizontalPostCardProps> = ({ post }) => {
 const Card = styled.div`
   display: flex;
   gap: 1rem;
+
+  &:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s;
+  }
 `;
 
 const Thumbnail = styled.img`
   width: 200px;
   height: 150px;
   object-fit: cover;
-  border-radius: 8px;
 `;
 
 const Content = styled.div`
@@ -76,9 +80,13 @@ const CreateDate = styled.div`
 `;
 
 const Description = styled.p`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box; /* Flexbox 기반의 줄바꿈 */
+  -webkit-line-clamp: 3; /* 최대 4줄까지 표시 */
+  -webkit-box-orient: vertical; /* 세로 방향으로 정렬 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 넘치는 내용에 '...' 표시 */
+  max-width: 100%; /* 부모의 최대 너비 사용 */
+  line-height: 1.5; /* 줄 간격 조절 */
 `;
 
 export default HorizontalPostCard;

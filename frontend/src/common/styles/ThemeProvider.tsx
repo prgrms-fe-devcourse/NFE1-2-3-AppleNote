@@ -3,6 +3,7 @@ import { ThemeProvider as StyledThemeProvider } from "styled-components";
 
 import { darkTheme, lightTheme } from "@common/styles/theme.ts";
 import { GlobalStyle } from "./GlobalStyle";
+import { localStorageHelper } from "@common/utils/localStorageHelper";
 
 type ThemeType = "light" | "dark";
 
@@ -14,8 +15,9 @@ interface ThemeContextType {
 export const CustomThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  const localStorage = localStorageHelper<ThemeType>("theme", "light");
   const isFirstTransition = useRef(false); // 첫 번째 테마 transition 전환 비활성화
-  const [themeType, setTheme] = useState<ThemeType>(() => manageTheme("get"));
+  const [themeType, setTheme] = useState<ThemeType>(() => localStorage.get());
 
   const toggleTheme = () => {
     setTheme((prevTheme) => {
@@ -23,7 +25,7 @@ export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) =
         isFirstTransition.current = true;
       }
 
-      return manageTheme("set", prevTheme === "light" ? "dark" : "light");
+      return localStorage.set(prevTheme === "light" ? "dark" : "light");
     });
   };
 
@@ -35,26 +37,4 @@ export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) =
       </StyledThemeProvider>
     </CustomThemeContext.Provider>
   );
-};
-
-/**
- * 테마 상태 유지 헬퍼함수
- */
-const manageTheme = <T extends "set" | "get">(
-  type: T,
-  payload?: T extends "set" ? ThemeType : never
-): ThemeType => {
-  const key = "theme";
-  const handler = {
-    // payload가 존재할 경우만 로컬 스토리지에 저장
-    set() {
-      return payload ? (localStorage.setItem(key, payload), payload) : "light";
-    },
-    // 로컬 스토리지에서 테마 가져오기
-    get() {
-      return (localStorage.getItem(key) ?? "light") as ThemeType;
-    },
-  };
-
-  return handler[type]();
 };

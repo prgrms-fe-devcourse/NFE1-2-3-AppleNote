@@ -5,13 +5,16 @@ import { AuthHeaderContainer, AuthTitle } from "./Header";
 import { AuthInput, AuthInputContainer } from "./Input";
 import { AuthFormContainer, AuthPageLayout } from "./Layout";
 import AuthButton from "./Button";
+import { AuthProvider } from "./AuthContext";
 
 const Signup = () => {
   return (
     <AuthPageLayout>
       <AuthFormContainer>
         <Header />
-        <Form />
+        <AuthProvider>
+          <Form />
+        </AuthProvider>
       </AuthFormContainer>
     </AuthPageLayout>
   );

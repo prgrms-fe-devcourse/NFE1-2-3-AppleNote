@@ -1,14 +1,21 @@
+import { ChangeEvent } from "react";
 import styled from "styled-components";
 
 interface CheckBoxProps {
   id: string;
   label: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
 }
 
-const Checkbox: React.FC<CheckBoxProps> = ({ id, label }) => {
+const Checkbox: React.FC<CheckBoxProps> = ({ id, label, value, onChange }) => {
+  const onChangeHandler = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    return onChange?.(target.checked ?? false);
+  };
+
   return (
     <CheckboxContainer>
-      <HiddenCheckbox type="checkbox" id={id} />
+      <HiddenCheckbox type="checkbox" id={id} checked={value} onChange={onChangeHandler} />
       <CustomCheckbox htmlFor={id}>{label}</CustomCheckbox>
     </CheckboxContainer>
   );

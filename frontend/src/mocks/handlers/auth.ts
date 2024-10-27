@@ -40,7 +40,7 @@ export const handlers = [
       payload: {
         accessToken:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiamVvbmdiYWViYW5nIiwidXNlcklkIjoiODkzN2MzZWUtN2I5NS00Njg4LWI3ZmUtOWMyZjE5MGU1M2RhIn0.D0oyvTrwN169uG9VvDvUpXgzD5Nio512ROlACguWLSs",
-        userId: "8937c3ee-7b95-4688-b7fe-9c2f190e53da",
+        userId: "671a140c3b619438688cd5e3",
         name: data.email,
         email: data.password,
         bannerImage: null,

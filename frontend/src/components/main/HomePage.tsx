@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import useCustomTheme from "@common/styles/useCustomTheme";
+import useCustomTheme from "@common/hooks/useCustomTheme";
 import Category from "@components/category/Category";
 import LatestPosts from "@components/main/LatestPosts";
 

@@ -14,6 +14,7 @@ interface InputProps {
   placeholder: string;
   value?: string;
   onChange?: (value: string) => void;
+  type?: React.HTMLInputTypeAttribute;
 }
 
 /**
@@ -40,6 +41,7 @@ export const AuthInput: React.FC<InputProps> = (props) => {
     onChange,
     value,
     placeholder,
+    type,
   } = props;
 
   const onChangeHandler = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +51,7 @@ export const AuthInput: React.FC<InputProps> = (props) => {
   return (
     <InputContainer>
       <Icon {...iconOptions} />
-      <Input placeholder={placeholder} value={value} onChange={onChangeHandler} />
+      <Input placeholder={placeholder} value={value} onChange={onChangeHandler} type={type} />
     </InputContainer>
   );
 };

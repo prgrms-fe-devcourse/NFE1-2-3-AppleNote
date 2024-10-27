@@ -1,4 +1,4 @@
-import useCustomTheme from "@common/styles/useCustomTheme";
+import useCustomTheme from "@common/hooks/useCustomTheme";
 
 import styled from "styled-components";
 

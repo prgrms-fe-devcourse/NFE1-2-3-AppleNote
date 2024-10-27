@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { FaSearch, FaCog, FaPen } from "react-icons/fa";
+import { FaSearch, FaCog, FaPen, FaSun, FaMoon } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
+import useCustomTheme from "@common/styles/useCustomTheme";
 
 // 기본 프로필 이미지 경로
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
 const Header: React.FC = () => {
+  const { toggleTheme, themeType } = useCustomTheme();
+  const icon = themeType === "light" ? "/logo.png" : "/logo(darkmode).png";
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -38,8 +41,15 @@ const Header: React.FC = () => {
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>
-        <Logo src="/logo.png" alt="AppleNote Logo" />
+        <Logo src={icon} alt="AppleNote Logo" />
       </LogoSection>
+
+      <ThemeToggleButton onClick={toggleTheme} themeType={themeType}>
+        <IconWrapper>
+          {themeType === "light" ? <FaSun size={30} /> : <FaMoon size={30} />}
+        </IconWrapper>
+        <ButtonText>{themeType === "light" ? "DAY" : "NIGHT"}</ButtonText>
+      </ThemeToggleButton>
 
       <SearchAndIconsSection>
         <SearchBarWrapper>
@@ -86,6 +96,47 @@ const Logo = styled.img`
   object-fit: contain; /* 비율 유지하며 이미지 조정 */
 `;
 
+/* 테마 토글 버튼 */
+const ThemeToggleButton = styled.button<{ themeType: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 160px;
+  height: 60px;
+  margin-left: 2rem;
+  padding: 10px;
+  border: solid;
+  border-radius: 30px;
+  background-color: ${({ themeType }) => (themeType === "light" ? "#ffffff" : "#000000")};
+  box-shadow: ${({ themeType }) =>
+    themeType === "light" ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 4px 8px rgba(255, 255, 255, 0.2)"};
+  color: ${({ themeType }) => (themeType === "light" ? "#000000" : "#ffffff")};
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    box-shadow 0.3s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+`;
+
+const ButtonText = styled.span`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
+`;
+
 /* 검색창 및 아이콘 섹션 */
 const SearchAndIconsSection = styled.div`
   display: flex;
@@ -106,6 +157,11 @@ const SearchInput = styled.input`
   padding: 0.5rem 2.5rem 0.5rem 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 `;
 
 /* 검색 버튼 */
@@ -114,9 +170,13 @@ const SearchButton = styled.button`
   right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
   border: none;
   cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 `;
 
 /* Upload 버튼 */
@@ -124,12 +184,15 @@ const UploadButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #000;
-  color: white;
+  background-color: ${({ theme }) => theme.buttonBgColor};
+  color: ${({ theme }) => theme.buttonTextColor};
   border: none;
   border-radius: 4px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.9;
@@ -150,10 +213,15 @@ const ProfileIcon = styled.img`
 `;
 
 const SettingsButton = styled.button`
-  background: none;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
   border: none;
-  padding: 0;
+  border-radius: 4px;
+  padding: 0.5rem;
   cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.8;

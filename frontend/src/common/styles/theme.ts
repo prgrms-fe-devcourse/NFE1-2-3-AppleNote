@@ -16,13 +16,13 @@ interface CustomTheme {
 export const lightTheme: DefaultTheme = {
   bgColor: "#ffffff",
   textColor: "#000000",
-  buttonBgColor: "#d33131",
-  buttonTextColor: "#E8EAF6",
+  buttonBgColor: "#000000",
+  buttonTextColor: "#ffffff",
 };
 
 export const darkTheme: DefaultTheme = {
-  bgColor: "#060606",
+  bgColor: "#000000",
   textColor: "#FFFFFF",
-  buttonBgColor: "#2CCECE",
-  buttonTextColor: "#ffffff",
+  buttonBgColor: "#ffffff",
+  buttonTextColor: "#000000",
 };

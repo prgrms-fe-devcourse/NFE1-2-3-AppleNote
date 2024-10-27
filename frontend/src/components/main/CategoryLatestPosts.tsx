@@ -104,11 +104,15 @@ const Header = styled.div`
 
 const MoreButton = styled.button`
   align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-  background: none;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
   border: none;
   font-size: 2rem;
   cursor: pointer;
   letter-spacing: -0.5rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.6;

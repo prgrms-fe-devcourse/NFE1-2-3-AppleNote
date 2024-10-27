@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
 import styled from "styled-components";
-import useCustomTheme from "@common/styles/useCustomTheme";
 import Category from "@components/category/Category";
 import LatestPosts from "@components/main/LatestPosts";
 import CategoryLatestPosts from "@components/main/CategoryLatestPosts";
@@ -29,16 +28,8 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = () => {
-  const { toggleTheme, themeType } = useCustomTheme();
-
-  const icon = themeType === "light" ? "🍎" : "🍏";
-
   // 선택된 카테고리 ID와 업데이트 함수
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-
-  const onClickHandler = () => {
-    toggleTheme();
-  };
 
   return (
     <CategoryContext.Provider value={{ selectedCategoryId, setSelectedCategoryId }}>
@@ -52,11 +43,6 @@ const HomePage: React.FC<HomePageProps> = () => {
             </CategoryWrapper>
           </ContentRow>
         </ContentWrapper>
-
-        <h1>
-          {icon} Hello World {icon}
-        </h1>
-        <StyledButton onClick={onClickHandler}>Click Me!</StyledButton>
       </Container>
     </CategoryContext.Provider>
   );
@@ -90,27 +76,6 @@ const CategoryWrapper = styled.div`
   padding-top: 150px;
   box-sizing: border-box;
   padding-left: 1rem;
-`;
-
-const StyledButton = styled.button`
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  background-color: ${({ theme }) => theme.buttonBgColor};
-  color: ${({ theme }) => theme.buttonTextColor};
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
-
-  &:hover {
-    opacity: 0.9;
-  }
-
-  &:focus {
-    outline: none;
-  }
 `;
 
 export default HomePage;

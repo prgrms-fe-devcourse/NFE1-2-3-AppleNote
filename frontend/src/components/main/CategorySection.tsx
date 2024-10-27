@@ -51,7 +51,7 @@ const DividerWrapper = styled.div`
 
 const Divider = styled.div`
   height: 3px;
-  background-color: black;
+  border-top: 7px solid;
 `;
 
 export default CategorySection;

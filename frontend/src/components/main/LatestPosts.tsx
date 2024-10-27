@@ -75,12 +75,16 @@ const Title = styled.h2`
 `;
 
 const MoreButton = styled.button`
-  background: none;
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
   border: none;
   font-size: 2rem;
   margin-right: 20px;
   cursor: pointer;
   letter-spacing: -0.5rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.6;
@@ -138,8 +142,7 @@ const PostContent = styled.p`
 
 const Divider = styled.hr`
   margin: 5rem 0;
-  border: none;
-  border-top: 1px solid #000;
+  border: 1px solid;
   width: 100%;
 `;
 

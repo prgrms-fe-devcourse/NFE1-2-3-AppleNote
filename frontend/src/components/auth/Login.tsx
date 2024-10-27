@@ -3,10 +3,16 @@ import { FaRegUser } from "react-icons/fa6";
 import { FaKey } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
-import { AuthFormContainer, AuthPageLayout } from "./Layout";
+import {
+  AuthFormContainer,
+  AuthOptionsContainer as OptionsContainer,
+  AuthPageLayout,
+  AuthInputContainer,
+  AuthHeaderContainer,
+} from "./Layout";
 import AuthButton from "./Button";
 import { AuthTitle, AuthSubTitle } from "./Header";
-import { AuthInput, AuthInputContainer } from "./Input";
+import { AuthInput } from "./Input";
 import Checkbox from "@common/components/Checkbox";
 import { AuthProvider } from "./AuthContext";
 import { useAuth } from "./useAuth";
@@ -16,6 +22,7 @@ import { requestLogin } from "./api";
 import { localStorageHelper } from "@common/utils/localStorageHelper";
 import Message from "./Message";
 import { setDefaultsHeaderAuth } from "@common/api/fetch";
+import { AuthOptionSubText } from "./Text";
 
 const LOCAL_STORAGE_KEY = "login_email";
 const defaultStorageEmail = {
@@ -30,8 +37,6 @@ const Login = () => {
         <Header />
         <AuthProvider>
           <Form />
-          <Options />
-          <Submit />
           <Message />
         </AuthProvider>
       </AuthFormContainer>
@@ -44,10 +49,10 @@ const Login = () => {
  */
 const Header = () => {
   return (
-    <HeaderContainer>
+    <AuthHeaderContainer>
       <AuthTitle>Welcome back!</AuthTitle>
       <AuthSubTitle>Sign in to get the most out of AppleNote.</AuthSubTitle>
-    </HeaderContainer>
+    </AuthHeaderContainer>
   );
 };
 
@@ -86,6 +91,8 @@ const Form = () => {
         value={state.password}
         onChange={dispatch.password}
       />
+      <Options />
+      <Submit />
     </AuthInputContainer>
   );
 };
@@ -180,38 +187,11 @@ const Submit = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
-  return (
-    <AuthSubmitContainer>
-      <AuthButton label={buttonLabel} disabled={isReady} onClick={onSubmitHandler} />
-    </AuthSubmitContainer>
-  );
+  return <AuthButton label={buttonLabel} disabled={isReady} onClick={onSubmitHandler} />;
 };
 
-const AuthSubmitContainer = styled.div`
-  margin-top: 13px;
-`;
-
-const AuthOptionsContainer = styled.div`
-  align-items: center;
-  display: flex;
+const AuthOptionsContainer = styled(OptionsContainer)`
   justify-content: space-between;
-  margin-top: 11px;
-`;
-
-const AuthOptionSubText = styled.h4`
-  cursor: pointer;
-  color: ${({ theme }) => `${theme.text.secondary}80`};
-  font-weight: 400;
-  font-size: 12px;
-  text-align: center;
-
-  &:hover {
-    color: ${({ theme }) => theme.text.secondary};
-  }
-`;
-
-const HeaderContainer = styled.div`
-  margin-bottom: 20px;
 `;
 
 export default Login;

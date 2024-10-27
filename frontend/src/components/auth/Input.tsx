@@ -87,9 +87,3 @@ const Input = styled.input`
     outline: none;
   }
 `;
-
-export const AuthInputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-`;

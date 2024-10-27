@@ -13,7 +13,22 @@ export const AuthPageLayout = styled.div`
   -ms-user-select: none;
 `;
 
+export const AuthHeaderContainer = styled.div`
+  margin-bottom: 20px;
+`;
+
 export const AuthFormContainer = styled.div`
   width: 100%;
   max-width: 324px;
+`;
+
+export const AuthOptionsContainer = styled.div`
+  align-items: center;
+  display: flex;
+`;
+
+export const AuthInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 `;

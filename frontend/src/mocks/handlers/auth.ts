@@ -2,20 +2,7 @@ import { http, HttpResponse, HttpResponseResolver } from "msw";
 
 import { validateContentBody, validateContentType } from "@mocks/helper";
 import { BASE_URL } from "@common/api/fetch";
-
-type LoginRequest = {
-  email: string;
-  password: string;
-};
-
-type LoginResponse = {
-  accessToken: string;
-  userId: string;
-  name: string;
-  email: string;
-  bannerImage: string | null;
-  profileImage: string | null;
-};
+import { CheckEmailPayload, LoginPayload, SignupPayload, User } from "@components/auth/api";
 
 type EmailCheckResponse = string;
 
@@ -36,8 +23,8 @@ const handleAuthRequest = (
   method: keyof typeof http,
   resolver: HttpResponseResolver<
     never,
-    LoginRequest,
-    AuthResponse<LoginResponse> | AuthResponse<EmailCheckResponse> | AuthErrorResponse
+    LoginPayload | CheckEmailPayload | SignupPayload,
+    AuthResponse<User> | AuthResponse<EmailCheckResponse> | AuthErrorResponse
   >
 ) => {
   return http[method](url, resolver);
@@ -48,7 +35,7 @@ export const handlers = [
     const url = new URL(request.url);
     const isThrowError = url.searchParams.get("error");
 
-    if (!isThrowError) {
+    if (isThrowError) {
       return HttpResponse.json(
         {
           error: {
@@ -60,7 +47,7 @@ export const handlers = [
       );
     }
 
-    const data = await request.json();
+    const data = (await request.json()) as LoginPayload;
 
     await validateContentType(request, "application/json");
     await validateContentBody(!data.email || !data.password, "Missing email or password");
@@ -71,8 +58,8 @@ export const handlers = [
         accessToken:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiamVvbmdiYWViYW5nIiwidXNlcklkIjoiODkzN2MzZWUtN2I5NS00Njg4LWI3ZmUtOWMyZjE5MGU1M2RhIn0.D0oyvTrwN169uG9VvDvUpXgzD5Nio512ROlACguWLSs",
         userId: "671a140c3b619438688cd5e3",
-        name: data.email,
-        email: data.password,
+        name: "unkown User",
+        email: data.email,
         bannerImage: null,
         profileImage: null,
       },
@@ -102,6 +89,43 @@ export const handlers = [
     return HttpResponse.json({
       statusCode: 200,
       payload: "This email is available",
+    });
+  }),
+  handleAuthRequest(`${BASE_URL}/auth/signup`, "post", async ({ request }) => {
+    const url = new URL(request.url);
+    const isThrowError = url.searchParams.get("error");
+
+    if (isThrowError) {
+      return HttpResponse.json(
+        {
+          error: {
+            statusCode: 422,
+            message: "Existing Email",
+          },
+        },
+        { status: 422 }
+      );
+    }
+
+    const data = (await request.json()) as SignupPayload;
+
+    await validateContentType(request, "application/json");
+    await validateContentBody(
+      !data.email || !data.password || !data.name,
+      "Missing email or password"
+    );
+
+    return HttpResponse.json({
+      statusCode: 200,
+      payload: {
+        accessToken:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiamVvbmdiYWViYW5nIiwidXNlcklkIjoiODkzN2MzZWUtN2I5NS00Njg4LWI3ZmUtOWMyZjE5MGU1M2RhIn0.D0oyvTrwN169uG9VvDvUpXgzD5Nio512ROlACguWLSs",
+        userId: "671a140c3b619438688cd5e3",
+        name: data.name,
+        email: data.email,
+        bannerImage: null,
+        profileImage: null,
+      },
     });
   }),
 ];

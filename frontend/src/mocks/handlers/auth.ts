@@ -3,21 +3,25 @@ import { http, HttpResponse, HttpResponseResolver } from "msw";
 import { validateContentBody, validateContentType } from "@mocks/helper";
 import { BASE_URL } from "@common/api/fetch";
 
-type AuthRequest = {
+type LoginRequest = {
   email: string;
   password: string;
 };
 
-type AuthResponse = {
+type LoginResponse = {
+  accessToken: string;
+  userId: string;
+  name: string;
+  email: string;
+  bannerImage: string | null;
+  profileImage: string | null;
+};
+
+type EmailCheckResponse = string;
+
+type AuthResponse<P> = {
   statusCode: number;
-  payload: {
-    accessToken: string;
-    userId: string;
-    name: string;
-    email: string;
-    bannerImage: string | null;
-    profileImage: string | null;
-  };
+  payload: P;
 };
 
 type AuthErrorResponse = {
@@ -30,7 +34,11 @@ type AuthErrorResponse = {
 const handleAuthRequest = (
   url: string,
   method: keyof typeof http,
-  resolver: HttpResponseResolver<never, AuthRequest, AuthResponse | AuthErrorResponse>
+  resolver: HttpResponseResolver<
+    never,
+    LoginRequest,
+    AuthResponse<LoginResponse> | AuthResponse<EmailCheckResponse> | AuthErrorResponse
+  >
 ) => {
   return http[method](url, resolver);
 };
@@ -40,7 +48,7 @@ export const handlers = [
     const url = new URL(request.url);
     const isThrowError = url.searchParams.get("error");
 
-    if (isThrowError) {
+    if (!isThrowError) {
       return HttpResponse.json(
         {
           error: {
@@ -68,6 +76,32 @@ export const handlers = [
         bannerImage: null,
         profileImage: null,
       },
+    });
+  }),
+  handleAuthRequest(`${BASE_URL}/auth/email`, "post", async ({ request }) => {
+    const url = new URL(request.url);
+    const isThrowError = url.searchParams.get("error");
+
+    if (isThrowError) {
+      return HttpResponse.json(
+        {
+          error: {
+            statusCode: 422,
+            message: "Existing Email",
+          },
+        },
+        { status: 422 }
+      );
+    }
+
+    const data = await request.json();
+
+    await validateContentType(request, "application/json");
+    await validateContentBody(!data.email, "No email was provided");
+
+    return HttpResponse.json({
+      statusCode: 200,
+      payload: "This email is available",
     });
   }),
 ];

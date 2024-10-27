@@ -14,7 +14,7 @@ const Message = styled.p`
   color: ${({ theme }) => `${theme.text.warning}`};
   font-size: 12px;
   font-weight: 600;
-  min-height: 28px;
+  min-height: 20px;
   margin: 10px 0;
   text-align: center;
 `;

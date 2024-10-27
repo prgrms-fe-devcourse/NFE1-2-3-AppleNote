@@ -8,8 +8,9 @@ import CreatePostPage from "@components/post/CreatePostPage";
 import PostListPage from "@components/main/PostListPage";
 import SettingPage from "@components/myPage/SettingPage";
 import Login from "@components/auth/Login";
-import Signup from "@components/auth/SignUp";
+import Signup from "@components/auth/Signup";
 
+// TODO: Creating protected routes
 const router = createBrowserRouter([
   {
     path: "/",

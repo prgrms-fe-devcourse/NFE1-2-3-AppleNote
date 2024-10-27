@@ -8,6 +8,7 @@ import CreatePostPage from "@components/post/CreatePostPage";
 import PostListPage from "@components/main/PostListPage";
 import SettingPage from "@components/myPage/SettingPage";
 import Login from "@components/auth/Login";
+import Signup from "@components/auth/SignUp";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <Login /> }, // 로그인 페이지
+  { path: "/signup", element: <Signup /> }, // 로그인 페이지
   { path: "/*", element: <NotFoundPage /> }, // 404 페이지
 ]);
 

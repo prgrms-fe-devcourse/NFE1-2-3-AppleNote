@@ -5,6 +5,13 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
+/**
+ * AuthButton 컴포넌트
+ *
+ * @param props - Button 컴포넌트의 프로퍼티
+ * @param props.label - 버튼 텍스트 라벨
+ * @param props.onClick - 클릭 시 호출되는 콜백 함수
+ */
 const AuthButton: React.FC<ButtonProps> = ({ label, onClick }) => {
   return <Button onClick={onClick}>{label}</Button>;
 };

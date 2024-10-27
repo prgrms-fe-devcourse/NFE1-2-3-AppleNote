@@ -13,3 +13,7 @@ export const AuthSubTitle = styled.h3`
   font-size: 16px;
   text-align: center;
 `;
+
+export const AuthHeaderContainer = styled.div`
+  margin-bottom: 20px;
+`;

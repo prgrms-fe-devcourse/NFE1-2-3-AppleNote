@@ -25,9 +25,8 @@ interface InputProps {
  * @param props.placeholder - 입력 필드의 플레이스홀더 텍스트
  * @param props.value - 입력 필드의 값
  * @param props.onChange - 입력 값 변경 시 호출되는 콜백 함수
- *
  */
-const AuthInput: React.FC<InputProps> = (props) => {
+export const AuthInput: React.FC<InputProps> = (props) => {
   const theme = useTheme();
 
   const defaultIconOptions: IconOptions = {
@@ -87,4 +86,8 @@ const Input = styled.input`
   }
 `;
 
-export default AuthInput;
+export const AuthInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+`;

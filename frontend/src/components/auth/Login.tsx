@@ -3,25 +3,28 @@ import { FaRegUser } from "react-icons/fa6";
 import { FaKey } from "react-icons/fa6";
 
 import { AuthFormContainer, AuthPageLayout } from "./Layout";
-import AuthInput from "./Input";
 import Checkbox from "@common/components/CheckBox";
 import AuthButton from "./Button";
 import { AuthTitle, AuthSubTitle } from "./Header";
+import { AuthInput, AuthInputContainer } from "./Input";
 
 const Login = () => {
   return (
     <AuthPageLayout>
       <AuthFormContainer>
-        <AuthHeader />
-        <AuthForm />
-        <AuthOptions />
-        <AuthSubmit />
+        <Header />
+        <Form />
+        <Options />
+        <Submit />
       </AuthFormContainer>
     </AuthPageLayout>
   );
 };
 
-const AuthHeader = () => {
+/**
+ * 카드 상단 컴포넌트
+ */
+const Header = () => {
   return (
     <HeaderContainer>
       <AuthTitle>Welcome back!</AuthTitle>
@@ -30,29 +33,40 @@ const AuthHeader = () => {
   );
 };
 
-const AuthForm = () => {
+/**
+ * 사용자 입력 폼 컴포넌트
+ */
+const Form = () => {
   return (
-    <InputContainer>
+    <AuthInputContainer>
       <AuthInput Icon={FaRegUser} placeholder="Username" />
       <AuthInput Icon={FaKey} placeholder="Password" />
-    </InputContainer>
+    </AuthInputContainer>
   );
 };
 
-const AuthSubmit = () => {
+/**
+ * 이메일 상태 유지 체크박스 컴포넌트
+ *
+ * 회원가입 링크 컴포넌트
+ */
+const Options = () => {
+  return (
+    <AuthOptionsContainer>
+      <Checkbox id="rememberMe" label="Remember Me" />
+      <AuthOptionSubText>Create an account</AuthOptionSubText>
+    </AuthOptionsContainer>
+  );
+};
+
+/**
+ * 로그인 요청 버튼 컴포넌트
+ */
+const Submit = () => {
   return (
     <AuthSubmitContainer>
       <AuthButton label="Login" />
     </AuthSubmitContainer>
-  );
-};
-
-const AuthOptions = () => {
-  return (
-    <AuthOptionsContainer>
-      <Checkbox id="rememberMe" label="Remember Me" />
-      <AuthOptionSubText>Forgot Password?</AuthOptionSubText>
-    </AuthOptionsContainer>
   );
 };
 
@@ -73,16 +87,14 @@ const AuthOptionSubText = styled.h4`
   font-weight: 400;
   font-size: 12px;
   text-align: center;
+
+  &:hover {
+    color: ${({ theme }) => theme.text.secondary};
+  }
 `;
 
 const HeaderContainer = styled.div`
   margin-bottom: 20px;
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 `;
 
 export default Login;

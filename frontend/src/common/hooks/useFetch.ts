@@ -1,10 +1,18 @@
 import { delayExecution } from "@common/utils/delayExecution";
+import { AxiosError } from "axios";
 import { useState } from "react";
+
+type ServerError = AxiosError<{
+  error: {
+    statusCode: number;
+    message: string;
+  };
+}>;
 
 interface FetchState<D> {
   data: D | null;
   loading: boolean;
-  error: string | null;
+  error: ServerError | null;
 }
 
 interface useFetchReturn<P, D> {
@@ -32,20 +40,20 @@ const useFetch = <P, D>(
 
   const request = async (payload: P) => {
     try {
-      setState((prev) => ({ ...prev, loading: true }));
-
-      const data = await fetch(payload);
+      setState(() => ({ data: null, error: null, loading: true }));
 
       if (options?.delay) {
         await delayExecution(options.delay).start();
       }
+
+      const data = await fetch(payload);
 
       setState({ data, loading: false, error: null });
     } catch (error) {
       setState({
         data: null,
         loading: false,
-        error: (error as Error).message,
+        error: error as ServerError,
       });
     }
   };

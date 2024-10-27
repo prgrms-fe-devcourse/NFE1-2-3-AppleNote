@@ -24,6 +24,9 @@ export const useAuth = () => {
     rememberMe: (payload: boolean) => {
       context.dispatch({ type: "REMEMBER_ME", payload });
     },
+    message: (payload: string) => {
+      context.dispatch({ type: "MESSAGE", payload });
+    },
   };
 
   return { state: context.state, dispatch };

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FaRegUser } from "react-icons/fa6";
 import { FaKey } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 import { AuthFormContainer, AuthPageLayout } from "./Layout";
 import AuthButton from "./Button";
@@ -13,6 +14,8 @@ import { useEffect } from "react";
 import useFetch from "@common/hooks/useFetch";
 import { requestLogin } from "./api";
 import { localStorageHelper } from "@common/utils/localStorageHelper";
+import Message from "./Message";
+import { setDefaultsHeaderAuth } from "@common/api/fetch";
 
 const LOCAL_STORAGE_KEY = "login_email";
 const defaultStorageEmail = {
@@ -29,6 +32,7 @@ const Login = () => {
           <Form />
           <Options />
           <Submit />
+          <Message />
         </AuthProvider>
       </AuthFormContainer>
     </AuthPageLayout>
@@ -93,6 +97,7 @@ const Form = () => {
  */
 const Options = () => {
   const { state, dispatch } = useAuth();
+  const navigate = useNavigate();
 
   // 체크박스 핸들러
   const onChangeHandler = (value: boolean) => {
@@ -103,6 +108,11 @@ const Options = () => {
     }
   };
 
+  // 회원가입 링크
+  const onClickHandler = () => {
+    navigate("/signup");
+  };
+
   return (
     <AuthOptionsContainer>
       <Checkbox
@@ -111,7 +121,7 @@ const Options = () => {
         value={state.rememberMe}
         onChange={onChangeHandler}
       />
-      <AuthOptionSubText>Create an account</AuthOptionSubText>
+      <AuthOptionSubText onClick={onClickHandler}>Create an account</AuthOptionSubText>
     </AuthOptionsContainer>
   );
 };
@@ -122,11 +132,13 @@ const Options = () => {
 const Submit = () => {
   const {
     state: { email, password, rememberMe },
+    dispatch,
   } = useAuth();
   const {
-    state: { data, loading },
+    state: { data, loading, error },
     request,
-  } = useFetch(requestLogin, { delay: 1000 });
+  } = useFetch(requestLogin, { delay: 500 });
+  const navigate = useNavigate();
 
   const isReady = !(email && password) || loading;
   const buttonLabel = loading ? "Logging in…" : "Login";
@@ -136,25 +148,37 @@ const Submit = () => {
     localStorageHelper(LOCAL_STORAGE_KEY, defaultStorageEmail).set({ email, isSave: true });
   };
 
+  // 로그인 요청 핸들러
   const onSubmitHandler = () => {
     if (rememberMe) saveAndDispatchEmail(email);
 
-    const payload = {
+    dispatch.message("");
+    request({
       email,
       password,
-    };
-
-    request(payload);
+    });
   };
 
   useEffect(() => {
+    const storage = localStorageHelper("user", { accessToken: "", userId: "" });
     const isFulfilled = !loading && data && data.payload && data.payload.accessToken;
 
     // 로그인이 성공한 시점
     if (isFulfilled) {
-      console.log(data);
+      const { accessToken, userId } = data.payload;
+
+      setDefaultsHeaderAuth(accessToken);
+      storage.set({ accessToken, userId });
+      navigate("/", { replace: true });
     }
-  }, [data, loading]);
+  }, [data, loading, navigate]);
+
+  useEffect(() => {
+    if (!error) return;
+
+    dispatch.message("Failed to login. Please try again.");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   return (
     <AuthSubmitContainer>

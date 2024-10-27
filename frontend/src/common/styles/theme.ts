@@ -14,6 +14,7 @@ interface CustomTheme {
   text: {
     primary: string;
     secondary: string;
+    warning: string;
   };
 }
 
@@ -25,6 +26,7 @@ export const lightTheme: DefaultTheme = {
   text: {
     primary: "#000000",
     secondary: "#1C1C1C",
+    warning: "#D32F2F",
   },
 };
 
@@ -36,5 +38,6 @@ export const darkTheme: DefaultTheme = {
   text: {
     primary: "#FFFFFF",
     secondary: "#E0E0E0",
+    warning: "#FF6659",
   },
 };

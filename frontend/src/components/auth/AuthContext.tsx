@@ -6,6 +6,7 @@ interface AuthState {
   password: string;
   passwordConfirm: string;
   rememberMe: boolean;
+  message: string;
 }
 
 const initialAuth: AuthState = {
@@ -14,6 +15,7 @@ const initialAuth: AuthState = {
   password: "",
   passwordConfirm: "",
   rememberMe: false,
+  message: "",
 };
 
 const ACTION_TYPES = {
@@ -22,6 +24,7 @@ const ACTION_TYPES = {
   PASSWORD: "PASSWORD",
   PASSWORD_CONFIRM: "PASSWORD_CONFIRM",
   REMEMBER_ME: "REMEMBER_ME",
+  MESSAGE: "MESSAGE",
 } as const;
 
 type AuthAction =
@@ -29,7 +32,8 @@ type AuthAction =
   | { type: typeof ACTION_TYPES.USERNAME; payload: string }
   | { type: typeof ACTION_TYPES.PASSWORD; payload: string }
   | { type: typeof ACTION_TYPES.PASSWORD_CONFIRM; payload: string }
-  | { type: typeof ACTION_TYPES.REMEMBER_ME; payload: boolean };
+  | { type: typeof ACTION_TYPES.REMEMBER_ME; payload: boolean }
+  | { type: typeof ACTION_TYPES.MESSAGE; payload: string };
 
 const reducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -43,6 +47,8 @@ const reducer = (state: AuthState, action: AuthAction): AuthState => {
       return { ...state, passwordConfirm: action.payload };
     case ACTION_TYPES.REMEMBER_ME:
       return { ...state, rememberMe: action.payload };
+    case ACTION_TYPES.MESSAGE:
+      return { ...state, message: action.payload };
     default:
       return state;
   }

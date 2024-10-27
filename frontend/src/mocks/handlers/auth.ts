@@ -20,16 +20,38 @@ type AuthResponse = {
   };
 };
 
+type AuthErrorResponse = {
+  error: {
+    statusCode: number;
+    message: string;
+  };
+};
+
 const handleAuthRequest = (
   url: string,
   method: keyof typeof http,
-  resolver: HttpResponseResolver<never, AuthRequest, AuthResponse>
+  resolver: HttpResponseResolver<never, AuthRequest, AuthResponse | AuthErrorResponse>
 ) => {
   return http[method](url, resolver);
 };
 
 export const handlers = [
   handleAuthRequest(`${BASE_URL}/auth/login`, "post", async ({ request }) => {
+    const url = new URL(request.url);
+    const isThrowError = url.searchParams.get("error");
+
+    if (isThrowError) {
+      return HttpResponse.json(
+        {
+          error: {
+            statusCode: 401,
+            message: "Invalid password",
+          },
+        },
+        { status: 401 }
+      );
+    }
+
     const data = await request.json();
 
     await validateContentType(request, "application/json");

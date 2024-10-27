@@ -22,6 +22,16 @@ export const fetchLatestPosts = async (): Promise<Post[]> => {
     .slice(0, 3);
 };
 
+// 전체 포스트 가져오기 (검색에서 사용)
+export const fetchAllPosts = async (): Promise<Post[]> => {
+  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
+
+  // 최신순 정렬 후 전체 반환
+  return response.data.payload.sort(
+    (a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+  );
+};
+
 // 전체 포스트 목록 가져오기 (페이지네이션 적용)
 export const fetchPostsByPage = async (page: number, postsPerPage: number): Promise<Post[]> => {
   const response = await httpClient.get<{ payload: Post[] }>(`/posts`);

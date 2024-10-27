@@ -6,6 +6,7 @@ import NotFoundPage from "routes/NotFoundPage.tsx";
 import CreatePostPage from "@components/post/CreatePostPage";
 import PostListPage from "@components/main/PostListPage";
 import SettingPage from "@components/myPage/SettingPage";
+import SearchResultPage from "@components/search/SearchResultPage";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: "/", element: <HomePage /> }, // 메인 페이지
       { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
       { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
+      { path: "/search", element: <SearchResultPage /> }, // 검색 페이지
       { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
       { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],

@@ -12,6 +12,7 @@ const Header: React.FC = () => {
   const { toggleTheme, themeType } = useCustomTheme();
   const icon = themeType === "light" ? "/logo.png" : "/logo(darkmode).png";
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState<string>(""); // 검색 입력 상태
   const navigate = useNavigate();
 
   // 사용자 정보 API 호출 및 프로필 이미지 설정
@@ -38,6 +39,15 @@ const Header: React.FC = () => {
     navigate("/create-post");
   };
 
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const query = searchInput.trim();
+
+    if (query) {
+      navigate(`/search?query=${query}`);
+    }
+  };
+
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>
@@ -52,12 +62,18 @@ const Header: React.FC = () => {
       </ThemeToggleButton>
 
       <SearchAndIconsSection>
-        <SearchBarWrapper>
-          <SearchInput placeholder="검색어를 입력하세요" />
-          <SearchButton aria-label="Search">
-            <FaSearch />
-          </SearchButton>
-        </SearchBarWrapper>
+        <SearchForm onSubmit={handleSearch}>
+          <SearchBarWrapper>
+            <SearchInput
+              placeholder="검색어를 입력하세요"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            <SearchButton aria-label="Search">
+              <FaSearch />
+            </SearchButton>
+          </SearchBarWrapper>
+        </SearchForm>
 
         <UploadButton onClick={handleUploadClick} aria-label="Upload">
           <FaPen />
@@ -101,7 +117,7 @@ const ThemeToggleButton = styled.button<{ themeType: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 160px;
+  width: 140px;
   height: 60px;
   margin-left: 2rem;
   padding: 10px;
@@ -132,7 +148,7 @@ const IconWrapper = styled.div`
 `;
 
 const ButtonText = styled.span`
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   margin-right: 0.5rem;
 `;
@@ -143,6 +159,12 @@ const SearchAndIconsSection = styled.div`
   align-items: center;
   margin-left: auto;
   gap: 1rem;
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
 `;
 
 /* 검색창 래퍼 */

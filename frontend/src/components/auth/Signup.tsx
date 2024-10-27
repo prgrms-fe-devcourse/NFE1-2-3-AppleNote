@@ -93,7 +93,7 @@ const Email = () => {
         setEmailCheckStatus(EmailStatus.ALLOWED);
       }
     } catch {
-      dispatch.message("Failed to check email. Please try again.");
+      dispatch.message("The email already exists. Please enter a different email.");
     }
   };
 

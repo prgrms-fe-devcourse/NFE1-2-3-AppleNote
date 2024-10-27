@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { BASE_URL } from "@common/api/fetch";
 
 // 카테고리 추가 요청 형식 정의
 type CategoryAddRequest = {
@@ -20,7 +21,7 @@ const generateCategoryId = (): string => {
 // MSW 핸들러 설정
 export const handlers = [
   // 카테고리 목록 조회 핸들러
-  http.get("/categories", async () => {
+  http.get(`${BASE_URL}/categories`, async () => {
     return HttpResponse.json({
       statusCode: 200,
       payload: categories,
@@ -28,7 +29,7 @@ export const handlers = [
   }),
 
   // 카테고리 추가 핸들러
-  http.post("/categories", async ({ request }) => {
+  http.post(`${BASE_URL}/categories`, async ({ request }) => {
     let data: CategoryAddRequest | null = null;
 
     // 요청에서 JSON 데이터 파싱
@@ -67,7 +68,7 @@ export const handlers = [
   }),
 
   // 카테고리 수정 핸들러
-  http.put("/categories/:categoryId", async ({ params, request }) => {
+  http.put(`${BASE_URL}/categories/:categoryId`, async ({ params, request }) => {
     let data: CategoryAddRequest | null = null;
 
     // 요청에서 JSON 데이터 파싱
@@ -110,7 +111,7 @@ export const handlers = [
   }),
 
   // 카테고리 삭제 핸들러
-  http.delete("/categories/:categoryId", async ({ params }) => {
+  http.delete(`${BASE_URL}/categories/:categoryId`, async ({ params }) => {
     // params로 받은 categoryId에 해당하는 카테고리를 찾기
     const categoryIndex = categories.findIndex(
       (category) => category.categoryId === params.categoryId

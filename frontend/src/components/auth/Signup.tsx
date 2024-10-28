@@ -13,24 +13,22 @@ import {
   AuthOptionsContainer as OptionsContainer,
 } from "./Layout";
 import AuthButton from "./Button";
-import { AuthProvider } from "./AuthContext";
+import { AuthFormProvider } from "./AuthContext";
 import Message from "./Message";
-import { useAuth } from "./useAuth";
+import { useAuth, useAuthForm } from "./useAuth";
 import { requestCheckEmail, requestSignup } from "./api";
 import { AuthOptionSubText } from "./Text";
 import useFetch from "@common/hooks/useFetch";
-import { setDefaultsHeaderAuth } from "@common/api/fetch";
-import { localStorageHelper } from "@common/utils/localStorageHelper";
 
 const Signup = () => {
   return (
     <AuthPageLayout>
       <AuthFormContainer>
         <Header />
-        <AuthProvider>
+        <AuthFormProvider>
           <Form />
           <Message />
-        </AuthProvider>
+        </AuthFormProvider>
       </AuthFormContainer>
     </AuthPageLayout>
   );
@@ -76,7 +74,7 @@ const Email = () => {
   const {
     state: { email, message },
     dispatch,
-  } = useAuth();
+  } = useAuthForm();
   const { allowEmail, isValid, emailStatus } = useEmailValidation(email, () => {
     dispatch.message("Please enter a valid email address.");
   });
@@ -180,7 +178,7 @@ const UserName = () => {
   const {
     state: { username },
     dispatch,
-  } = useAuth();
+  } = useAuthForm();
 
   return (
     <AuthInput
@@ -199,7 +197,7 @@ const Password = () => {
   const {
     state: { password, passwordConfirm },
     dispatch,
-  } = useAuth();
+  } = useAuthForm();
 
   const onChangeHandler = (value: string) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
@@ -270,11 +268,12 @@ const Submit = () => {
   const {
     state: { email, password, passwordConfirm, username: name },
     dispatch,
-  } = useAuth();
+  } = useAuthForm();
   const {
     state: { data, loading, error },
     request,
   } = useFetch(requestSignup, { delay: 500 });
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const isReady = email && password && passwordConfirm && password === passwordConfirm && name;
@@ -291,18 +290,17 @@ const Submit = () => {
   };
 
   useEffect(() => {
-    const storage = localStorageHelper("user", { accessToken: "", userId: "" });
     const isFulfilled = !loading && data && data.payload && data.payload.accessToken;
 
     // 회원가입이 성공한 시점
     if (isFulfilled) {
-      const { accessToken, userId } = data.payload;
-
-      setDefaultsHeaderAuth(accessToken);
-      storage.set({ accessToken, userId });
-      navigate("/", { replace: true });
+      login(data, {
+        onSuccess: () => {
+          navigate("/", { replace: true });
+        },
+      });
     }
-  }, [data, loading, navigate]);
+  }, [data, loading, login, navigate]);
 
   useEffect(() => {
     if (!error) return;

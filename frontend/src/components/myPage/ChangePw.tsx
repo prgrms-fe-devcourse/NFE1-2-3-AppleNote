@@ -11,7 +11,6 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const validatePasswordFormat = (password: string) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -20,33 +19,30 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
   };
 
   const handleConfirm = async () => {
-    if (newPassword === confirmPassword) {
-      if (validatePasswordFormat(newPassword)) {
-        try {
-          const isSuccess = await changePassword({
-            oldPassword: currentPassword, // 기존 비밀번호
-            newPassword: newPassword, // 새 비밀번호
-          });
+    if (newPassword !== confirmPassword) {
+      return setErrorMessage("새 비밀번호와 비밀번호 확인이 일치하지 않습니다."); // 새 비밀번호와 비밀번호 확인 일치 검증
+    }
+    if (!validatePasswordFormat(newPassword)) {
+      return setErrorMessage(
+        "새 비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수문자를 포함해야 합니다."
+      );
+    }
 
-          if (isSuccess === true) {
-            setErrorMessage(null);
-            alert("비밀번호가 성공적으로 변경되었습니다.");
-            setStatus(false);
-          } else {
-            setErrorMessage("기존 비밀번호가 일치하지 않습니다.");
-            setSuccessMessage(null);
-          }
-        } catch {
-          setErrorMessage("서버 오류가 발생했습니다.");
-          setSuccessMessage(null);
-        }
+    try {
+      const isSuccess = await changePassword({
+        oldPassword: currentPassword, // 기존 비밀번호
+        newPassword: newPassword, // 새 비밀번호
+      });
+
+      if (isSuccess === true) {
+        setErrorMessage(null);
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        setStatus(false);
       } else {
-        setErrorMessage(
-          "새 비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수문자를 포함해야 합니다."
-        ); // 새 비밀번호 형식 검증
+        setErrorMessage("기존 비밀번호가 일치하지 않습니다.");
       }
-    } else {
-      setErrorMessage("새 비밀번호와 비밀번호 확인이 일치하지 않습니다."); // 새 비밀번호와 비밀번호 확인 일치 검증
+    } catch {
+      setErrorMessage("서버 오류가 발생했습니다.");
     }
   };
 
@@ -59,7 +55,7 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
       <Container>
         <h2>비밀번호 변경</h2>
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+
         <InputWrapper>
           <Label>기존 비밀번호</Label>
           <Input
@@ -156,11 +152,6 @@ const Button = styled.button`
 
 const ErrorMessage = styled.div`
   color: red;
-  margin-bottom: 10px;
-`;
-
-const SuccessMessage = styled.div`
-  color: green;
   margin-bottom: 10px;
 `;
 

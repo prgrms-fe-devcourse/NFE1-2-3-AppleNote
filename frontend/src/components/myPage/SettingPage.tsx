@@ -4,6 +4,7 @@ import { deleteUser, getUser } from "./userApi";
 import { useEffect, useState } from "react";
 import { User } from "./userApi";
 import ChangePw from "./ChangePw";
+const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
@@ -36,7 +37,7 @@ const SettingPage = () => {
   const logout = () => {};
 
   const editImg = () => ({});
-  // const editName = () => ({});
+  const editName = () => ({});
 
   return (
     <>
@@ -46,18 +47,17 @@ const SettingPage = () => {
         <Wrapper>
           <ProfileWrapper>
             <ImgWrapper>
-              <UserImg>
-                <img src={user?.profileImg} alt="사용자이미지" />
-              </UserImg>
-              <EditBtn onClick={editImg}>
+              <UserImg src={user?.profileImg || DEFAULT_PROFILE_IMAGE} />
+
+              <ImgEditBtn onClick={editImg}>
                 <img src={edit} />
-              </EditBtn>
+              </ImgEditBtn>
             </ImgWrapper>
             <UserProfile>
               <UserName>{user?.name}</UserName>
-              {/* <EditBtn onClick={editName}>
+              <NameEditBtn onClick={editName}>
                 <img src={edit} />
-              </EditBtn> */}
+              </NameEditBtn>
 
               <UserEmail>{user?.email}</UserEmail>
               <Button onClick={changePw}>비밀번호 변경</Button>
@@ -79,7 +79,7 @@ const Wrapper = styled.div`
 `;
 const ImgWrapper = styled.div`
   position: relative;
-  margin-right: 50px;
+  margin-right: 100px;
   display: flex;
   flex-direction: column;
 `;
@@ -89,12 +89,14 @@ const ProfileWrapper = styled.div`
   justify-content: center;
 `;
 
-const UserImg = styled.div`
+const UserImg = styled.div<{ src: string }>`
   border-radius: 50%;
   width: 250px;
   height: 250px;
-  object-fit: cover;
   background-color: aliceblue;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  background-position: center;
 `;
 
 const UserProfile = styled.div`
@@ -111,12 +113,19 @@ const UserName = styled.p`
   align-items: center;
 `;
 
-const EditBtn = styled.button`
+const ImgEditBtn = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
   margin-left: 79%;
   margin-top: -10%;
+`;
+const NameEditBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 60%;
+  margin-top: -15%;
 `;
 
 const UserEmail = styled.p`

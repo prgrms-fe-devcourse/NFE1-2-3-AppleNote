@@ -9,7 +9,7 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
 
   // 현재 경로가 "/"일 때만 Banner를 표시, 추후 설정 페이지의 경로까지 추가해야함
-  const showBanner = location.pathname === "/";
+  const showBanner = location.pathname === "/" || location.pathname === "/setting";
 
   // 포스트 상세 페이지에서는 Footer 숨기기(추후 랜딩 페이지에서도 숨기도록 추가 예정)
   const hideFooter = ["/posts/:postId"].some((path) =>

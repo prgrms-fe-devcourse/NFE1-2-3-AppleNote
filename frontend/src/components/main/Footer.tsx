@@ -13,9 +13,7 @@ const FooterContainer = styled.footer`
   color: white;
   text-align: center;
   padding: 1rem;
-  position: fixed; /* 페이지 하단에 고정 */
-  bottom: 0;
-  left: 0;
+  margin-top: auto; /* 페이지 내용이 짧을 때 Footer가 하단에 붙도록 처리 */
 `;
 
 const FooterContent = styled.p`

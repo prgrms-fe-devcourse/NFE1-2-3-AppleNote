@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { FaSearch, FaCog, FaPen, FaSun, FaMoon } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
-import useCustomTheme from "@common/styles/useCustomTheme";
+import useCustomTheme from "@common/hooks/useCustomTheme";
 
 // 기본 프로필 이미지 경로
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
@@ -35,6 +35,7 @@ const Header: React.FC = () => {
     navigate("/");
   };
 
+  // UploadButton 클릭 시 포스트 작성 페이지로 이동하는 함수
   const handleUploadClick = () => {
     navigate("/create-post");
   };
@@ -46,6 +47,10 @@ const Header: React.FC = () => {
     if (query) {
       navigate(`/search?query=${query}`);
     }
+  };
+
+  const handleSettingsClick = () => {
+    navigate("/setting");
   };
 
   return (
@@ -82,7 +87,7 @@ const Header: React.FC = () => {
 
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
 
-        <SettingsButton aria-label="Settings">
+        <SettingsButton onClick={handleSettingsClick} aria-label="Settings">
           <FaCog />
         </SettingsButton>
       </SearchAndIconsSection>
@@ -123,10 +128,10 @@ const ThemeToggleButton = styled.button<{ themeType: string }>`
   padding: 10px;
   border: solid;
   border-radius: 30px;
-  background-color: ${({ themeType }) => (themeType === "light" ? "#ffffff" : "#000000")};
+  background-color: ${({ theme }) => theme.background.primary};
   box-shadow: ${({ themeType }) =>
     themeType === "light" ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 4px 8px rgba(255, 255, 255, 0.2)"};
-  color: ${({ themeType }) => (themeType === "light" ? "#000000" : "#ffffff")};
+  color: ${({ theme }) => theme.text.primary};
   cursor: pointer;
   transition:
     background-color 0.3s,
@@ -179,8 +184,8 @@ const SearchInput = styled.input`
   padding: 0.5rem 2.5rem 0.5rem 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   transition:
     background-color 0.3s,
     color 0.3s;
@@ -192,8 +197,8 @@ const SearchButton = styled.button`
   right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   cursor: pointer;
   transition:
@@ -206,8 +211,8 @@ const UploadButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: ${({ theme }) => theme.buttonBgColor};
-  color: ${({ theme }) => theme.buttonTextColor};
+  background-color: ${({ theme }) => theme.button.background};
+  color: ${({ theme }) => theme.button.text};
   border: none;
   border-radius: 4px;
   padding: 0.5rem 1rem;
@@ -235,8 +240,8 @@ const ProfileIcon = styled.img`
 `;
 
 const SettingsButton = styled.button`
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   border-radius: 4px;
   padding: 0.5rem;

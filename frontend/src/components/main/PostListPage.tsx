@@ -47,7 +47,7 @@ const PostListPage: React.FC = () => {
 
   return (
     <Container>
-      <CategorySection title={categoryName} />
+      <CategorySection title={categoryName} small /> {/* 작은 크기로 표시 */}
       <ContentWrapper>
         <HorizontalPostGrid>
           {posts.map((post) => (

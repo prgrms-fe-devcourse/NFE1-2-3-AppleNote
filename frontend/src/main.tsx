@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 
 import router from "@routes/router";
 import { CustomThemeProvider } from "@common/styles/ThemeProvider";
+import { AuthProvider } from "@components/auth/AuthContext.tsx";
 
 const enableMocking = async () => {
   if (process.env.NODE_ENV !== "development" || import.meta.env.VITE_MSW_ENABLED !== "true") {
@@ -21,7 +22,9 @@ enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <CustomThemeProvider>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </CustomThemeProvider>
     </StrictMode>
   );

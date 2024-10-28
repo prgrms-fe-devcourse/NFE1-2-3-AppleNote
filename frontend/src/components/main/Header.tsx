@@ -39,9 +39,6 @@ const Header: React.FC = () => {
   const handleUploadClick = () => {
     navigate("/create-post");
   };
-  const handleSettingsClick = () => {
-    navigate("/setting");
-  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,7 +88,7 @@ const Header: React.FC = () => {
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
 
         <SettingsButton onClick={handleSettingsClick} aria-label="Settings">
-          <FaCog />
+          <FaCog size={25} />
         </SettingsButton>
       </SearchAndIconsSection>
     </StyledHeader>
@@ -125,8 +122,8 @@ const ThemeToggleButton = styled.button<{ themeType: string }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 140px;
-  height: 60px;
+  width: 110px;
+  height: 40px;
   margin-left: 2rem;
   padding: 10px;
   border: solid;
@@ -150,13 +147,13 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
 `;
 
 const ButtonText = styled.span`
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: bold;
   margin-right: 0.5rem;
 `;

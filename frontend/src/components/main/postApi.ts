@@ -49,13 +49,7 @@ export const fetchPostsByPage = async (page: number, postsPerPage: number): Prom
 // 특정 카테고리별 최신 포스트 최대 4개 가져오기
 export const fetchLatestPostsByCategoryId = async (categoryId: string): Promise<Post[]> => {
   const response = await httpClient.get<{ payload: { posts: Post[] } }>(
-    `/categories/${categoryId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-    }
+    `/categories/${categoryId}`
   );
 
   // 최신순 정렬 후 최대 4개만 반환
@@ -67,13 +61,7 @@ export const fetchLatestPostsByCategoryId = async (categoryId: string): Promise<
 // 특정 카테고리별 포스트 목록 가져오기
 export const fetchPostsByCategoryId = async (categoryId: string): Promise<Post[]> => {
   const response = await httpClient.get<{ payload: { posts: Post[] } }>(
-    `/categories/${categoryId}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-    }
+    `/categories/${categoryId}`
   );
 
   return response.data.payload.posts.sort(

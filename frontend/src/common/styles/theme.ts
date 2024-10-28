@@ -36,6 +36,9 @@ export const lightTheme: DefaultTheme = {
     background: "#000000",
     text: "#ffffff",
   },
+  footer: {
+    background: "#333333",
+  },
 };
 
 export const darkTheme: DefaultTheme = {
@@ -51,5 +54,8 @@ export const darkTheme: DefaultTheme = {
   button: {
     background: "#ffffff",
     text: "#000000",
+  },
+  footer: {
+    background: "#000000",
   },
 };

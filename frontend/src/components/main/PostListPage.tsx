@@ -70,7 +70,7 @@ const PostListPage: React.FC = () => {
 
 const Container = styled.div`
   width: 1205px;
-  margin: 0 auto;
+  margin: 40px auto 0;
   padding: 1rem;
 `;
 

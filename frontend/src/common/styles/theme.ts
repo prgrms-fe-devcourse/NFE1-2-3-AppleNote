@@ -7,22 +7,49 @@ declare module "styled-components" {
 }
 
 interface CustomTheme {
-  bgColor: string;
-  textColor: string;
-  buttonBgColor: string;
-  buttonTextColor: string;
+  background: {
+    primary: string;
+    secondary: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+    warning: string;
+  };
+  button: {
+    background: string;
+    text: string;
+  };
 }
 
 export const lightTheme: DefaultTheme = {
-  bgColor: "#ffffff",
-  textColor: "#000000",
-  buttonBgColor: "#000000",
-  buttonTextColor: "#ffffff",
+  background: {
+    primary: "#ffffff",
+    secondary: "#f8f8f8",
+  },
+  text: {
+    primary: "#000000",
+    secondary: "#1C1C1C",
+    warning: "#D32F2F",
+  },
+  button: {
+    background: "#000000",
+    text: "#ffffff",
+  },
 };
 
 export const darkTheme: DefaultTheme = {
-  bgColor: "#000000",
-  textColor: "#FFFFFF",
-  buttonBgColor: "#ffffff",
-  buttonTextColor: "#000000",
+  background: {
+    primary: "#121212",
+    secondary: "#1E1E1E",
+  },
+  text: {
+    primary: "#FFFFFF",
+    secondary: "#E0E0E0",
+    warning: "#FF6659",
+  },
+  button: {
+    background: "#ffffff",
+    text: "#000000",
+  },
 };

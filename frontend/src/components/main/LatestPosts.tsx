@@ -75,8 +75,8 @@ const Title = styled.h2`
 `;
 
 const MoreButton = styled.button`
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   font-size: 2rem;
   margin-right: 20px;

@@ -104,8 +104,8 @@ const Header = styled.div`
 
 const MoreButton = styled.button`
   align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   font-size: 2rem;
   cursor: pointer;

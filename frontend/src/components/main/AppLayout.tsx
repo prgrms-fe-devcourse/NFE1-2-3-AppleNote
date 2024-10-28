@@ -17,16 +17,16 @@ const AppLayout: React.FC = () => {
   );
 
   return (
-    <>
+    <LayoutContainer>
       <ConditionalWrapper condition={showBanner}>
         <Header />
         {showBanner && <Banner />}
       </ConditionalWrapper>
-      <MainContainer>
+      <MainContent>
         <Outlet /> {/* 각 페이지별 자식 컴포넌트 렌더링 */}
-      </MainContainer>
+      </MainContent>
       {!hideFooter && <Footer />} {/* Footer 조건부 렌더링 */}
-    </>
+    </LayoutContainer>
   );
 };
 
@@ -42,12 +42,15 @@ const ConditionalWrapper: React.FC<PropsWithChildren<ConditionalWrapperProps>> =
   return condition ? <>{children}</> : <Header />; // 홈 페이지 외에는 Header만 표시
 };
 
-const MainContainer = styled.div`
-  margin-top: 20px;
-  padding: 0 1rem;
-  padding-bottom: 4rem; /* Footer 높이만큼 여백 추가 */
+const LayoutContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   min-height: 100vh; /* 화면 전체를 채우기 위해 설정 */
-  box-sizing: border-box;
+`;
+
+const MainContent = styled.main`
+  flex: 1; /* 남은 공간을 모두 차지 */
+  padding: 1rem;
 `;
 
 export default AppLayout;

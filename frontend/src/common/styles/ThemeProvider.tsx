@@ -14,10 +14,12 @@ interface ThemeContextType {
 
 export const CustomThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const THEME_STORAGE_KEY = "theme";
+const themeLocalStorage = localStorageHelper<ThemeType>(THEME_STORAGE_KEY, "light");
+
 export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const localStorage = localStorageHelper<ThemeType>("theme", "light");
   const isFirstTransition = useRef(false); // 첫 번째 테마 transition 전환 비활성화
-  const [themeType, setTheme] = useState<ThemeType>(() => localStorage.get());
+  const [themeType, setTheme] = useState<ThemeType>(() => themeLocalStorage.get());
 
   const toggleTheme = () => {
     setTheme((prevTheme) => {
@@ -25,7 +27,7 @@ export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) =
         isFirstTransition.current = true;
       }
 
-      return localStorage.set(prevTheme === "light" ? "dark" : "light");
+      return themeLocalStorage.set(prevTheme === "light" ? "dark" : "light");
     });
   };
 

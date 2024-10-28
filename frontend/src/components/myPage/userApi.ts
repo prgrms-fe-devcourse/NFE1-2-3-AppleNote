@@ -1,5 +1,4 @@
 import { httpClient } from "@common/api/fetch";
-import axios from "axios";
 
 export type User = {
   name: string;
@@ -38,20 +37,12 @@ export const changePassword = async (payload: PasswordForm): Promise<boolean> =>
 
 // 회원 탈퇴 API
 export const deleteUser = async (): Promise<boolean> => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("토큰이 존재하지 않습니다.");
-  }
   try {
-    const response = await axios.delete("/users/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const URL = `/users/me`;
+    const { data } = await httpClient.delete(URL);
 
-    return response.status === 200; // 200이면 성공으로 간주
+    return data.payload.isRemove;
   } catch {
-    throw new Error("회원탈퇴를 실패했습니다.");
+    return false;
   }
 };

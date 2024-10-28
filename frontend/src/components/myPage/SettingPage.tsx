@@ -4,10 +4,13 @@ import { deleteUser, getUser } from "./userApi";
 import { useEffect, useState } from "react";
 import { User } from "./userApi";
 import ChangePw from "./ChangePw";
+import { useAuth } from "@components/auth/useAuth";
+import { useNavigate } from "react-router-dom";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -25,8 +28,9 @@ const SettingPage = () => {
     try {
       const isDeleted = await deleteUser(); // 회원 탈퇴 API 호출
 
-      if (isDeleted) {
+      if (isDeleted === true) {
         alert("회원탈퇴 완료"); // 모달창 혹은 alert로 변경 예정
+        navigate("/");
       } else {
         alert("회원 탈퇴에 실패했습니다."); // 모달창 혹은 alert로 변경 예정
       }
@@ -34,10 +38,22 @@ const SettingPage = () => {
       alert("회원 탈퇴 중 오류 발생"); // 모달창 혹은 alert로 변경 예정
     }
   };
-  const logout = () => {};
 
   const editImg = () => ({});
   const editName = () => ({});
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout({
+      onSuccess: () => {
+        alert("로그아웃 되었습니다.");
+        navigate("/");
+      },
+      onFailure: () => {
+        alert("로그아웃 실패");
+      },
+    });
+  };
 
   return (
     <>
@@ -62,7 +78,7 @@ const SettingPage = () => {
               <UserEmail>{user?.email}</UserEmail>
               <Button onClick={changePw}>비밀번호 변경</Button>
               <Button onClick={signout}>회원 탈퇴</Button>
-              <Button onClick={logout}>로그아웃</Button>
+              <Button onClick={handleLogout}>로그아웃</Button>
             </UserProfile>
           </ProfileWrapper>
         </Wrapper>

@@ -39,6 +39,9 @@ const Header: React.FC = () => {
   const handleUploadClick = () => {
     navigate("/create-post");
   };
+  const handleSettingsClick = () => {
+    navigate("/setting");
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

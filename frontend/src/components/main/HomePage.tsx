@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import styled from "styled-components";
-import useCustomTheme from "@common/styles/useCustomTheme";
+import useCustomTheme from "@common/hooks/useCustomTheme";
 import Category from "@components/category/Category";
 import LatestPosts from "@components/main/LatestPosts";
 import CategoryLatestPosts from "@components/main/CategoryLatestPosts";
@@ -65,8 +65,8 @@ const StyledButton = styled.button`
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  background-color: ${({ theme }) => theme.buttonBgColor};
-  color: ${({ theme }) => theme.buttonTextColor};
+  background-color: ${({ theme }) => theme.text.secondary};
+  color: ${({ theme }) => theme.background.primary};
   transition:
     background-color 0.3s ease,
     color 0.3s ease;

@@ -1,9 +1,25 @@
-import Banner from "@components/main/Banner";
 import styled from "styled-components";
 import edit from "@assets/icons/edit.svg";
-import { deleteUser } from "./userApi";
+import { deleteUser, getUser } from "./userApi";
+import { useEffect, useState } from "react";
+import { User } from "./userApi";
+import ChangePw from "./ChangePw";
 const SettingPage = () => {
-  const changePw = () => {};
+  const [user, setUser] = useState<User | null>(null);
+  const [status, setStatus] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUser();
+
+      setUser(userData);
+    };
+
+    fetchUser();
+  }, []);
+  const changePw = () => {
+    setStatus(true);
+  };
   const signout = async () => {
     try {
       const isDeleted = await deleteUser(); // 회원 탈퇴 API 호출
@@ -19,33 +35,38 @@ const SettingPage = () => {
   };
   const logout = () => {};
 
+  const editImg = () => ({});
+  // const editName = () => ({});
+
   return (
     <>
-      <Banner />
-      <Wrapper>
-        <ProfileWrapper>
-          <ImgWrapper>
-            <UserImg>
-              <img src="" alt="사용자이미지" />
-            </UserImg>
-            <EditBtn>
-              <img src={edit} />
-            </EditBtn>
-          </ImgWrapper>
-          <UserProfile>
-            <UserName>유저 이름</UserName>
-            <EditBtn>
-              <img src={edit} />
-            </EditBtn>
+      {status ? (
+        <ChangePw setStatus={setStatus} /> // status가 true이면 ChangePw 컴포넌트 렌더링
+      ) : (
+        <Wrapper>
+          <ProfileWrapper>
+            <ImgWrapper>
+              <UserImg>
+                <img src={user?.profileImg} alt="사용자이미지" />
+              </UserImg>
+              <EditBtn onClick={editImg}>
+                <img src={edit} />
+              </EditBtn>
+            </ImgWrapper>
+            <UserProfile>
+              <UserName>{user?.name}</UserName>
+              {/* <EditBtn onClick={editName}>
+                <img src={edit} />
+              </EditBtn> */}
 
-            <UserEmail>유저 이메일</UserEmail>
-
-            <Button onClick={changePw}>비밀번호 변경</Button>
-            <Button onClick={signout}>회원 탈퇴</Button>
-            <Button onClick={logout}>로그아웃</Button>
-          </UserProfile>
-        </ProfileWrapper>
-      </Wrapper>
+              <UserEmail>{user?.email}</UserEmail>
+              <Button onClick={changePw}>비밀번호 변경</Button>
+              <Button onClick={signout}>회원 탈퇴</Button>
+              <Button onClick={logout}>로그아웃</Button>
+            </UserProfile>
+          </ProfileWrapper>
+        </Wrapper>
+      )}
     </>
   );
 };

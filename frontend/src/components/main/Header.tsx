@@ -34,6 +34,9 @@ const Header: React.FC = () => {
   const handleUploadClick = () => {
     navigate("/create-post");
   };
+  const handleSettingsClick = () => {
+    navigate("/setting");
+  };
 
   return (
     <StyledHeader>
@@ -56,7 +59,7 @@ const Header: React.FC = () => {
 
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
 
-        <SettingsButton aria-label="Settings">
+        <SettingsButton onClick={handleSettingsClick} aria-label="Settings">
           <FaCog />
         </SettingsButton>
       </SearchAndIconsSection>

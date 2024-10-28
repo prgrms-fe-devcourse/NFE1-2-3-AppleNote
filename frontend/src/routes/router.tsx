@@ -19,10 +19,11 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> }, // 메인 페이지
       { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
-      { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
+      { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성페이지
       { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],
   },
+
   { path: "/login", element: <Login /> }, // 로그인 페이지
   { path: "/signup", element: <Signup /> }, // 로그인 페이지
   { path: "/*", element: <NotFoundPage /> }, // 404 페이지

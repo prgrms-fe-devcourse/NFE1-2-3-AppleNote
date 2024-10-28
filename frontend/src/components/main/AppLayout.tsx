@@ -8,7 +8,7 @@ const AppLayout: React.FC = () => {
   const location = useLocation();
 
   // 현재 경로가 "/"일 때만 Banner를 표시, 추후 설정 페이지의 경로까지 추가해야함
-  const showBanner = location.pathname === "/";
+  const showBanner = location.pathname === "/" || location.pathname === "/setting";
 
   return (
     <>

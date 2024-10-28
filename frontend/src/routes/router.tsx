@@ -22,12 +22,16 @@ const router = createBrowserRouter([
     path: "/app",
     element: <AppLayout />, // 상위 레이아웃으로 AppLayout 설정
     children: [
-      { index: true, element: <HomePage /> }, // 기본 페이지로 HomePage 설정
-      { path: "posts", element: <PostListPage /> }, // 포스트 목록 페이지
-      { path: "create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
-      { path: "setting", element: <SettingPage /> }, // 세팅 페이지
+      { path: "/", element: <HomePage /> }, // 메인 페이지
+      { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
+
+      { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
+      { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
+
+      { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],
   },
+
   { path: "/login", element: <Login /> }, // 로그인 페이지
   { path: "/signup", element: <Signup /> }, // 회원가입 페이지
   { path: "*", element: <NotFoundPage /> }, // 404 페이지

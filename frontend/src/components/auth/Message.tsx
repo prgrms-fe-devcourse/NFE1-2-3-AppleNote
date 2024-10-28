@@ -1,11 +1,11 @@
 import styled from "styled-components";
 
-import { useAuth } from "./useAuth";
+import { useAuthForm } from "./useAuth";
 
 const AuthMessage = () => {
   const {
     state: { message },
-  } = useAuth();
+  } = useAuthForm();
 
   return <Message>{message}</Message>;
 };

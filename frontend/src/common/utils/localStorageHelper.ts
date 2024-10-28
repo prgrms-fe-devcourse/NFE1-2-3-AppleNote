@@ -31,7 +31,7 @@ export const localStorageHelper = <P>(key: string, init: P) => {
 
       return payload;
     },
-    get() {
+    get(): P {
       const value = localStorage.getItem(key);
 
       if (value) {

@@ -38,14 +38,16 @@ const LandingPage: React.FC = () => {
         <AppleImageContainer onClick={toggleImagePosition}>
           <AppleImage src={Apple1} alt="Apple1" isMoved={isMoved} />
         </AppleImageContainer>
+      </LeftSection>
+      <RightSection>
+        <Image1 src={Apple4} alt="Apple3" />
+        <Image2 src={Apple3} alt="Apple4" />
         <ButtonGroup>
           <Button onClick={handleLogin}>Login</Button>
           <Button onClick={handleSignup}>Sign up</Button>
         </ButtonGroup>
-      </LeftSection>
-      <RightSection>
-        <Image src={Apple3} alt="Apple3" />
-        <Image src={Apple4} alt="Apple4" />
+        <Subtitle1>Place For</Subtitle1>
+        <Subtitle2>BETTER RECORDS.</Subtitle2>
       </RightSection>
     </Container>
   );
@@ -62,15 +64,15 @@ const Container = styled.div`
 `;
 
 const LeftSection = styled.div`
-  width: 40%;
+  width: 37%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  align-items: flex-end;
-  padding-right: 20px;
+  align-items: center;
+  padding-right: 10px;
 `;
 
 const VerticalLine = styled.div`
@@ -92,20 +94,14 @@ const Title = styled.h1`
 const AppleImageContainer = styled.div`
   position: relative;
   overflow: visible;
-  width: 550px;
-  margin-bottom: 20px;
+  width: 600px;
+  margin-bottom: 420px;
 `;
 
 const AppleImage = styled.img<{ isMoved: boolean }>`
   width: 100%;
   object-fit: cover;
-  transition:
-    transform 0.3s ease-in-out,
-    z-index 0.3s ease-in-out;
-  position: relative;
-  transform: ${({ isMoved }) =>
-    isMoved ? "translateX(-200px) translateZ(-2px)" : "translateX(0) translateZ(0)"};
-  z-index: ${({ isMoved }) => (isMoved ? 0 : 2)};
+  position: absolute;
 `;
 
 const ButtonGroup = styled.div`
@@ -116,7 +112,6 @@ const ButtonGroup = styled.div`
   flex-direction: column;
   gap: 15px;
   opacity: 1;
-  transition: opacity 0.3s ease-in-out;
 `;
 
 const Button = styled.button`
@@ -135,16 +130,51 @@ const Button = styled.button`
 `;
 
 const RightSection = styled.div`
+  position: relative;
   width: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  text-align: left; /* 부모 요소에서 왼쪽 정렬 */
+  justify-content: flex-start;
 `;
 
-const Image = styled.img`
-  width: 200px;
+const Image1 = styled.img`
+  position: relative;
+  width: 550px;
   height: auto;
   object-fit: cover;
-  margin: 10px;
+  margin-left: -250px;
+  margin-top: 20px;
+  z-index: 1;
+`;
+
+const Image2 = styled.img`
+  width: 420px;
+  height: auto;
+  object-fit: cover;
+  margin-right: -450px;
+  margin-top: -170px;
+`;
+
+const Subtitle1 = styled.h2`
+  position: relative;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  font-family: "Merriweather", serif;
+  align-items: flex-start;
+  margin-left: -700px;
+  margin-top: -50px;
+`;
+
+const Subtitle2 = styled.h2`
+  position: relative;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  font-family: "Merriweather", serif;
+  align-items: flex-start;
+  margin-left: -540px;
+  border-bottom: 1.5px solid;
 `;

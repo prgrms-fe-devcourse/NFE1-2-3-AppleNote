@@ -1,11 +1,14 @@
 import { useContext } from "react";
-import { AuthFormContext } from "./AuthContext";
+import { AuthContext, AuthFormContext } from "./AuthContext";
 
-export const useAuth = () => {
+/**
+ * 로그인/회원가입 폼 양식 상태 괸리 훅
+ */
+export const useAuthForm = () => {
   const context = useContext(AuthFormContext);
 
   if (!context) {
-    throw new Error("useAuth must be used within a AuthProvider");
+    throw new Error("useAuthForm must be used within a AuthFormProvider");
   }
 
   const dispatch = {
@@ -30,4 +33,21 @@ export const useAuth = () => {
   };
 
   return { state: context.state, dispatch };
+};
+
+/**
+ * 로그인 상태 관리 훅
+ *
+ * `login` - 함수를 호출하면 로그인 정보를 브라우저에 저장합니다.
+ *
+ * `logout` - 함수를 호출하면 로그인 정보를 브라우저에서 삭제합니다.
+ */
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within a AuthProvider");
+  }
+
+  return context;
 };

@@ -19,7 +19,7 @@ const themeLocalStorage = localStorageHelper<ThemeType>(THEME_STORAGE_KEY, "ligh
 
 export const CustomThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const isFirstTransition = useRef(false); // 첫 번째 테마 transition 전환 비활성화
-  const [themeType, setTheme] = useState<ThemeType>(() => localStorage.get());
+  const [themeType, setTheme] = useState<ThemeType>(() => themeLocalStorage.get());
 
   const toggleTheme = () => {
     setTheme((prevTheme) => {

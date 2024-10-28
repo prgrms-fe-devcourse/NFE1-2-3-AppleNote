@@ -15,14 +15,13 @@ import { AuthTitle, AuthSubTitle } from "./Header";
 import { AuthInput } from "./Input";
 import Checkbox from "@common/components/Checkbox";
 import { AuthFormProvider } from "./AuthContext";
-import { useAuth } from "./useAuth";
+import { useAuth, useAuthForm } from "./useAuth";
 import { useEffect } from "react";
 import useFetch from "@common/hooks/useFetch";
 import { requestLogin } from "./api";
 import Message from "./Message";
-import { setDefaultsHeaderAuth } from "@common/api/fetch";
 import { AuthOptionSubText } from "./Text";
-import { authLocalStorage, emailLocalStorage } from "./localStorage";
+import { emailLocalStorage } from "./localStorage";
 
 const Login = () => {
   return (
@@ -54,7 +53,7 @@ const Header = () => {
  * 사용자 입력 폼 컴포넌트
  */
 const Form = () => {
-  const { state, dispatch } = useAuth();
+  const { state, dispatch } = useAuthForm();
 
   const loadAndDispatchEmail = () => {
     const { email, isSave } = emailLocalStorage.get();
@@ -97,7 +96,7 @@ const Form = () => {
  * 회원가입 링크 컴포넌트
  */
 const Options = () => {
-  const { state, dispatch } = useAuth();
+  const { state, dispatch } = useAuthForm();
   const navigate = useNavigate();
 
   // 체크박스 핸들러
@@ -134,11 +133,12 @@ const Submit = () => {
   const {
     state: { email, password, rememberMe },
     dispatch,
-  } = useAuth();
+  } = useAuthForm();
   const {
     state: { data, loading, error },
     request,
   } = useFetch(requestLogin, { delay: 500 });
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const isReady = !(email && password) || loading;
@@ -165,13 +165,13 @@ const Submit = () => {
 
     // 로그인이 성공한 시점
     if (isFulfilled) {
-      const { accessToken, userId } = data.payload;
-
-      setDefaultsHeaderAuth(accessToken);
-      authLocalStorage.set({ accessToken, userId });
-      navigate("/", { replace: true });
+      login(data, {
+        onSuccess: () => {
+          navigate("/", { replace: true });
+        },
+      });
     }
-  }, [data, loading, navigate]);
+  }, [data, loading, login, navigate]);
 
   useEffect(() => {
     if (!error) return;

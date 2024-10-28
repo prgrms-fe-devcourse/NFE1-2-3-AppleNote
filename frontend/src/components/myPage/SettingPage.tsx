@@ -1,51 +1,90 @@
-import Banner from "@components/main/Banner";
 import styled from "styled-components";
 import edit from "@assets/icons/edit.svg";
-import { deleteUser } from "./userApi";
+import { deleteUser, getUser } from "./userApi";
+import { useEffect, useState } from "react";
+import { User } from "./userApi";
+import ChangePw from "./ChangePw";
+import { useAuth } from "@components/auth/useAuth";
+import { useNavigate } from "react-router-dom";
+const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
-  const changePw = () => {};
+  const [user, setUser] = useState<User | null>(null);
+  const [status, setStatus] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUser();
+
+      setUser(userData);
+    };
+
+    fetchUser();
+  }, []);
+  const changePw = () => {
+    setStatus(true);
+  };
   const signout = async () => {
     try {
-      const isDeleted = await deleteUser(); // 회원 탈퇴 API 호출
+      const isDeleted = await deleteUser();
 
-      if (isDeleted) {
-        alert("회원탈퇴 완료"); // 모달창 혹은 alert로 변경 예정
+      if (isDeleted === true) {
+        alert("회원탈퇴 완료");
+        navigate("/");
       } else {
-        alert("회원 탈퇴에 실패했습니다."); // 모달창 혹은 alert로 변경 예정
+        alert("회원 탈퇴에 실패했습니다.");
       }
     } catch {
-      alert("회원 탈퇴 중 오류 발생"); // 모달창 혹은 alert로 변경 예정
+      alert("회원 탈퇴 중 오류 발생");
     }
   };
-  const logout = () => {};
+
+  const editImg = () => ({});
+  const editName = () => ({});
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout({
+      onSuccess: () => {
+        alert("로그아웃 되었습니다.");
+        navigate("/");
+      },
+      onFailure: () => {
+        alert("로그아웃 실패");
+      },
+    });
+  };
 
   return (
     <>
-      <Banner />
-      <Wrapper>
-        <ProfileWrapper>
-          <ImgWrapper>
-            <UserImg>
-              <img src="" alt="사용자이미지" />
-            </UserImg>
-            <EditBtn>
-              <img src={edit} />
-            </EditBtn>
-          </ImgWrapper>
-          <UserProfile>
-            <UserName>유저 이름</UserName>
-            <EditBtn>
-              <img src={edit} />
-            </EditBtn>
+      {status ? (
+        <ChangePw setStatus={setStatus} /> // status가 true이면 ChangePw 컴포넌트 렌더링
+      ) : (
+        <Wrapper>
+          <ProfileWrapper>
+            <ImgWrapper>
+              <UserImg src={user?.profileImg || DEFAULT_PROFILE_IMAGE} />
 
-            <UserEmail>유저 이메일</UserEmail>
+              <ImgEditBtn onClick={editImg}>
+                <img src={edit} />
+              </ImgEditBtn>
+            </ImgWrapper>
+            <UserProfile>
+              <UserNameWrapper>
+                <UserName>{user?.name}</UserName>
+                <NameEditBtn onClick={editName}>
+                  <img src={edit} />
+                </NameEditBtn>
+              </UserNameWrapper>
 
-            <Button onClick={changePw}>비밀번호 변경</Button>
-            <Button onClick={signout}>회원 탈퇴</Button>
-            <Button onClick={logout}>로그아웃</Button>
-          </UserProfile>
-        </ProfileWrapper>
-      </Wrapper>
+              <UserEmail>{user?.email}</UserEmail>
+              <Button onClick={changePw}>비밀번호 변경</Button>
+              <Button onClick={signout}>회원 탈퇴</Button>
+              <Button onClick={handleLogout}>로그아웃</Button>
+            </UserProfile>
+          </ProfileWrapper>
+        </Wrapper>
+      )}
     </>
   );
 };
@@ -58,7 +97,7 @@ const Wrapper = styled.div`
 `;
 const ImgWrapper = styled.div`
   position: relative;
-  margin-right: 50px;
+  margin-right: 100px;
   display: flex;
   flex-direction: column;
 `;
@@ -68,18 +107,24 @@ const ProfileWrapper = styled.div`
   justify-content: center;
 `;
 
-const UserImg = styled.div`
+const UserImg = styled.div<{ src: string }>`
   border-radius: 50%;
   width: 250px;
   height: 250px;
-  object-fit: cover;
   background-color: aliceblue;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  background-position: center;
 `;
-
 const UserProfile = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+`;
+
+const UserNameWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const UserName = styled.p`
@@ -90,7 +135,14 @@ const UserName = styled.p`
   align-items: center;
 `;
 
-const EditBtn = styled.button`
+const NameEditBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  padding-top: 10px;
+`;
+const ImgEditBtn = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;

@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import Apple1 from "../../assets/images/apple.png";
 import Apple3 from "../../assets/images/apple3.jpg";
 import Apple4 from "../../assets/images/apple4.jpg";
+import Paper from "../../assets/images/papers.png";
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+KR:wght@900&display=swap');
@@ -40,14 +41,19 @@ const LandingPage: React.FC = () => {
         </AppleImageContainer>
       </LeftSection>
       <RightSection>
-        <Image1 src={Apple4} alt="Apple3" />
+        <Div1>
+          <Image1 src={Apple4} alt="Apple3" />
+          <ButtonGroup>
+            <Button onClick={handleLogin}>Login</Button>
+            <Button onClick={handleSignup}>Sign up</Button>
+          </ButtonGroup>
+        </Div1>
         <Image2 src={Apple3} alt="Apple4" />
-        <ButtonGroup>
-          <Button onClick={handleLogin}>Login</Button>
-          <Button onClick={handleSignup}>Sign up</Button>
-        </ButtonGroup>
         <Subtitle1>Place For</Subtitle1>
         <Subtitle2>BETTER RECORDS.</Subtitle2>
+        <ImageContainer>
+          <Image3 src={Paper} alt="Paper" />
+        </ImageContainer>
       </RightSection>
     </Container>
   );
@@ -58,13 +64,16 @@ export default LandingPage;
 // Styled Components
 
 const Container = styled.div`
-  display: flex;
+  width: 100vw;
   height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
   background-color: #fff;
 `;
 
 const LeftSection = styled.div`
-  width: 37%;
+  flex-basis: 35vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,15 +81,6 @@ const LeftSection = styled.div`
   position: relative;
   overflow: hidden;
   align-items: center;
-  padding-right: 10px;
-`;
-
-const VerticalLine = styled.div`
-  position: absolute;
-  right: 0;
-  width: 2px;
-  height: 97%;
-  background-color: #333;
 `;
 
 const Title = styled.h1`
@@ -95,30 +95,63 @@ const AppleImageContainer = styled.div`
   position: relative;
   overflow: visible;
   width: 600px;
-  margin-bottom: 420px;
+  bottom: 0px;
 `;
 
-const AppleImage = styled.img<{ isMoved: boolean }>`
+const AppleImage = styled.img`
   width: 100%;
   object-fit: cover;
+  position: relative;
+`;
+
+const VerticalLine = styled.div`
   position: absolute;
+  right: 0;
+  width: 2px;
+  height: 98%;
+  background-color: #333;
+`;
+
+const RightSection = styled.div`
+  position: relative;
+  flex-basis: 65vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const Div1 = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const Image1 = styled.img`
+  position: relative;
+  width: 55%;
+  height: auto;
+  object-fit: cover;
+  margin-top: 2vh;
+  margin-left: 2vw;
+  z-index: 1;
 `;
 
 const ButtonGroup = styled.div`
-  position: absolute;
-  top: 70%;
-  right: 30%;
-  display: flex;
-  flex-direction: column;
+  position: relative;
   gap: 15px;
   opacity: 1;
+  margin-top: 20px;
+  margin-left: 15px;
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
+  position: relative;
+  padding: 10px 10px;
+  width: 100px;
   font-size: 1rem;
   color: #fff;
-  background-color: #333;
+  background-color: #a9a9a9;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -129,52 +162,46 @@ const Button = styled.button`
   }
 `;
 
-const RightSection = styled.div`
-  position: relative;
-  width: 60%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: left; /* 부모 요소에서 왼쪽 정렬 */
-  justify-content: flex-start;
-`;
-
-const Image1 = styled.img`
-  position: relative;
-  width: 550px;
-  height: auto;
-  object-fit: cover;
-  margin-left: -250px;
-  margin-top: 20px;
-  z-index: 1;
-`;
-
 const Image2 = styled.img`
-  width: 420px;
+  position: relative;
+  width: 50%;
   height: auto;
   object-fit: cover;
-  margin-right: -450px;
-  margin-top: -170px;
+  margin-top: -30vh;
+  margin-left: 30vw;
 `;
 
 const Subtitle1 = styled.h2`
   position: relative;
+  margin-top: -7vh;
+  margin-left: -51vw;
   font-size: 2rem;
   font-weight: 700;
   color: #333;
   font-family: "Merriweather", serif;
-  align-items: flex-start;
-  margin-left: -700px;
-  margin-top: -50px;
 `;
 
 const Subtitle2 = styled.h2`
   position: relative;
+  margin-top: -1vh;
+  margin-left: -39.5vw;
   font-size: 2rem;
   font-weight: 700;
   color: #333;
   font-family: "Merriweather", serif;
-  align-items: flex-start;
-  margin-left: -540px;
   border-bottom: 1.5px solid;
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 80%;
+  height: 70vh;
+  overflow: hidden;
+  margin-top: -5vh;
+`;
+
+const Image3 = styled.img`
+  position: relative;
+  object-fit: cover;
+  margin-top: -25vh;
 `;

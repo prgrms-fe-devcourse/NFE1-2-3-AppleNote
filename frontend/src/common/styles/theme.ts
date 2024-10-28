@@ -16,6 +16,10 @@ interface CustomTheme {
     secondary: string;
     warning: string;
   };
+  button: {
+    background: string;
+    text: string;
+  };
 }
 
 export const lightTheme: DefaultTheme = {
@@ -28,6 +32,10 @@ export const lightTheme: DefaultTheme = {
     secondary: "#1C1C1C",
     warning: "#D32F2F",
   },
+  button: {
+    background: "#000000",
+    text: "#ffffff",
+  },
 };
 
 export const darkTheme: DefaultTheme = {
@@ -39,5 +47,9 @@ export const darkTheme: DefaultTheme = {
     primary: "#FFFFFF",
     secondary: "#E0E0E0",
     warning: "#FF6659",
+  },
+  button: {
+    background: "#ffffff",
+    text: "#000000",
   },
 };

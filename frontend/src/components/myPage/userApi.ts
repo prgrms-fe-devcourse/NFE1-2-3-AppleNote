@@ -1,3 +1,4 @@
+import { authLocalStorage } from "@components/auth/localStorage";
 import axios from "axios";
 
 // 비밀번호 변경 API
@@ -5,9 +6,9 @@ export const changePassword = async (
   oldPassword: string,
   newPassword: string
 ): Promise<boolean> => {
-  const token = localStorage.getItem("token"); // 로컬 스토리지에서 JWT 토큰 가져오기
+  const { accessToken } = authLocalStorage.get(); // 로컬 스토리지에서 JWT 토큰 가져오기
 
-  if (!token) {
+  if (!accessToken) {
     throw new Error("토큰이 존재하지 않습니다."); // 토큰이 없을 경우 오류 처리
   }
 
@@ -20,7 +21,7 @@ export const changePassword = async (
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -33,16 +34,16 @@ export const changePassword = async (
 
 // 회원 탈퇴 API
 export const deleteUser = async (): Promise<boolean> => {
-  const token = localStorage.getItem("token");
+  const { accessToken } = authLocalStorage.get(); // 로컬 스토리지에서 JWT 토큰 가져오기
 
-  if (!token) {
+  if (!accessToken) {
     throw new Error("토큰이 존재하지 않습니다.");
   }
 
   try {
     const response = await axios.delete("/users/me", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 

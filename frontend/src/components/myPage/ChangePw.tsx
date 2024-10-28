@@ -55,50 +55,60 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
   };
 
   return (
-    <Container>
-      <h2>비밀번호 변경</h2>
-      {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-      <InputWrapper>
-        <Label>기존 비밀번호</Label>
-        <Input
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <Label>새 비밀번호</Label>
-        <Input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <Label>새 비밀번호 확인</Label>
-        <Input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-      </InputWrapper>
-      <ButtonWrapper>
-        <Button onClick={handleConfirm}>확인</Button>
-        <Button onClick={handleCancel}>취소</Button>
-      </ButtonWrapper>
-    </Container>
+    <Wrapper>
+      <Container>
+        <h2>비밀번호 변경</h2>
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+        <InputWrapper>
+          <Label>기존 비밀번호</Label>
+          <Input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <Label>새 비밀번호</Label>
+          <Input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <Label>새 비밀번호 확인</Label>
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </InputWrapper>
+        <ButtonWrapper>
+          <Button onClick={handleConfirm}>확인</Button>
+          <Button onClick={handleCancel}>취소</Button>
+        </ButtonWrapper>
+      </Container>
+    </Wrapper>
   );
 };
 
-// 스타일 컴포넌트
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+`;
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  width: 50%;
   margin: 20px;
 `;
 

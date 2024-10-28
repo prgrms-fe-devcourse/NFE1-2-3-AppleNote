@@ -26,16 +26,16 @@ const SettingPage = () => {
   };
   const signout = async () => {
     try {
-      const isDeleted = await deleteUser(); // 회원 탈퇴 API 호출
+      const isDeleted = await deleteUser();
 
       if (isDeleted === true) {
-        alert("회원탈퇴 완료"); // 모달창 혹은 alert로 변경 예정
+        alert("회원탈퇴 완료");
         navigate("/");
       } else {
-        alert("회원 탈퇴에 실패했습니다."); // 모달창 혹은 alert로 변경 예정
+        alert("회원 탈퇴에 실패했습니다.");
       }
     } catch {
-      alert("회원 탈퇴 중 오류 발생"); // 모달창 혹은 alert로 변경 예정
+      alert("회원 탈퇴 중 오류 발생");
     }
   };
 
@@ -70,10 +70,12 @@ const SettingPage = () => {
               </ImgEditBtn>
             </ImgWrapper>
             <UserProfile>
-              <UserName>{user?.name}</UserName>
-              <NameEditBtn onClick={editName}>
-                <img src={edit} />
-              </NameEditBtn>
+              <UserNameWrapper>
+                <UserName>{user?.name}</UserName>
+                <NameEditBtn onClick={editName}>
+                  <img src={edit} />
+                </NameEditBtn>
+              </UserNameWrapper>
 
               <UserEmail>{user?.email}</UserEmail>
               <Button onClick={changePw}>비밀번호 변경</Button>
@@ -114,11 +116,15 @@ const UserImg = styled.div<{ src: string }>`
   background-size: cover;
   background-position: center;
 `;
-
 const UserProfile = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+`;
+
+const UserNameWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const UserName = styled.p`
@@ -129,19 +135,19 @@ const UserName = styled.p`
   align-items: center;
 `;
 
+const NameEditBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  padding-top: 10px;
+`;
 const ImgEditBtn = styled.button`
   background-color: transparent;
   border: none;
   cursor: pointer;
   margin-left: 79%;
   margin-top: -10%;
-`;
-const NameEditBtn = styled.button`
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  margin-left: 60%;
-  margin-top: -15%;
 `;
 
 const UserEmail = styled.p`

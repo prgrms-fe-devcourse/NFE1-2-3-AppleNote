@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
+  const [previewModalOpen, setPreviewModalOpen] = useState<boolean>(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -26,7 +27,7 @@ const CreatePostPage: React.FC = () => {
       <ImageWrapper>
         <ImageInput type="file" accept="image/*" onChange={handleImageUpload} />
         {!image && <PlaceholderText>이미지 추가하기</PlaceholderText>}
-        {image && <PreviewImage src={image} alt="Uploaded preview" />}
+        {image && <Image src={image} alt="Uploaded preview" />}
       </ImageWrapper>
 
       <Title>본문</Title>
@@ -48,12 +49,23 @@ const CreatePostPage: React.FC = () => {
           삭제
         </Button>
         <Button>임시저장</Button>
-        <Button>미리보기</Button>
+        <Button
+          onClick={() => {
+            setPreviewModalOpen(true);
+          }}>
+          미리보기
+        </Button>
       </ButtonWrapper>
 
       {deleteModalOpen && (
-        <ModalOverlay>
-          <ModalWrapper>
+        <ModalOverlay
+          onClick={() => {
+            setDeleteModalOpen(false);
+          }}>
+          <ModalWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+            }}>
             <div>삭제하시겠습니까?</div>
             <ButtonWrapper>
               <Button
@@ -72,9 +84,35 @@ const CreatePostPage: React.FC = () => {
           </ModalWrapper>
         </ModalOverlay>
       )}
+      {previewModalOpen && (
+        <ModalOverlay
+          onClick={() => {
+            setPreviewModalOpen(false);
+          }}>
+          <ModalWrapper
+            onClick={(e) => {
+              e.stopPropagation();
+            }}>
+            {title !== "" && <PreviewTitle>{title}</PreviewTitle>}
+            {image && <PreviewImg src={image} />}
+            {content !== "" && <PreviewContent>{content}</PreviewContent>}
+          </ModalWrapper>
+        </ModalOverlay>
+      )}
     </Wrapper>
   );
 };
+
+const PreviewContent = styled.div``;
+const PreviewImg = styled.img`
+  width: 600px;
+  height: 300px;
+  object-fit: cover;
+`;
+const PreviewTitle = styled.div`
+  font-size: 30px;
+  font-weight: 900;
+`;
 
 const ModalWrapper = styled.div`
   background: white;
@@ -123,7 +161,7 @@ const ImageInput = styled.input`
   z-index: 2;
 `;
 
-const PreviewImage = styled.img`
+const Image = styled.img`
   width: 100%;
   height: 300px;
   object-fit: cover;

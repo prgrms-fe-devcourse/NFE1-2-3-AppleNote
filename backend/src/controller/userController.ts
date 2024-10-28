@@ -9,15 +9,50 @@ import { IUserWithId } from "@src/models/userModel";
 export class UserController {
   constructor(private userService: IUserService) {}
 
+  async check(req: Request, res: Response) {
+    try {
+      const email = req.body.email;
+
+      // 이메일이 제공되지 않은 경우
+      if (!email) {
+        return res.status(400).json(createErrorResponse(400, "No email was provided"));
+      }
+
+      // 이메일로 사용자 검색
+      const userExist = await this.userService.getUserByEmail(email);
+
+      if (userExist) {
+        // 이메일이 이미 존재하는 경우
+        return res.status(409).json(createErrorResponse(422, "Existing Email"));
+      } else {
+        // 이메일이 사용 가능할 경우
+        return res.status(200).json({
+          statusCode: 200,
+          payload: "This email is available",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json(createErrorResponse(500, `${error}`));
+    }
+  }
   // 회원가입
   async create(req: Request, res: Response) {
     try {
       const userData: UserSchemaType = req.body;
+
       //이메일 형식 검증
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!emailRegex.test(userData.email)) {
         return res.status(400).json(createErrorResponse(400, "Invalid email format"));
+      }
+
+      //비밀번호 형식 검증
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+
+      if (!passwordRegex.test(userData.password)) {
+        return res.status(400).json(createErrorResponse(400, "Invalid password format"));
       }
       // 비밀번호 해시화
       const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -50,7 +85,7 @@ export class UserController {
         payload: responsePayload,
       });
     } catch (error) {
-      return res.status(500).json(createErrorResponse(500, `Signup failed: ${error}`));
+      return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
   // 로그인
@@ -89,7 +124,7 @@ export class UserController {
         payload: responsePayload,
       });
     } catch (error) {
-      return res.status(500).json(createErrorResponse(500, `Login failed: ${error}`));
+      return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
 
@@ -132,7 +167,7 @@ export class UserController {
         payload: responsePayload,
       });
     } catch (error) {
-      return res.status(500).json(createErrorResponse(500, `User read failed: ${error}`));
+      return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
   //비밀번호 변경
@@ -170,7 +205,7 @@ export class UserController {
         payload: { isChange: true },
       });
     } catch (error) {
-      return res.status(500).json(createErrorResponse(500, `Update failed: ${error}`));
+      return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
 
@@ -197,7 +232,7 @@ export class UserController {
         payload: { isRemove: true },
       });
     } catch (error) {
-      return res.status(500).json(createErrorResponse(500, `Delete failed: ${error}`));
+      return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
 }

@@ -1,3 +1,20 @@
+#!/bin/sh
+
+# 변경된 파일 목록을 가져오기
+changed_files=$(git diff --cached --name-only)
+
+# package.json 파일의 변경을 감지하되, frontend/ 및 backend/ 폴더는 제외
+if echo "$changed_files" | grep -E '^(frontend|backend)/.*package\.json$' > /dev/null; then
+  # frontend 또는 backend 디렉터리에서 변경된 경우, 아무 동작도 하지 않음
+  echo "✅ Allowed directory modification. Proceeding with commit."
+else
+  # root 디렉터리에서 package.json이 변경된 경우
+  if echo "$changed_files" | grep -E 'package\.json$'; then
+    echo "❌ A modification of package.json was detected in the root directory. Commits will be blocked."
+    exit 1
+  fi
+fi
+
 # 현재 작업 디렉토리 확인
 if [ "$(git diff --cached --name-only | grep '^frontend/')" ]; then
   echo "Running frontend ESLint..."

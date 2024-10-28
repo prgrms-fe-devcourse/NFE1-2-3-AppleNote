@@ -19,16 +19,10 @@ import { useAuth } from "./useAuth";
 import { useEffect } from "react";
 import useFetch from "@common/hooks/useFetch";
 import { requestLogin } from "./api";
-import { localStorageHelper } from "@common/utils/localStorageHelper";
 import Message from "./Message";
 import { setDefaultsHeaderAuth } from "@common/api/fetch";
 import { AuthOptionSubText } from "./Text";
-
-const LOCAL_STORAGE_KEY = "login_email";
-const defaultStorageEmail = {
-  isSave: false,
-  email: "",
-};
+import { authLocalStorage, emailLocalStorage } from "./localStorage";
 
 const Login = () => {
   return (
@@ -63,7 +57,7 @@ const Form = () => {
   const { state, dispatch } = useAuth();
 
   const loadAndDispatchEmail = () => {
-    const { email, isSave } = localStorageHelper(LOCAL_STORAGE_KEY, defaultStorageEmail).get();
+    const { email, isSave } = emailLocalStorage.get();
 
     if (isSave) {
       dispatch.email(email);
@@ -111,7 +105,7 @@ const Options = () => {
     dispatch.rememberMe(value);
 
     if (value === false) {
-      localStorageHelper(LOCAL_STORAGE_KEY, defaultStorageEmail).remove();
+      emailLocalStorage.remove();
     }
   };
 
@@ -152,7 +146,7 @@ const Submit = () => {
 
   // 체크박스 활성화된 경우 상태 저장
   const saveAndDispatchEmail = (email: string) => {
-    localStorageHelper(LOCAL_STORAGE_KEY, defaultStorageEmail).set({ email, isSave: true });
+    emailLocalStorage.set({ email, isSave: true });
   };
 
   // 로그인 요청 핸들러
@@ -167,7 +161,6 @@ const Submit = () => {
   };
 
   useEffect(() => {
-    const storage = localStorageHelper("user", { accessToken: "", userId: "" });
     const isFulfilled = !loading && data && data.payload && data.payload.accessToken;
 
     // 로그인이 성공한 시점
@@ -175,7 +168,7 @@ const Submit = () => {
       const { accessToken, userId } = data.payload;
 
       setDefaultsHeaderAuth(accessToken);
-      storage.set({ accessToken, userId });
+      authLocalStorage.set({ accessToken, userId });
       navigate("/", { replace: true });
     }
   }, [data, loading, navigate]);

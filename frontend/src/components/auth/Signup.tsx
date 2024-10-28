@@ -20,7 +20,7 @@ import { requestCheckEmail, requestSignup } from "./api";
 import { AuthOptionSubText } from "./Text";
 import useFetch from "@common/hooks/useFetch";
 import { setDefaultsHeaderAuth } from "@common/api/fetch";
-import { localStorageHelper } from "@common/utils/localStorageHelper";
+import { authLocalStorage } from "./localStorage";
 
 const Signup = () => {
   return (
@@ -291,7 +291,6 @@ const Submit = () => {
   };
 
   useEffect(() => {
-    const storage = localStorageHelper("user", { accessToken: "", userId: "" });
     const isFulfilled = !loading && data && data.payload && data.payload.accessToken;
 
     // 회원가입이 성공한 시점
@@ -299,7 +298,7 @@ const Submit = () => {
       const { accessToken, userId } = data.payload;
 
       setDefaultsHeaderAuth(accessToken);
-      storage.set({ accessToken, userId });
+      authLocalStorage.set({ accessToken, userId });
       navigate("/", { replace: true });
     }
   }, [data, loading, navigate]);

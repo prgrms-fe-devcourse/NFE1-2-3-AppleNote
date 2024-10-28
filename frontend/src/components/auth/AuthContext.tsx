@@ -54,18 +54,37 @@ const reducer = (state: AuthState, action: AuthAction): AuthState => {
   }
 };
 
-interface ThemeContextType {
+interface AuthFormContextType {
   state: AuthState;
   dispatch: Dispatch<AuthAction>;
 }
 
-export const AuthContext = createContext<ThemeContextType | undefined>(undefined);
+export const AuthFormContext = createContext<AuthFormContextType | undefined>(undefined);
 
 /**
- * 로그인/회원가입 상태 관리 컨텍스트 프로바이더
+ * 로그인/회원가입 폼 입력 관리 컨텍스트 프로바이더
  */
 export const AuthFormProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialAuth);
 
-  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthFormContext.Provider value={{ state, dispatch }}>{children}</AuthFormContext.Provider>
+  );
 };
+
+interface AuthContextType {
+  accessToken: string;
+  userId: string;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+/**
+ * 사용자 로그인 정보 상태 컨텍스트 프로바이더
+ */
+
+// export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
+//   return (
+//     <AuthFormContext.Provider value={{ state, dispatch }}>{children}</AuthFormContext.Provider>
+//   );
+// };

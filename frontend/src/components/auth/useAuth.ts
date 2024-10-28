@@ -1,8 +1,8 @@
 import { useContext } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthFormContext } from "./AuthContext";
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthFormContext);
 
   if (!context) {
     throw new Error("useAuth must be used within a AuthProvider");

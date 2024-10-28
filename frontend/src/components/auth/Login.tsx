@@ -14,7 +14,7 @@ import AuthButton from "./Button";
 import { AuthTitle, AuthSubTitle } from "./Header";
 import { AuthInput } from "./Input";
 import Checkbox from "@common/components/Checkbox";
-import { AuthProvider } from "./AuthContext";
+import { AuthFormProvider } from "./AuthContext";
 import { useAuth } from "./useAuth";
 import { useEffect } from "react";
 import useFetch from "@common/hooks/useFetch";
@@ -35,10 +35,10 @@ const Login = () => {
     <AuthPageLayout>
       <AuthFormContainer>
         <Header />
-        <AuthProvider>
+        <AuthFormProvider>
           <Form />
           <Message />
-        </AuthProvider>
+        </AuthFormProvider>
       </AuthFormContainer>
     </AuthPageLayout>
   );

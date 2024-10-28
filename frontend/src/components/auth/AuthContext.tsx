@@ -64,7 +64,7 @@ export const AuthContext = createContext<ThemeContextType | undefined>(undefined
 /**
  * 로그인/회원가입 상태 관리 컨텍스트 프로바이더
  */
-export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const AuthFormProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialAuth);
 
   return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;

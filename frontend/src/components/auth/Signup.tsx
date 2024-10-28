@@ -13,7 +13,7 @@ import {
   AuthOptionsContainer as OptionsContainer,
 } from "./Layout";
 import AuthButton from "./Button";
-import { AuthProvider } from "./AuthContext";
+import { AuthFormProvider } from "./AuthContext";
 import Message from "./Message";
 import { useAuth } from "./useAuth";
 import { requestCheckEmail, requestSignup } from "./api";
@@ -27,10 +27,10 @@ const Signup = () => {
     <AuthPageLayout>
       <AuthFormContainer>
         <Header />
-        <AuthProvider>
+        <AuthFormProvider>
           <Form />
           <Message />
-        </AuthProvider>
+        </AuthFormProvider>
       </AuthFormContainer>
     </AuthPageLayout>
   );

@@ -42,10 +42,6 @@ const Header: React.FC = () => {
     navigate("/setting");
   };
 
-  const handleSettingsClick = () => {
-    navigate("/setting");
-  };
-
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>

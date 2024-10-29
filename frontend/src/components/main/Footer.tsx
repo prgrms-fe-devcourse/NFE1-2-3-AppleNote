@@ -8,8 +8,8 @@ const Footer: React.FC = () => (
 );
 
 const FooterContainer = styled.footer`
+  background-color: ${({ theme }) => theme.footer.background};
   width: 100%;
-  background-color: #333;
   color: white;
   text-align: center;
   padding: 1rem;

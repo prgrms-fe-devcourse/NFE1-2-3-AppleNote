@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useParams, useLocation } from "react-router-dom";
 import { fetchPostsByPage, fetchPostsByCategoryId, Post } from "./postApi";
 import Category from "../category/Category";
-import PaginationComponent from "./PaginationComponent";
+import PaginationComponent from "../../common/components/PaginationComponent";
 import HorizontalPostCard from "./HorizontalPostCard";
 import CategorySection from "./CategorySection";
 
@@ -70,7 +70,7 @@ const PostListPage: React.FC = () => {
 
 const Container = styled.div`
   width: 1205px;
-  margin: 0 auto;
+  margin: 40px auto 0;
   padding: 1rem;
 `;
 

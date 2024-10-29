@@ -4,7 +4,7 @@ export interface PostType {
   title: string;
   content: string;
   images: string[];
-  category?: CategoryType[];
+  categories?: CategoryType[];
 }
 
 export type FormDataPost = Omit<PostType, "images"> & {

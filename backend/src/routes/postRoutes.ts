@@ -23,5 +23,6 @@ route.patch(
   postController.update.bind(postController)
 );
 route.delete("/:postId", postController.delete.bind(postController));
+route.post("/:postId/categories", postController.addCategory.bind(postController));
 
 export default route;

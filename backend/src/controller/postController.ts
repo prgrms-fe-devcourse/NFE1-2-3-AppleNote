@@ -10,12 +10,12 @@ export class PostController implements IController {
 
   async create(req: Request, res: Response) {
     try {
-      const { title, content, category } = req.body;
+      const { title, content } = req.body;
       const files = req.files;
       const post = await this.postService.createPost({
         header: req.headers["content-type"],
         user: req.user,
-        data: { title, category, content, images: files },
+        data: { title, content, images: files },
       });
 
       return res.status(201).json(createSuccessResponse(201, post));
@@ -77,6 +77,26 @@ export class PostController implements IController {
       });
 
       return res.status(200).json(createSuccessResponse(200, { isRemove: true }));
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
+      return res.status(500).json(createErrorResponse(500, "Internal server error"));
+    }
+  }
+
+  async addCategory(req: Request, res: Response) {
+    try {
+      const categories = await this.postService.addCategory({
+        postId: req.params.postId,
+        data: { categories: req.body.categories },
+        user: req.user,
+      });
+
+      return res.status(200).json(createSuccessResponse(200, categories));
     } catch (error) {
       if (error instanceof ServiceError) {
         return res

@@ -4,7 +4,7 @@ import { CategoryType } from "@src/types/category";
 
 export interface CategorySchemaType extends CategoryType {
   authorId?: Types.ObjectId;
-  postId?: Types.ObjectId;
+  postId?: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,7 +13,7 @@ const categorySchema = new Schema<CategorySchemaType>(
   {
     name: { type: String, required: true, unique: false },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    postId: { type: Schema.Types.ObjectId, ref: "Post", required: false },
+    postId: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }
 );

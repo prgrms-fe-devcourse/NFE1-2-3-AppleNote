@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
-import searchIcon from "@assets/icons/search-icon.svg";
-import settingsIcon from "@assets/icons/settings.svg";
+import { FaSearch, FaCog, FaPen, FaSun, FaMoon } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
 import { useNavigate } from "react-router-dom";
+import useCustomTheme from "@common/hooks/useCustomTheme";
 
 // 기본 프로필 이미지 경로
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
 const Header: React.FC = () => {
+  const { toggleTheme, themeType } = useCustomTheme();
+  const icon = themeType === "light" ? "/logo.png" : "/logo(darkmode).png";
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -33,23 +34,48 @@ const Header: React.FC = () => {
     navigate("/");
   };
 
+  // UploadButton 클릭 시 포스트 작성 페이지로 이동하는 함수
+  const handleUploadClick = () => {
+    navigate("/create-post");
+  };
+  const handleSettingsClick = () => {
+    navigate("/setting");
+  };
+
+  const handleSettingsClick = () => {
+    navigate("/setting");
+  };
+
   return (
     <StyledHeader>
       <LogoSection onClick={handleLogoClick}>
-        <Logo src="/logo.png" alt="AppleNote Logo" />
+        <Logo src={icon} alt="AppleNote Logo" />
       </LogoSection>
+
+      <ThemeToggleButton onClick={toggleTheme} themeType={themeType}>
+        <IconWrapper>
+          {themeType === "light" ? <FaSun size={30} /> : <FaMoon size={30} />}
+        </IconWrapper>
+        <ButtonText>{themeType === "light" ? "DAY" : "NIGHT"}</ButtonText>
+      </ThemeToggleButton>
 
       <SearchAndIconsSection>
         <SearchBarWrapper>
           <SearchInput placeholder="검색어를 입력하세요" />
           <SearchButton aria-label="Search">
-            <IconImage src={searchIcon} alt="Search Icon" />
+            <FaSearch />
           </SearchButton>
         </SearchBarWrapper>
 
+        <UploadButton onClick={handleUploadClick} aria-label="Upload">
+          <FaPen />
+          <UploadText>Upload</UploadText>
+        </UploadButton>
+
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
-        <SettingsButton aria-label="Settings">
-          <IconImage src={settingsIcon} alt="Settings Icon" />
+
+        <SettingsButton onClick={handleSettingsClick} aria-label="Settings">
+          <FaCog />
         </SettingsButton>
       </SearchAndIconsSection>
     </StyledHeader>
@@ -60,8 +86,6 @@ const StyledHeader = styled.header`
   display: flex;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #f5f5f5;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   gap: 1rem;
 `;
 
@@ -78,6 +102,47 @@ const Logo = styled.img`
   height: 70px;
   max-width: 100%; /* 화면 너비에 맞게 조정 */
   object-fit: contain; /* 비율 유지하며 이미지 조정 */
+`;
+
+/* 테마 토글 버튼 */
+const ThemeToggleButton = styled.button<{ themeType: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 160px;
+  height: 60px;
+  margin-left: 2rem;
+  padding: 10px;
+  border: solid;
+  border-radius: 30px;
+  background-color: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ themeType }) =>
+    themeType === "light" ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "0 4px 8px rgba(255, 255, 255, 0.2)"};
+  color: ${({ theme }) => theme.text.primary};
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    box-shadow 0.3s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+`;
+
+const ButtonText = styled.span`
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 0.5rem;
 `;
 
 /* 검색창 및 아이콘 섹션 */
@@ -100,6 +165,11 @@ const SearchInput = styled.input`
   padding: 0.5rem 2.5rem 0.5rem 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 `;
 
 /* 검색 버튼 */
@@ -108,9 +178,38 @@ const SearchButton = styled.button`
   right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+`;
+
+/* Upload 버튼 */
+const UploadButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: ${({ theme }) => theme.button.background};
+  color: ${({ theme }) => theme.button.text};
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+/* Upload 텍스트 */
+const UploadText = styled.span`
+  font-size: 1rem;
 `;
 
 /* 프로필 아이콘 및 설정 버튼 */
@@ -122,19 +221,19 @@ const ProfileIcon = styled.img`
 `;
 
 const SettingsButton = styled.button`
-  background: none;
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
-  padding: 0;
+  border-radius: 4px;
+  padding: 0.5rem;
   cursor: pointer;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.8;
   }
-`;
-
-const IconImage = styled.img`
-  width: 24px;
-  height: 24px;
 `;
 
 export default Header;

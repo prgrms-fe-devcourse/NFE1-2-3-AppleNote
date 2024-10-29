@@ -22,10 +22,10 @@ const LatestPosts: React.FC = () => {
     getPosts();
   }, []);
 
-  // 포스트 클릭 핸들러 (주석 처리)
-  // const handlePostClick = (postId: string) => {
-  //   navigate(`/posts/${postId}`); // 클릭 시 상세 페이지로 이동 (추후 활성화)
-  // };
+  // 포스트 클릭 핸들러
+  const handlePostClick = (postId: string) => {
+    navigate(`/posts/${postId}`);
+  };
 
   // MoreButton 클릭 핸들러
   const handleMoreButtonClick = () => {
@@ -40,16 +40,14 @@ const LatestPosts: React.FC = () => {
       </Header>
       <PostsGrid>
         {posts.map((post) => (
-          <PostCard
-            key={post.postId}
-            // onClick={() => handlePostClick(post.postId)} // 추후 활성화
-          >
+          <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
             <Thumbnail src={post.images[0]} alt={post.title} />
             <PostTitle>{post.title}</PostTitle>
             <PostContent>{post.content}</PostContent>
           </PostCard>
         ))}
       </PostsGrid>
+      <Divider />
     </Container>
   );
 };
@@ -69,20 +67,24 @@ const Header = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 3rem;
+  font-size: 6rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 3rem;
   margin-left: 20px;
   align-self: flex-start;
 `;
 
 const MoreButton = styled.button`
-  background: none;
+  background-color: ${({ theme }) => theme.background.primary};
+  color: ${({ theme }) => theme.text.primary};
   border: none;
   font-size: 2rem;
   margin-right: 20px;
   cursor: pointer;
   letter-spacing: -0.5rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 
   &:hover {
     opacity: 0.6;
@@ -119,14 +121,29 @@ const Thumbnail = styled.img`
 `;
 
 const PostTitle = styled.h3`
-  margin: 1rem 0 0.5rem;
-  font-size: 1.5rem;
+  display: -webkit-box; /* Flexbox 대체로 줄 제한 */
+  -webkit-line-clamp: 3; /* 최대 줄 수: 3줄 */
+  -webkit-box-orient: vertical; /* 세로 방향 박스 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 줄임표(...) 표시 */
+  white-space: normal; /* 자동 줄바꿈 허용 */
+  margin: 1rem 0 1.5rem;
+  font-size: 2rem;
 `;
 
 const PostContent = styled.p`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box; /* Flexbox 대체로 줄 제한 */
+  -webkit-line-clamp: 2; /* 최대 줄 수: 2줄 */
+  -webkit-box-orient: vertical; /* 세로 방향 박스 */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+  text-overflow: ellipsis; /* 줄임표(...) 표시 */
+  white-space: normal; /* 자동 줄바꿈 허용 */
+`;
+
+const Divider = styled.hr`
+  margin: 5rem 0;
+  border: 1px solid;
+  width: 100%;
 `;
 
 export default LatestPosts;

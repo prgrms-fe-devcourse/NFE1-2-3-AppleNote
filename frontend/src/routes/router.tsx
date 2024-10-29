@@ -12,14 +12,19 @@ import PostPage from "@components/post/PostPage";
 
 import Login from "@components/auth/Login";
 import Signup from "@components/auth/Signup";
+import LandingPage from "@components/landing/LandingPage";
 
 
 // TODO: Creating protected routes
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />, // 상위 레이아웃으로 AppLayout 설정
+    element: <LandingPage />, // 루트 경로에 랜딩페이지 설정
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "/app",
+    element: <AppLayout />, // 상위 레이아웃으로 AppLayout 설정
     children: [
       { path: "/", element: <HomePage /> }, // 메인 페이지
       { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
@@ -38,8 +43,8 @@ const router = createBrowserRouter([
   },
 
   { path: "/login", element: <Login /> }, // 로그인 페이지
-  { path: "/signup", element: <Signup /> }, // 로그인 페이지
-  { path: "/*", element: <NotFoundPage /> }, // 404 페이지
+  { path: "/signup", element: <Signup /> }, // 회원가입 페이지
+  { path: "*", element: <NotFoundPage /> }, // 404 페이지
 ]);
 
 export default router;

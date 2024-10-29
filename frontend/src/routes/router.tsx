@@ -7,9 +7,13 @@ import NotFoundPage from "routes/NotFoundPage.tsx";
 import CreatePostPage from "@components/post/CreatePostPage";
 import PostListPage from "@components/main/PostListPage";
 import SettingPage from "@components/myPage/SettingPage";
+
+import PostPage from "@components/post/PostPage";
+
 import Login from "@components/auth/Login";
 import Signup from "@components/auth/Signup";
 import LandingPage from "@components/landing/LandingPage";
+
 
 // TODO: Creating protected routes
 const router = createBrowserRouter([
@@ -24,6 +28,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> }, // 기본 경로는 빈 문자열로 설정하여 "/app"으로 접근 가능
       { path: "posts", element: <PostListPage /> }, // "/app/posts" 경로
+      { path: "post/:id", element: <PostPage /> },
       { path: "categories/:categoryId", element: <PostListPage /> }, // "/app/categories/:categoryId" 경로
       { path: "create-post", element: <CreatePostPage /> }, // "/app/create-post" 경로
       { path: "setting", element: <SettingPage /> }, // "/app/setting" 경로

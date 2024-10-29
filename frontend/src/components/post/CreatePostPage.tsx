@@ -137,13 +137,14 @@ const Button = styled.div`
   cursor: pointer;
 `;
 const ButtonWrapper = styled.div`
+  width: 600px;
   display: inline-flex;
   justify-content: flex-end;
   gap: 10px;
 `;
 
 const ImageWrapper = styled.div`
-  width: 100%;
+  width: 600px;
   height: 300px;
   background-color: gray;
   display: flex;
@@ -153,7 +154,7 @@ const ImageWrapper = styled.div`
 `;
 
 const ImageInput = styled.input`
-  width: 100%;
+  width: 600px;
   height: 100%;
   opacity: 0;
   position: absolute;
@@ -162,7 +163,7 @@ const ImageInput = styled.input`
 `;
 
 const Image = styled.img`
-  width: 100%;
+  width: 600px;
   height: 300px;
   object-fit: cover;
 `;
@@ -175,23 +176,25 @@ const PlaceholderText = styled.div`
 `;
 
 const ContentText = styled.textarea`
-  width: 100%;
+  width: 600px;
   height: 300px;
   resize: none;
 `;
 
 const TitleInput = styled.input`
-  width: 100%;
+  width: 600px;
 `;
 
 const Title = styled.div`
+  width: 600px;
   font-size: 20px;
   color: gray;
 `;
 
 const Wrapper = styled.div`
-  width: 600px;
+  width: 100%;
   display: inline-flex;
+  align-items: center;
   flex-direction: column;
   gap: 10px;
 `;

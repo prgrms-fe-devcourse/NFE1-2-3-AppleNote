@@ -4,7 +4,7 @@ import styled, { createGlobalStyle } from "styled-components";
 import Apple1 from "../../assets/images/apple.png";
 import Apple3 from "../../assets/images/apple3.jpg";
 import Apple4 from "../../assets/images/apple4.jpg";
-import Paper from "../../assets/images/papers.png";
+import Paper from "../../assets/images/paper.png";
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+KR:wght@900&display=swap');
@@ -37,7 +37,7 @@ const LandingPage: React.FC = () => {
         <Title>APPLE</Title>
         <Title>NOTE</Title>
         <AppleImageContainer onClick={toggleImagePosition}>
-          <AppleImage src={Apple1} alt="Apple1" isMoved={isMoved} />
+          <AppleImage src={Apple1} alt="Apple1" />
         </AppleImageContainer>
       </LeftSection>
       <RightSection>
@@ -70,6 +70,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   background-color: #fff;
+
+  @media (max-width: 1000px) {
+    flex-direction: column; /* 작은 화면에서는 세로로 배치 */
+    height: auto;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -81,6 +86,11 @@ const LeftSection = styled.div`
   position: relative;
   overflow: hidden;
   align-items: center;
+
+  @media (max-width: 1000px) {
+    flex-basis: auto; /* 작은 화면에서는 자동 크기 */
+    width: 100%;
+  }
 `;
 
 const Title = styled.h1`
@@ -89,6 +99,13 @@ const Title = styled.h1`
   font-weight: 700;
   color: #333;
   font-family: "Merriweather", serif;
+
+  @media (max-width: 1272px) {
+    font-size: 5.5rem;
+  }
+  @media (max-width: 1000px) {
+    font-size: 4rem; /* 작은 화면에서는 폰트 크기 축소 */
+  }
 `;
 
 const AppleImageContainer = styled.div`
@@ -96,6 +113,14 @@ const AppleImageContainer = styled.div`
   overflow: visible;
   width: 600px;
   bottom: 0px;
+
+  @media (max-width: 1272px) {
+    width: 500px;
+  }
+
+  @media (max-width: 1000px) {
+    width: 80%; /* 작은 화면에서는 크기 축소 */
+  }
 `;
 
 const AppleImage = styled.img`
@@ -118,8 +143,15 @@ const RightSection = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
+
+  @media (max-width: 1000px) {
+    flex-basis: auto;
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
 `;
 
 const Div1 = styled.div`
@@ -129,79 +161,105 @@ const Div1 = styled.div`
 
 const Image1 = styled.img`
   position: relative;
-  width: 55%;
+  width: 600px;
   height: auto;
   object-fit: cover;
-  margin-top: 2vh;
-  margin-left: 2vw;
+  padding: 20px;
   z-index: 1;
+  min-width: 500px;
+
+  @media (max-width: 1000px) {
+    width: 90%;
+    min-width: 200px;
+  }
 `;
 
 const ButtonGroup = styled.div`
   position: relative;
-  gap: 15px;
   opacity: 1;
-  margin-top: 20px;
-  margin-left: 15px;
+  margin: 30px;
 `;
 
 const Button = styled.button`
   position: relative;
-  padding: 10px 10px;
-  width: 100px;
-  font-size: 1rem;
-  color: #fff;
-  background-color: #a9a9a9;
+  width: 120px;
+  font-size: 1.5rem;
+  color: black;
+  background-color: transparent;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
   transition: 0.3s;
-
-  &:hover {
-    background-color: #555;
-  }
+  cursor: pointer;
+  font-family: "Merriweather", serif;
 `;
 
 const Image2 = styled.img`
   position: relative;
-  width: 50%;
+  width: 400px;
   height: auto;
   object-fit: cover;
   margin-top: -30vh;
-  margin-left: 30vw;
+  margin-left: 35vw;
+  min-width: 10%;
+
+  @media (max-width: 1272px) {
+    display: none;
+  }
+
+  @media (max-width: 1000px) {
+    margin-bottom: 20px;
+    display: none;
+  }
 `;
 
 const Subtitle1 = styled.h2`
   position: relative;
-  margin-top: -7vh;
-  margin-left: -51vw;
+  margin-left: 1vw;
   font-size: 2rem;
   font-weight: 700;
   color: #333;
   font-family: "Merriweather", serif;
+  @media (max-width: 1000px) {
+    margin-left: 3vw;
+    text-align: center; /* 텍스트 가운데 정렬 */
+  }
 `;
 
 const Subtitle2 = styled.h2`
   position: relative;
   margin-top: -1vh;
-  margin-left: -39.5vw;
+  margin-left: 1vw;
   font-size: 2rem;
   font-weight: 700;
   color: #333;
   font-family: "Merriweather", serif;
   border-bottom: 1.5px solid;
+
+  @media (max-width: 1000px) {
+    margin-left: 3vw;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    border-bottom: none; /* 작은 화면에서 하단 테두리 제거 */
+  }
 `;
 
 const ImageContainer = styled.div`
   position: relative;
-  width: 80%;
-  height: 70vh;
-  overflow: hidden;
-  margin-top: -5vh;
+  width: 100%;
+  height: auto;
+  min-width: 400px;
+  margin-top: -85px;
+
+  @media (max-width: 1000px) {
+    width: 100%; /* 작은 화면에서 너비 조정 */
+    margin-top: 0;
+    margin-left: 0;
+  }
 `;
 
 const Image3 = styled.img`
   position: relative;
   object-fit: cover;
-  margin-top: -25vh;
+
+  @media (max-width: 1000px) {
+    width: 100%;
+  }
 `;

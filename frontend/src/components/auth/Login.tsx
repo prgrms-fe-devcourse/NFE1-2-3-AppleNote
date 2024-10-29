@@ -167,7 +167,7 @@ const Submit = () => {
     if (isFulfilled) {
       login(data, {
         onSuccess: () => {
-          navigate("/", { replace: true });
+          navigate("/home", { replace: true });
         },
       });
     }

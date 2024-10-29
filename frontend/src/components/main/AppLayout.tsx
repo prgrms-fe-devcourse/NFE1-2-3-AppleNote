@@ -8,10 +8,15 @@ import Footer from "@components/main/Footer";
 const AppLayout: React.FC = () => {
   const location = useLocation();
 
-  // 현재 경로가 "/"일 때만 Banner를 표시, 추후 설정 페이지의 경로까지 추가해야함
-  const showBanner = location.pathname === "/" || location.pathname === "/setting";
+  // 루트 경로('/')에서는 랜딩 페이지를 보여주고 다른 페이지는 Outlet을 통해 렌더링
+  if (location.pathname === "/") {
+    return <Outlet />;
+  }
 
-  // 포스트 상세 페이지에서는 Footer 숨기기(추후 랜딩 페이지에서도 숨기도록 추가 예정)
+  // 현재 경로가 "/home" 혹은 "/setting"일 때만 Banner를 표시
+  const showBanner = location.pathname === "/home" || location.pathname === "/setting";
+
+  // 포스트 상세 페이지에서는 Footer 숨기기
   const hideFooter = ["/posts/:postId"].some((path) =>
     location.pathname.match(new RegExp(`^${path.replace(":postId", "\\d+")}$`))
   );

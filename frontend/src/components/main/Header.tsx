@@ -32,7 +32,7 @@ const Header: React.FC = () => {
 
   // 로고 클릭 시 홈으로 이동하는 함수
   const handleLogoClick = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   // UploadButton 클릭 시 포스트 작성 페이지로 이동하는 함수

@@ -17,25 +17,19 @@ import LandingPage from "@components/landing/LandingPage";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LandingPage />, // 루트 경로에 랜딩페이지 설정
+    element: <AppLayout />, // 루트에 AppLayout을 그대로 유지
     errorElement: <ErrorPage />,
-  },
-  {
-    path: "/app",
-    element: <AppLayout />, // 상위 레이아웃으로 AppLayout 설정
     children: [
-      { path: "/", element: <HomePage /> }, // 메인 페이지
+      { path: "/", element: <LandingPage /> }, // 루트 경로에서 랜딩 페이지 표시
+      { path: "/home", element: <HomePage /> }, // 메인 페이지
       { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
-      { path: "/post/:id", element: <PostPage /> }, //포스트 상세 페이지
+      { path: "/posts/:id", element: <PostPage /> }, // 포스트 상세 페이지
       { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
       { path: "/search", element: <SearchResultPage /> }, // 검색 페이지
-
       { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
-
       { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],
   },
-
   { path: "/login", element: <Login /> }, // 로그인 페이지
   { path: "/signup", element: <Signup /> }, // 회원가입 페이지
   { path: "*", element: <NotFoundPage /> }, // 404 페이지

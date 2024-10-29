@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FaSearch, FaCog, FaPen, FaSun, FaMoon } from "react-icons/fa";
 import { fetchUserData } from "./headerApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useCustomTheme from "@common/hooks/useCustomTheme";
 
 // 기본 프로필 이미지 경로
@@ -14,6 +14,7 @@ const Header: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState<string>(""); // 검색 입력 상태
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 경로 감지
 
   // 사용자 정보 API 호출 및 프로필 이미지 설정
   useEffect(() => {
@@ -29,6 +30,13 @@ const Header: React.FC = () => {
 
     getUserData();
   }, []);
+
+  // 검색어 초기화: 검색 페이지에서 벗어날 때 실행
+  useEffect(() => {
+    if (!location.pathname.startsWith("/search")) {
+      setSearchInput(""); // 검색어 초기화
+    }
+  }, [location.pathname]); // 경로 변경 감지
 
   // 로고 클릭 시 홈으로 이동하는 함수
   const handleLogoClick = () => {

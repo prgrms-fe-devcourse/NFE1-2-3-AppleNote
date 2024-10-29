@@ -4,6 +4,7 @@ import { fetchPost } from "./postAPI";
 import styled from "styled-components";
 import { LuPencilLine } from "react-icons/lu";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,10 +37,28 @@ const PostPage = () => {
         <LuPencilLine onClick={() => {}} size={30} />
         <FaRegTrashCan onClick={() => {}} size={30} />
       </IconWrapper>
+      <NaviWrapper>
+        <NaviContent>
+          <IoIosArrowBack size={50} color="#fff" />
+        </NaviContent>
+        <NaviContent>
+          <IoIosArrowForward size={50} color="#fff" />
+        </NaviContent>
+      </NaviWrapper>
     </Wrapper>
   );
 };
 
+const NaviContent = styled.div`
+  width: 50px;
+  background-color: black;
+`;
+const NaviWrapper = styled.div`
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+  margin-top: 50px;
+`;
 const IconWrapper = styled.div`
   width: 100%;
   display: flex;

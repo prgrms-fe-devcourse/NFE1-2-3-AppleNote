@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { fetchAllPosts, Post } from "../main/postApi";
 import HorizontalPostCard from "../main/HorizontalPostCard";
-import PaginationComponent from "../main/PaginationComponent";
+import PaginationComponent from "../../common/components/PaginationComponent";
 
 const SearchResultPage: React.FC = () => {
   const location = useLocation();

@@ -36,6 +36,9 @@ export const lightTheme: DefaultTheme = {
     background: "#000000",
     text: "#ffffff",
   },
+  boxShadow: {
+    primary: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  },
   footer: {
     background: "#333333",
   },
@@ -54,6 +57,9 @@ export const darkTheme: DefaultTheme = {
   button: {
     background: "#ffffff",
     text: "#000000",
+  },
+  boxShadow: {
+    primary: "0 4px 8px rgba(255, 255, 255, 0.2)",
   },
   footer: {
     background: "#000000",

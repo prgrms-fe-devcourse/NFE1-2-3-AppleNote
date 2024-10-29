@@ -9,6 +9,7 @@ export class CategoryController {
   async create(req: Request, res: Response) {
     try {
       const category = await this.categoryService.createCategory({
+        user: req.user,
         data: req.body,
       });
 

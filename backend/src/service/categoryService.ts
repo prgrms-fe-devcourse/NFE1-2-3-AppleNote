@@ -9,6 +9,7 @@ export interface ICategoryService {
   createCategory(arg: CreateCategoryArg): Promise<CreateCategoryReturn>;
   getCategories(arg: GetCategoriesArg): Promise<GetCategoryReturn>;
   updateCategory(arg: UpdateCategoryArg): Promise<UpdateCategoryReturn>;
+  deleteCategory(arg: DeleteCategoryArg): Promise<void>;
 }
 
 type RequestUser = IUserWithId | undefined;
@@ -22,6 +23,7 @@ type CreateCategoryArg = {
   user: RequestUser;
 };
 type UpdateCategoryArg = CreateCategoryArg & { categoryId: string };
+type DeleteCategoryArg = GetCategoriesArg & { categoryId: string };
 
 type GetCategoryReturn = CategorySchemaType[];
 type UpdateCategoryReturn = CategorySchemaType & { categoryId: Types.ObjectId };
@@ -59,6 +61,7 @@ export class CategoryService implements ICategoryService {
       updatedAt: category.updatedAt,
     };
   }
+
   async getCategories({ user }: GetCategoriesArg): Promise<GetCategoryReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
@@ -75,6 +78,7 @@ export class CategoryService implements ICategoryService {
 
     return mappedPosts;
   }
+
   async updateCategory({
     user,
     data,
@@ -113,5 +117,27 @@ export class CategoryService implements ICategoryService {
       createdAt: updatedCategory.createdAt,
       updatedAt: updatedCategory.updatedAt,
     };
+  }
+
+  async deleteCategory({ user, categoryId }: DeleteCategoryArg): Promise<void> {
+    // categoryId 검증
+    if (!validators.isObjectId(categoryId)) {
+      throw new ServiceError("Invalid categoryId", 404);
+    }
+
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const deletedCategory = await Category.findOneAndDelete({
+      _id: categoryId,
+      authorId: user.userId,
+    });
+
+    // 포스트 검증
+    if (!deletedCategory) {
+      throw new ServiceError("Failed to delete category item", 404);
+    }
   }
 }

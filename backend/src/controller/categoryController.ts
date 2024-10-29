@@ -24,4 +24,20 @@ export class CategoryController {
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
   }
+
+  async read(req: Request, res: Response) {
+    try {
+      const categories = await this.categoryService.getCategories({ user: req.user });
+
+      return res.status(200).json(createSuccessResponse(200, categories));
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
+      return res.status(500).json(createErrorResponse(500, "Internal server error"));
+    }
+  }
 }

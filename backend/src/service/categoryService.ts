@@ -7,17 +7,21 @@ import { IUserWithId } from "@src/models/userModel";
 
 export interface ICategoryService {
   createCategory(arg: CreateCategoryArg): Promise<CreateCategoryReturn>;
-  // getCategories(): Promise<GetCategories>;
+  getCategories(arg: getCategoriesArg): Promise<GetCategories>;
 }
+
 type RequestUser = IUserWithId | undefined;
 type RequestData = Partial<CategorySchemaType>;
 
+type getCategoriesArg = {
+  user: RequestUser;
+};
 type CreateCategoryArg = {
   data: RequestData;
   user: RequestUser;
 };
 
-// type GetCategories = CreateCategoryReturn[];
+type GetCategories = CreateCategoryReturn[];
 type CreateCategoryReturn = CategorySchemaType & { categoryId: Types.ObjectId };
 
 export class CategoryService implements ICategoryService {
@@ -52,7 +56,20 @@ export class CategoryService implements ICategoryService {
       updatedAt: category.updatedAt,
     };
   }
-  // getCategories(): Promise<GetCategories> {
+  async getCategories({ user }: getCategoriesArg): Promise<GetCategories> {
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
 
-  // }
+    const categories = await Category.find({ authorId: user.userId }).lean();
+    const mappedPosts = categories.map((category) => ({
+      categoryId: category._id,
+      name: category.name,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+    }));
+
+    return mappedPosts;
+  }
 }

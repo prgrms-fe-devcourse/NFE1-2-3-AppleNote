@@ -7,6 +7,7 @@ const categoryService = new CategoryService();
 const categoryController = new CategoryController(categoryService);
 
 //categories
+route.get("/", categoryController.read.bind(categoryController));
 route.post("/", categoryController.create.bind(categoryController));
 
 export default route;

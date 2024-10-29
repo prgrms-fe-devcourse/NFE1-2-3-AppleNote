@@ -35,7 +35,13 @@ export class PostController implements IController {
       const posts = await this.postService.getPosts({ user: req.user });
 
       return res.status(200).json(createSuccessResponse(200, posts));
-    } catch {
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
   }

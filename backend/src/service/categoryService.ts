@@ -33,7 +33,7 @@ export class CategoryService implements ICategoryService {
     }
 
     // 카테고리 중복검증
-    const categoryExist = await Category.findOne({ name: data.name });
+    const categoryExist = await Category.findOne({ name: data.name, authorId: user.userId });
 
     if (categoryExist) {
       throw new ServiceError("Category already exists", 409);

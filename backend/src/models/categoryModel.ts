@@ -11,7 +11,7 @@ export interface CategorySchemaType extends CategoryType {
 
 const categorySchema = new Schema<CategorySchemaType>(
   {
-    name: { type: String, required: true, unique: true },
+    name: { type: String, required: true, unique: false },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     postId: { type: Schema.Types.ObjectId, ref: "Post", required: false },
   },

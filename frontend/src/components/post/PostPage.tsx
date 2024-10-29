@@ -54,13 +54,13 @@ const NaviContent = styled.div`
   background-color: black;
 `;
 const NaviWrapper = styled.div`
-  width: 100%;
+  width: 90%;
   display: inline-flex;
   justify-content: space-between;
   margin-top: 50px;
 `;
 const IconWrapper = styled.div`
-  width: 100%;
+  width: 600px;
   display: flex;
   gap: 15px;
 `;
@@ -77,7 +77,7 @@ const PostInfo = styled.div`
   color: gray;
 `;
 const PostInfoWrapper = styled.div`
-  width: 100%;
+  width: 600px;
   display: inline-flex;
   justify-content: flex-end;
   gap: 20px;
@@ -87,7 +87,7 @@ const Title = styled.div`
   font-weight: 900;
 `;
 const Wrapper = styled.div`
-  width: 600px;
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;

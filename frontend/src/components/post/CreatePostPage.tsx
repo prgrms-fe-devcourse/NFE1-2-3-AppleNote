@@ -70,7 +70,7 @@ const CreatePostPage: React.FC = () => {
             <ButtonWrapper>
               <Button
                 onClick={() => {
-                  navigate("/");
+                  navigate(-1);
                 }}>
                 Yes
               </Button>

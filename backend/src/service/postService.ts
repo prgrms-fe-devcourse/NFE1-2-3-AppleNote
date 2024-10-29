@@ -124,7 +124,7 @@ export class PostService implements IPostService {
       throw new ServiceError("There are no items with that userId.", 404);
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(
+    const updatedPost = await Post.findOneAndUpdate(
       { authorId: user.userId, _id: postId },
       validators.cleanedValue(data),
       { new: true, runValidators: true }
@@ -209,7 +209,7 @@ export class PostService implements IPostService {
       throw new ServiceError("Category already exists", 409);
     }
 
-    const updatedCategory = await Category.findByIdAndUpdate(
+    const updatedCategory = await Category.findOneAndUpdate(
       { _id: categoryId, authorId: user.userId },
       { $addToSet: { postId } },
       { new: true, runValidators: true }

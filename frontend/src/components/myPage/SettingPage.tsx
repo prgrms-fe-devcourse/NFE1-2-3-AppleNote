@@ -6,10 +6,14 @@ import { User } from "./userApi";
 import ChangePw from "./ChangePw";
 import { useAuth } from "@components/auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import NameEditModal from "./NameEditModal";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
+  // const [isImageModalOpen, setImageModalOpen] = useState(false);
+  const [isNameModalOpen, setNameModalOpen] = useState(false);
+  const [name, setName] = useState(user?.name ?? "");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,34 +29,46 @@ const SettingPage = () => {
     setStatus(true);
   };
   const signout = async () => {
-    try {
-      const isDeleted = await deleteUser();
+    const confirmed = window.confirm("회원탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다."); // 회원탈퇴 확인
 
-      if (isDeleted === true) {
-        alert("회원탈퇴 완료");
-        navigate("/");
-      } else {
-        alert("회원 탈퇴에 실패했습니다.");
+    if (confirmed) {
+      try {
+        const isDeleted = await deleteUser();
+
+        if (isDeleted === true) {
+          alert("회원탈퇴 완료");
+          navigate("/");
+        } else {
+          alert("회원 탈퇴에 실패했습니다.");
+        }
+      } catch {
+        alert("회원 탈퇴 중 오류 발생");
       }
-    } catch {
-      alert("회원 탈퇴 중 오류 발생");
     }
   };
+  // const editImg = () => {
+  //   setImageModalOpen(true); // 이미지 모달 열기
+  // };
 
-  const editImg = () => ({});
-  const editName = () => ({});
+  const editName = () => {
+    setNameModalOpen(true); // 이름 모달 열기
+  };
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout({
-      onSuccess: () => {
-        alert("로그아웃 되었습니다.");
-        navigate("/");
-      },
-      onFailure: () => {
-        alert("로그아웃 실패");
-      },
-    });
+    const confirmed = window.confirm("로그아웃하시겠습니까?"); // 로그아웃 확인
+
+    if (confirmed) {
+      logout({
+        onSuccess: () => {
+          alert("로그아웃 되었습니다.");
+          navigate("/");
+        },
+        onFailure: () => {
+          alert("로그아웃 실패");
+        },
+      });
+    }
   };
 
   return (
@@ -63,9 +79,9 @@ const SettingPage = () => {
         <Wrapper>
           <ProfileWrapper>
             <ImgWrapper>
-              <UserImg src={user?.profileImg || DEFAULT_PROFILE_IMAGE} />
+              <UserImg src={user?.profileImage || DEFAULT_PROFILE_IMAGE} />
 
-              <ImgEditBtn onClick={editImg}>
+              <ImgEditBtn>
                 <img src={edit} />
               </ImgEditBtn>
             </ImgWrapper>
@@ -83,11 +99,38 @@ const SettingPage = () => {
               <Button onClick={handleLogout}>로그아웃</Button>
             </UserProfile>
           </ProfileWrapper>
+          {/* {isImageModalOpen && <ImageEditModal onClose={() => setImageModalOpen(false)} />} */}
+          {isNameModalOpen && (
+            <NameEditModal
+              name={name}
+              setName={setName}
+              onClose={() => {
+                setNameModalOpen(false);
+              }}
+            />
+          )}
         </Wrapper>
       )}
     </>
   );
 };
+
+//  모달 인터페이스
+// interface ImageEditModalProps {
+//   onClose: () => void;
+// }
+
+// //프로필 이미지 수정 모달
+// const ImageEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => (
+//   <ModalOverlay>
+//     <ModalContent>
+//       <h3>프로필 이미지 변경</h3>
+//       <button>확인</button>
+//       <button onClick={onClose}>닫기</button>
+//     </ModalContent>
+//   </ModalOverlay>
+// );
+
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;

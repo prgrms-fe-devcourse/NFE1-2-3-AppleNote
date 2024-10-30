@@ -8,21 +8,32 @@ export type Post = {
   authorId: string;
   category: string[];
 };
-export type FetchPostPayload = {
+export type FetchPostResponse = {
   statusCode: number;
   payload: Post;
 };
 
-export type DeletePostPayload = {
+export type DeletePostResponse = {
   statueCode: number;
   payload: {
     isRemove: boolean;
   };
 };
 
-export type PatchPostPayload = {
+export type PatchPostResponse = {
   statusCode: number;
   payload: Post;
+};
+
+export type CreatePostResponse = {
+  statusCode: number;
+  payload: Post;
+};
+
+export type PostPayload = {
+  title?: string;
+  content?: string;
+  images?: string[];
 };
 
 /**
@@ -31,7 +42,7 @@ export type PatchPostPayload = {
  * @param id
  * @returns post data
  */
-export const fetchPost = async (id: string): Promise<FetchPostPayload> => {
+export const fetchPost = async (id: string): Promise<FetchPostResponse> => {
   const URL = `/posts/${id}`;
   const { data } = await httpClient.get(URL);
 
@@ -44,7 +55,7 @@ export const fetchPost = async (id: string): Promise<FetchPostPayload> => {
  * @param id
  * @returns isRemove 값 반환
  */
-export const deletePost = async (id: string): Promise<DeletePostPayload> => {
+export const deletePost = async (id: string): Promise<DeletePostResponse> => {
   const URL = `/posts/${id}`;
   const { data } = await httpClient.delete(URL);
 
@@ -57,9 +68,22 @@ export const deletePost = async (id: string): Promise<DeletePostPayload> => {
  * @param id
  * @returns 수정된 post data
  */
-export const patchPost = async (id: string): Promise<PatchPostPayload> => {
+export const patchPost = async (id: string, payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts/${id}`;
-  const { data } = await httpClient.patch(URL);
+  const { data } = await httpClient.patch(URL, payload);
+
+  return data;
+};
+
+/**
+ * POST /posts post data 생성하기
+ * @requires Authorization Bearer {access-token}
+ * @param payload postform 양식
+ * @returns 생성된 post data
+ */
+export const createPost = async (payload: PostPayload): Promise<PatchPostResponse> => {
+  const URL = `/posts`;
+  const { data } = await httpClient.post(URL, payload);
 
   return data;
 };

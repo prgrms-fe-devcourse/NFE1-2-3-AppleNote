@@ -32,9 +32,9 @@ export class PostController implements IController {
 
   async read(req: Request, res: Response) {
     try {
-      const posts = await this.postService.getPosts({ user: req.user });
+      const postList = await this.postService.getPostList({ user: req.user });
 
-      return res.status(200).json(createSuccessResponse(200, posts));
+      return res.status(200).json(createSuccessResponse(200, postList));
     } catch (error) {
       if (error instanceof ServiceError) {
         return res
@@ -117,6 +117,25 @@ export class PostController implements IController {
       });
 
       return res.status(200).json(createSuccessResponse(200, categories));
+    } catch (error) {
+      if (error instanceof ServiceError) {
+        return res
+          .status(error.statusCode)
+          .json(createErrorResponse(error.statusCode, error.message));
+      }
+
+      return res.status(500).json(createErrorResponse(500, "Internal server error"));
+    }
+  }
+
+  async getPostDetail(req: Request, res: Response) {
+    try {
+      const post = await this.postService.getPost({
+        postId: req.params.postId,
+        user: req.user,
+      });
+
+      return res.status(200).json(createSuccessResponse(200, post));
     } catch (error) {
       if (error instanceof ServiceError) {
         return res

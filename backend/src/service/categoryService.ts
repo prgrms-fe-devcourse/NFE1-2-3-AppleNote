@@ -21,8 +21,9 @@ type WithCategoryId = { categoryId: string };
 type WithUser = { user: RequestUser };
 type Post = PostSchemaType & { postId: Types.ObjectId };
 type WithPosts = {
-  posts: Array<Post>;
+  posts: Array<Omit<Post, "categories">>;
 };
+type CategoryWithId = RequestData & { categoryId: Types.ObjectId };
 
 // 요청 인자 타입
 type GetCategoriesArg = WithUser;
@@ -32,7 +33,6 @@ type DeleteCategoryArg = GetCategoriesArg & WithCategoryId;
 type GetPostsByCategoryArg = GetCategoriesArg & WithCategoryId;
 
 // 반환 타입
-type CategoryWithId = CategorySchemaType & { categoryId: Types.ObjectId };
 type GetCategoryReturn = CategoryWithId[];
 type CreateCategoryReturn = CategoryWithId;
 type UpdateCategoryReturn = CategoryWithId;

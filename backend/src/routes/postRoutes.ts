@@ -17,6 +17,7 @@ route.post(
   upload.array("images", IMAGE_MAX_COUNT),
   postController.create.bind(postController)
 );
+route.get("/:postId", postController.getPostDetail.bind(postController));
 route.patch(
   "/:postId",
   upload.array("images", IMAGE_MAX_COUNT),

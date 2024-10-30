@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 import Post, { FormDataPost, PostSchemaType } from "@src/models/postModel";
 import User from "@src/models/userModel";
@@ -9,11 +9,12 @@ import { IUserWithId } from "@src/models/userModel";
 
 export interface IPostService {
   createPost(arg: CreatePostArg): Promise<CreatePostReturn>;
-  getPosts(arg: GetPostsArg): Promise<GetPostReturn>;
+  getPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
   updatePost(arg: UpdatePostArg): Promise<UpdatePostReturn>;
   deletePost(arg: DeletePostArg): Promise<void>;
   addPostFromCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
   deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
+  getPost(arg: GetPostArg): Promise<GetPostReturn>;
 }
 
 // 재사용 가능한 기본 타입
@@ -27,19 +28,23 @@ type PostWithoutId = Omit<PostSchemaType, "_id">;
 type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
 // 요청 인자 타입
-type GetPostsArg = WithUser;
+type GetPostListArg = WithUser;
 type CreatePostArg = WithUser & { header: RequestHeader; data: RequestData };
 type UpdatePostArg = CreatePostArg & WithPostId;
 type DeletePostArg = WithUser & WithPostId;
 type AddCategoryArg = WithUser & WithPostId & { data: WithCategories };
 type RemoveCategoryArg = WithUser & WithPostId & { data: WithCategories };
+type GetPostArg = WithUser & WithPostId;
 
 // 반환 타입
-type GetPostReturn = PostWithoutId[];
-type CreatePostReturn = PostWithId;
-type UpdatePostReturn = PostWithId;
+type GetPostListReturn = Omit<PostWithId, "categories">[];
+type CreatePostReturn = Omit<PostWithId, "categories">;
+type UpdatePostReturn = Omit<PostWithId, "categories">;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
+type GetPostReturn = Omit<PostSchemaType, "categories"> & { postId: Types.ObjectId } & {
+  categories: { name: string; categoryId: Types.ObjectId; createdAt: Date; updatedAt: Date }[];
+};
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
@@ -83,14 +88,14 @@ export class PostService implements IPostService {
 
   // DONE: 사용자 구분하기 [V]
   // TODO: 카테고리 참조
-  async getPosts({ user }: GetPostsArg): Promise<GetPostReturn> {
+  async getPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const posts = await Post.find({ authorId: user.userId }).lean();
-    const mappedPosts = posts.map((post) => ({
+    const postList = await Post.find({ authorId: user.userId }).lean();
+    const mappedPosts = postList.map((post) => ({
       postId: post._id,
       title: post.title,
       content: post.content,
@@ -161,11 +166,40 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const deletedPost = await Post.findOneAndDelete({ _id: postId, authorId: user.userId });
+    const session = await mongoose.startSession();
 
-    // 포스트 검증
-    if (!deletedPost) {
-      throw new ServiceError("Failed to delete post item", 404);
+    session.startTransaction();
+
+    try {
+      const isExistPost = await Post.exists({ _id: postId, authorId: user.userId });
+
+      // 포스트 검증
+      if (!isExistPost) {
+        throw new ServiceError("No posts with that postId were found.", 404);
+      }
+
+      // 포스트 삭제
+      const deletedPost = await Post.deleteOne({ _id: postId, authorId: user.userId }, { session });
+
+      if (deletedPost.deletedCount === 0) {
+        throw new ServiceError("Failed to delete the post.", 404);
+      }
+
+      // 카테고리에서 포스트 ID 제거
+      await Category.updateMany(
+        { posts: postId, authorId: user.userId },
+        { $pull: { posts: postId } },
+        { session }
+      );
+
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+
+      // 예외 던지기
+      throw error;
+    } finally {
+      await session.endSession();
     }
   }
 
@@ -212,18 +246,40 @@ export class PostService implements IPostService {
       throw new ServiceError("Category already exists", 409);
     }
 
-    const updatedCategory = await Category.findOneAndUpdate(
-      { _id: categoryId, authorId: user.userId },
-      { $addToSet: { posts: postId } },
-      { new: true, runValidators: true }
-    );
+    const session = await mongoose.startSession();
 
-    // 카테고리 업데이트 여부
-    if (!updatedCategory) {
-      throw new ServiceError("Failed to update category item", 404);
+    session.startTransaction();
+
+    try {
+      // 카테고리 업데이트 (카테고리의 posts 배열에 포스트 ID 추가)
+      const updatedCategory = await Category.findOneAndUpdate(
+        { _id: categoryId, authorId: user.userId },
+        { $addToSet: { posts: postId } },
+        { new: true, runValidators: true, session }
+      );
+
+      // 포스트에 카테고리 ID 추가
+      const updatedPost = await Post.findOneAndUpdate(
+        { _id: postId, authorId: user.userId },
+        { categories: categoryId }, // 포스트에 카테고리 ID 업데이트
+        { new: true, runValidators: true, session }
+      );
+
+      if (!updatedCategory || !updatedPost) {
+        throw new ServiceError("Failed to update item", 404);
+      }
+
+      await session.commitTransaction();
+
+      return { categories: [categoryId] };
+    } catch (error) {
+      await session.abortTransaction();
+
+      // 예외 던지기
+      throw error;
+    } finally {
+      await session.endSession();
     }
-
-    return { categories: [categoryId] };
   }
 
   async deletePostFromCategory({
@@ -273,17 +329,81 @@ export class PostService implements IPostService {
       throw new ServiceError("No post information in the category", 404);
     }
 
-    const updatedCategory = await Category.findOneAndUpdate(
-      { posts: postId, authorId: user.userId },
-      { $pull: { posts: postId } },
-      { new: true }
-    );
+    const session = await mongoose.startSession();
 
-    // 카테고리 업데이트 여부
-    if (!updatedCategory) {
-      throw new ServiceError("Failed to update category item", 404);
+    session.startTransaction();
+
+    try {
+      // 카테고리에서 포스트 ID 제거
+      const updatedCategory = await Category.findOneAndUpdate(
+        { _id: categoryId, authorId: user.userId },
+        { $pull: { posts: postId } }, // 카테고리의 posts 배열에서 포스트 ID 제거
+        { new: true, runValidators: true, session }
+      );
+
+      // 포스트에서 카테고리 ID 제거
+      const updatedPost = await Post.findOneAndUpdate(
+        { _id: postId, authorId: user.userId },
+        { $unset: { categories: "" } }, // 포스트에서 categoryId 필드 제거
+        { new: true, runValidators: true, session }
+      );
+
+      if (!updatedCategory || !updatedPost) {
+        throw new ServiceError("Failed to update item", 404);
+      }
+
+      await session.commitTransaction();
+
+      return { categories: [categoryId] };
+    } catch (error) {
+      await session.abortTransaction();
+
+      // 예외 던지기
+      throw error;
+    } finally {
+      await session.endSession();
+    }
+  }
+
+  async getPost({ postId, user }: GetPostArg): Promise<GetPostReturn> {
+    // postId 검증
+    if (!validators.isObjectId(postId)) {
+      throw new ServiceError("Invalid postId", 404);
     }
 
-    return { categories: [categoryId] };
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const post = await Post.findOne({ _id: postId, authorId: user.userId })
+      .populate<{
+        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
+      }>("categories")
+      .lean();
+
+    if (!post) {
+      throw new ServiceError("There are no items with that postId.", 404);
+    }
+
+    return {
+      postId: post._id,
+      title: post.title,
+      content: post.content,
+      images: post.images,
+      authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      categories: post.categories
+        ? [
+            {
+              name: post.categories.name,
+              categoryId: post.categories._id,
+              createdAt: post.categories.createdAt,
+              updatedAt: post.categories.updatedAt,
+            },
+          ]
+        : [],
+    };
   }
 }

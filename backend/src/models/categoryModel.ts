@@ -4,10 +4,10 @@ import { PostSchemaType } from "./postModel";
 
 export interface CategorySchemaType {
   name: string;
-  authorId?: Types.ObjectId;
-  posts?: PostSchemaType[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  authorId: Types.ObjectId;
+  posts: Omit<PostSchemaType, "categories">[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const categorySchema = new Schema<CategorySchemaType>(

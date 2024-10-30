@@ -7,7 +7,7 @@ export interface PostSchemaType {
   content: string;
   images: string[];
   authorId: Types.ObjectId;
-  categories?: CategorySchemaType[];
+  categories: CategorySchemaType;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,6 +26,7 @@ const postSchema = new Schema<PostSchemaType>(
     content: { type: String, required: true },
     images: { type: [String], default: [] },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    categories: { type: Schema.Types.ObjectId, ref: "Category" },
   },
   { timestamps: true }
 );

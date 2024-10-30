@@ -40,7 +40,7 @@ app.get("/", (_req, res) => {
 app.use("/users", verifyToken, userRoutes);
 app.use("/auth", authRoutes);
 app.use("/posts", verifyToken, postRoutes);
-app.use("/categories", categoryRoutes);
+app.use("/categories", verifyToken, categoryRoutes);
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

@@ -1,66 +1,109 @@
-import React, { useState } from "react";
+import React, { useReducer } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
+type State = {
+  previewModalOpen: boolean;
+  deleteModalOpen: boolean;
+  title: string;
+  content: string;
+  image: string | null;
+};
+type Action =
+  | { type: "TOGGLE_PREVIEW_MODAL"; payload: boolean }
+  | { type: "TOGGLE_DELETE_MODAL"; payload: boolean }
+  | { type: "SET_TITLE"; payload: string }
+  | { type: "SET_CONTENT"; payload: string }
+  | { type: "SET_IMAGE"; payload: string | null };
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "TOGGLE_PREVIEW_MODAL":
+      return { ...state, previewModalOpen: !state.previewModalOpen };
+    case "TOGGLE_DELETE_MODAL":
+      return { ...state, deleteModalOpen: !state.deleteModalOpen };
+    case "SET_TITLE":
+      return { ...state, title: action.payload };
+    case "SET_CONTENT":
+      return { ...state, content: action.payload };
+    case "SET_IMAGE":
+      return { ...state, image: action.payload };
+    default:
+      return state;
+  }
+};
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
-  const [previewModalOpen, setPreviewModalOpen] = useState<boolean>(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
-  const [image, setImage] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, {
+    title: "",
+    content: "",
+    image: null,
+    previewModalOpen: false,
+    deleteModalOpen: false,
+  });
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
 
-      setImage(imageUrl);
+      dispatch({ type: "SET_IMAGE", payload: imageUrl });
     }
   };
 
   return (
     <Wrapper>
       <Title>제목</Title>
-      <TitleInput onChange={(e) => setTitle(e.target.value)} type="text" />
+      <TitleInput
+        onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
+        type="text"
+      />
 
       <ImageWrapper>
-        <ImageInput type="file" accept="image/*" onChange={handleImageUpload} />
-        {!image && <PlaceholderText>이미지 추가하기</PlaceholderText>}
-        {image && <Image src={image} alt="Uploaded preview" />}
+        <ImageInput
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          // style={{
+          //   pointerEvents: state.previewModalOpen || state.deleteModalOpen ? "none" : "auto",
+          // }}
+          isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+        />
+        {!state.image && <PlaceholderText>이미지 추가하기</PlaceholderText>}
+        {state.image && <Image src={state.image} alt="Uploaded preview" />}
       </ImageWrapper>
 
       <Title>본문</Title>
-      <ContentText onChange={(e) => setContent(e.target.value)} />
+      <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
 
       <ButtonWrapper>
         <Button
           onClick={() => {
             // API 추후 적용 예정 + 페이지 이동
             // eslint-disable-next-line no-console
-            console.log(title, image, content);
+            console.log(state.title, state.image, state.content);
           }}>
           확인
         </Button>
         <Button
           onClick={() => {
-            setDeleteModalOpen(true);
+            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
           }}>
           삭제
         </Button>
         <Button>임시저장</Button>
         <Button
           onClick={() => {
-            setPreviewModalOpen(true);
+            dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
           }}>
           미리보기
         </Button>
       </ButtonWrapper>
 
-      {deleteModalOpen && (
+      {state.deleteModalOpen && (
         <ModalOverlay
           onClick={() => {
-            setDeleteModalOpen(false);
+            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: false });
           }}>
           <ModalWrapper
             onClick={(e) => {
@@ -76,7 +119,7 @@ const CreatePostPage: React.FC = () => {
               </Button>
               <Button
                 onClick={() => {
-                  setDeleteModalOpen(false);
+                  dispatch({ type: "TOGGLE_DELETE_MODAL", payload: false });
                 }}>
                 No
               </Button>
@@ -84,18 +127,18 @@ const CreatePostPage: React.FC = () => {
           </ModalWrapper>
         </ModalOverlay>
       )}
-      {previewModalOpen && (
+      {state.previewModalOpen && (
         <ModalOverlay
           onClick={() => {
-            setPreviewModalOpen(false);
+            dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: false });
           }}>
           <ModalWrapper
             onClick={(e) => {
               e.stopPropagation();
             }}>
-            {title !== "" && <PreviewTitle>{title}</PreviewTitle>}
-            {image && <PreviewImg src={image} />}
-            {content !== "" && <PreviewContent>{content}</PreviewContent>}
+            {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
+            {state.image && <PreviewImg src={state.image} />}
+            {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>
       )}
@@ -131,19 +174,21 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
 `;
 
 const Button = styled.div`
   cursor: pointer;
 `;
 const ButtonWrapper = styled.div`
+  width: 600px;
   display: inline-flex;
   justify-content: flex-end;
   gap: 10px;
 `;
 
 const ImageWrapper = styled.div`
-  width: 100%;
+  width: 600px;
   height: 300px;
   background-color: gray;
   display: flex;
@@ -152,17 +197,18 @@ const ImageWrapper = styled.div`
   position: relative;
 `;
 
-const ImageInput = styled.input`
-  width: 100%;
+const ImageInput = styled.input<{ isModalOpen: boolean }>`
+  width: 600px;
   height: 100%;
   opacity: 0;
   position: absolute;
   cursor: pointer;
   z-index: 2;
+  pointer-events: ${(props) => (props.isModalOpen ? "none" : "auto")};
 `;
 
 const Image = styled.img`
-  width: 100%;
+  width: 600px;
   height: 300px;
   object-fit: cover;
 `;
@@ -175,23 +221,25 @@ const PlaceholderText = styled.div`
 `;
 
 const ContentText = styled.textarea`
-  width: 100%;
+  width: 600px;
   height: 300px;
   resize: none;
 `;
 
 const TitleInput = styled.input`
-  width: 100%;
+  width: 600px;
 `;
 
 const Title = styled.div`
+  width: 600px;
   font-size: 20px;
   color: gray;
 `;
 
 const Wrapper = styled.div`
-  width: 600px;
+  width: 100%;
   display: inline-flex;
+  align-items: center;
   flex-direction: column;
   gap: 10px;
 `;

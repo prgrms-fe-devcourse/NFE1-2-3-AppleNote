@@ -51,14 +51,12 @@ type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
-  // TODO: 카테고리 없는 경우도 고려하기
   async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
       throw new ServiceError("The content-type is invalid.", 400);
     }
 
-    // TODO: 올바르지 않은 필드 포함시 에러 발생시키기
     // 필드검증
     if (!validators.keys(data, ["title", "content", "images"])) {
       throw new ServiceError("Invalid request field.", 422);
@@ -69,7 +67,6 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    // TODO: 카테고리 id 조인하기
     const postData = new Post({
       ...data,
       images: ["test.url"],
@@ -89,8 +86,6 @@ export class PostService implements IPostService {
     };
   }
 
-  // DONE: 사용자 구분하기 [V]
-  // TODO: 카테고리 참조
   async getPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
@@ -126,7 +121,6 @@ export class PostService implements IPostService {
     return mappedPosts;
   }
 
-  // TODO: 포스트아이디와 사용자아이디 조인해서 가져오기
   async updatePost({ header, user, data, postId }: UpdatePostArg): Promise<UpdatePostReturn> {
     // postId 검증
     if (!validators.isObjectId(postId)) {

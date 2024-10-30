@@ -108,7 +108,7 @@ export class PostController implements IController {
     }
   }
 
-  async removeCategory(req: Request, res: Response) {
+  async excludeCategory(req: Request, res: Response) {
     try {
       const categories = await this.postService.deletePostFromCategory({
         postId: req.params.postId,
@@ -147,7 +147,7 @@ export class PostController implements IController {
     }
   }
 
-  async searchPost(req: Request, res: Response) {
+  async getPostListByQuery(req: Request, res: Response) {
     try {
       const post = await this.postService.searchPostList({
         data: { query: req.body.query },

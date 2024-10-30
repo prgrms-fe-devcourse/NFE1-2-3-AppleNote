@@ -82,7 +82,7 @@ export class CategoryController implements IController {
     }
   }
 
-  async getPostsByCategory(req: Request, res: Response) {
+  async getPostListByCategory(req: Request, res: Response) {
     try {
       const categories = await this.categoryService.getPostsByCategory({
         categoryId: req.params.categoryId,

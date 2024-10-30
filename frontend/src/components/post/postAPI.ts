@@ -20,6 +20,11 @@ export type DeletePostPayload = {
   };
 };
 
+export type PatchPostPayload = {
+  statusCode: number;
+  payload: Post;
+};
+
 /**
  * GET /posts/:id post data 가져오기
  * @requires Authorization Bearer {access-token}
@@ -42,6 +47,19 @@ export const fetchPost = async (id: string): Promise<FetchPostPayload> => {
 export const deletePost = async (id: string): Promise<DeletePostPayload> => {
   const URL = `/posts/${id}`;
   const { data } = await httpClient.delete(URL);
+
+  return data;
+};
+
+/**
+ * PATCH /posts/:id post data 수정하기
+ * @requires Authorization Bearer {access-token}
+ * @param id
+ * @returns 수정된 post data
+ */
+export const patchPost = async (id: string): Promise<PatchPostPayload> => {
+  const URL = `/posts/${id}`;
+  const { data } = await httpClient.patch(URL);
 
   return data;
 };

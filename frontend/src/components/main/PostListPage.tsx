@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation } from "react-router-dom";
-import { fetchPostsByPage, fetchPostsByCategoryId, Post } from "./postApi";
+import { fetchPostsByCategoryId, fetchPostsByPage, Post } from "./postApi";
 import Category from "../category/Category";
 import PaginationComponent from "../../common/components/PaginationComponent";
 import HorizontalPostCard from "./HorizontalPostCard";
@@ -24,14 +24,20 @@ const PostListPage: React.FC = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
+        // 전체 포스트 또는 카테고리별 포스트 가져오기
         const fetchedPosts = categoryId
-          ? await fetchPostsByCategoryId(categoryId) // 카테고리별 포스트 로드
+          ? await fetchPostsByCategoryId(categoryId)
           : await fetchPostsByPage(1, Number.MAX_SAFE_INTEGER); // 전체 포스트 로드
 
-        setTotalPosts(fetchedPosts.length); // 전체 포스트 수 설정
+        // 최신순으로 정렬된 데이터
+        const sortedPosts = fetchedPosts.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
 
-        // 현재 페이지에 해당하는 포스트만 슬라이스
-        const paginatedPosts = fetchedPosts.slice(
+        setTotalPosts(sortedPosts.length); // 전체 포스트 수 설정
+
+        // 현재 페이지에 해당하는 포스트 슬라이스
+        const paginatedPosts = sortedPosts.slice(
           (currentPage - 1) * postsPerPage,
           currentPage * postsPerPage
         );

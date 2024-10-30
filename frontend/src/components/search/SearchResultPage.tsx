@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { FaSearch } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { fetchAllPosts, Post } from "../main/postApi";
-import HorizontalPostCard from "../main/HorizontalPostCard";
 import PaginationComponent from "../../common/components/PaginationComponent";
+import SearchResultHeader from "./SearchResultHeader";
+import PostsGrid from "./PostsGrid";
 
 const SearchResultPage: React.FC = () => {
   const location = useLocation();
@@ -49,16 +49,8 @@ const SearchResultPage: React.FC = () => {
 
   return (
     <Container>
-      <SearchHeader>
-        <FaSearch size={30} />
-        <SearchResultText>"{searchQuery}"에 대한 검색 결과</SearchResultText>
-      </SearchHeader>
-
-      <PostsGrid>
-        {paginatedPosts.map((post) => (
-          <HorizontalPostCard key={post.postId} post={post} />
-        ))}
-      </PostsGrid>
+      <SearchResultHeader searchQuery={searchQuery} />
+      <PostsGrid posts={paginatedPosts} />
 
       {filteredPosts.length === 0 && <NoResultsMessage>검색 결과가 없습니다.</NoResultsMessage>}
       {/* 페이지네이션 컴포넌트 */}
@@ -76,28 +68,6 @@ const Container = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem 1rem;
-`;
-
-const SearchHeader = styled.div`
-  display: flex; /* 수평 정렬을 위해 flex 사용 */
-  align-items: center; /* 세로 가운데 정렬 */
-  gap: 1rem; /* 아이콘과 텍스트 사이 여백 */
-  margin-bottom: 2rem;
-  background-color: ${({ theme }) => theme.bgColor};
-  color: ${({ theme }) => theme.textColor};
-`;
-
-const SearchResultText = styled.h2`
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0; /* 기본 여백 제거 */
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-`;
-
-const PostsGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
 `;
 
 const NoResultsMessage = styled.p`

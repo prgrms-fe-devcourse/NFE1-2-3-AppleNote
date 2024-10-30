@@ -1,9 +1,8 @@
 import { Types } from "mongoose";
 
-import Post, { PostSchemaType } from "@src/models/postModel";
+import Post, { FormDataPost, PostSchemaType } from "@src/models/postModel";
 import User from "@src/models/userModel";
 import Category from "@src/models/categoryModel";
-import { FormDataPost } from "@src/types/post";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
@@ -16,27 +15,28 @@ export interface IPostService {
   addCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
 }
 
-// TODO: 타입 개선하기
+// 재사용 가능한 기본 타입
 type RequestUser = IUserWithId | undefined;
-type RequestData = Partial<FormDataPost>;
 type RequestHeader = string | undefined;
+type RequestData = Partial<FormDataPost>;
+type WithPostId = { postId: string };
+type WithUser = { user: RequestUser };
+type WithCategories = { categories: string[] };
+type PostWithoutId = Omit<PostSchemaType, "_id">;
+type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
-type GetPostsArg = {
-  user: RequestUser;
-};
-type CreatePostArg = {
-  header: RequestHeader;
-  data: RequestData;
-  user: RequestUser;
-};
-type UpdatePostArg = CreatePostArg & { postId: string };
-type DeletePostArg = GetPostsArg & { postId: string };
-type AddCategoryArg = GetPostsArg & { postId: string; data: { categories: string[] } };
+// 요청 인자 타입
+type GetPostsArg = WithUser;
+type CreatePostArg = WithUser & { header: RequestHeader; data: RequestData };
+type UpdatePostArg = CreatePostArg & WithPostId;
+type DeletePostArg = GetPostsArg & WithPostId;
+type AddCategoryArg = GetPostsArg & WithPostId & { data: WithCategories };
 
-type GetPostReturn = PostSchemaType[];
-type UpdatePostReturn = PostSchemaType & { postId: Types.ObjectId };
-type CreatePostReturn = PostSchemaType & { postId: Types.ObjectId };
-type AddCategoryReturn = { categories: string[] };
+// 반환 타입
+type GetPostReturn = PostWithoutId[];
+type CreatePostReturn = PostWithId;
+type UpdatePostReturn = PostWithId;
+type AddCategoryReturn = WithCategories;
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
@@ -203,7 +203,7 @@ export class PostService implements IPostService {
     }
 
     // 카테고리 검증
-    const categoryExist = await Category.findOne({ postId, authorId: user.userId });
+    const categoryExist = await Category.findOne({ posts: postId, authorId: user.userId });
 
     if (categoryExist) {
       throw new ServiceError("Category already exists", 409);
@@ -211,7 +211,7 @@ export class PostService implements IPostService {
 
     const updatedCategory = await Category.findOneAndUpdate(
       { _id: categoryId, authorId: user.userId },
-      { $addToSet: { postId } },
+      { $addToSet: { posts: postId } },
       { new: true, runValidators: true }
     );
 

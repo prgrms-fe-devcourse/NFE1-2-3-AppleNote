@@ -1,10 +1,11 @@
 import { Schema, Types, model } from "mongoose";
 
-import { CategoryType } from "@src/types/category";
+import { PostSchemaType } from "./postModel";
 
-export interface CategorySchemaType extends CategoryType {
+export interface CategorySchemaType {
+  name: string;
   authorId?: Types.ObjectId;
-  postId?: Types.ObjectId[];
+  posts?: PostSchemaType[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -13,7 +14,7 @@ const categorySchema = new Schema<CategorySchemaType>(
   {
     name: { type: String, required: true, unique: false },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    postId: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }
 );

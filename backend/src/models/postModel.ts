@@ -1,12 +1,24 @@
 import { Schema, Types, model } from "mongoose";
 
-import { PostType } from "@src/types/post";
+import { CategorySchemaType } from "./categoryModel";
 
-export interface PostSchemaType extends PostType {
-  authorId?: Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface PostSchemaType {
+  title: string;
+  content: string;
+  images: string[];
+  authorId: Types.ObjectId;
+  categories?: CategorySchemaType[];
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export type FormDataPost = Omit<PostSchemaType, "images"> & {
+  images:
+    | {
+        [fieldname: string]: Express.Multer.File[];
+      }
+    | Express.Multer.File[];
+};
 
 const postSchema = new Schema<PostSchemaType>(
   {

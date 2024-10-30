@@ -9,6 +9,7 @@ const categoryController = new CategoryController(categoryService);
 
 //categories
 route.get("/", categoryController.read.bind(categoryController));
+route.get("/:categoryId", categoryController.getPostsByCategory.bind(categoryController));
 route.post("/", categoryController.create.bind(categoryController));
 route.put("/:categoryId", categoryController.update.bind(categoryController));
 route.delete("/:categoryId", categoryController.delete.bind(categoryController));

@@ -4,30 +4,39 @@ import Category, { CategorySchemaType } from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
+import { PostSchemaType } from "@src/models/postModel";
 
 export interface ICategoryService {
   createCategory(arg: CreateCategoryArg): Promise<CreateCategoryReturn>;
   getCategories(arg: GetCategoriesArg): Promise<GetCategoryReturn>;
   updateCategory(arg: UpdateCategoryArg): Promise<UpdateCategoryReturn>;
   deleteCategory(arg: DeleteCategoryArg): Promise<void>;
+  getPostsByCategory(arg: GetPostsByCategoryArg): Promise<GetPostsByCategoryReturn>;
 }
 
+// 재사용 가능한 기본 타입
 type RequestUser = IUserWithId | undefined;
 type RequestData = Partial<CategorySchemaType>;
-
-type GetCategoriesArg = {
-  user: RequestUser;
+type WithCategoryId = { categoryId: string };
+type WithUser = { user: RequestUser };
+type Post = PostSchemaType & { postId: Types.ObjectId };
+type WithPosts = {
+  posts: Array<Post>;
 };
-type CreateCategoryArg = {
-  data: RequestData;
-  user: RequestUser;
-};
-type UpdateCategoryArg = CreateCategoryArg & { categoryId: string };
-type DeleteCategoryArg = GetCategoriesArg & { categoryId: string };
 
-type GetCategoryReturn = CategorySchemaType[];
-type UpdateCategoryReturn = CategorySchemaType & { categoryId: Types.ObjectId };
-type CreateCategoryReturn = CategorySchemaType & { categoryId: Types.ObjectId };
+// 요청 인자 타입
+type GetCategoriesArg = WithUser;
+type CreateCategoryArg = WithUser & { data: RequestData };
+type UpdateCategoryArg = CreateCategoryArg & WithCategoryId;
+type DeleteCategoryArg = GetCategoriesArg & WithCategoryId;
+type GetPostsByCategoryArg = GetCategoriesArg & WithCategoryId;
+
+// 반환 타입
+type CategoryWithId = CategorySchemaType & { categoryId: Types.ObjectId };
+type GetCategoryReturn = CategoryWithId[];
+type CreateCategoryReturn = CategoryWithId;
+type UpdateCategoryReturn = CategoryWithId;
+type GetPostsByCategoryReturn = CategoryWithId & WithPosts;
 
 export class CategoryService implements ICategoryService {
   async createCategory({ data, user }: CreateCategoryArg): Promise<CreateCategoryReturn> {
@@ -139,5 +148,49 @@ export class CategoryService implements ICategoryService {
     if (!deletedCategory) {
       throw new ServiceError("Failed to delete category item", 404);
     }
+  }
+
+  async getPostsByCategory({
+    categoryId,
+    user,
+  }: GetPostsByCategoryArg): Promise<GetPostsByCategoryReturn> {
+    // categoryId 검증
+    if (!validators.isObjectId(categoryId)) {
+      throw new ServiceError("Invalid categoryId", 404);
+    }
+
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const category = await Category.findOne({ _id: categoryId, authorId: user.userId })
+      .populate<{
+        posts: (Post & { _id: Types.ObjectId })[];
+      }>("posts")
+      .lean();
+
+    // 카테고리 존재여부 검증
+    if (!category) {
+      throw new ServiceError("Invalid category ID.", 404);
+    }
+
+    const mappedCategory = {
+      categoryId: category._id,
+      name: category.name,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+      posts: category.posts.map((post) => ({
+        postId: post._id,
+        title: post.title,
+        content: post.content,
+        images: post.images,
+        authorId: post.authorId,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+      })),
+    };
+
+    return mappedCategory;
   }
 }

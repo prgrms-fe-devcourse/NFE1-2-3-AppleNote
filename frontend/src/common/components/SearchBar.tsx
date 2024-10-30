@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface SearchBarProps {
   placeholder: string;
@@ -10,23 +10,12 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ placeholder }) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // 검색 페이지를 벗어나면 입력 초기화
-  useEffect(() => {
-    if (!location.pathname.startsWith("/search")) {
-      setSearchInput("");
-    }
-
-    return () => {
-      setSearchInput("");
-    };
-  }, [location.pathname]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      navigate(`/search?query=${searchInput}`);
+      navigate(`/search?query=${searchInput}`); // 검색 페이지로 이동
+      setSearchInput(""); // 검색 후 입력 초기화
     }
   };
 

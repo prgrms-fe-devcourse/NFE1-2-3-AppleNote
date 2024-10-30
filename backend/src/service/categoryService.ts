@@ -1,10 +1,10 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 import Category, { CategorySchemaType } from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
-import { PostSchemaType } from "@src/models/postModel";
+import Post, { PostSchemaType } from "@src/models/postModel";
 
 export interface ICategoryService {
   createCategory(arg: CreateCategoryArg): Promise<CreateCategoryReturn>;
@@ -139,14 +139,58 @@ export class CategoryService implements ICategoryService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const deletedCategory = await Category.findOneAndDelete({
-      _id: categoryId,
-      authorId: user.userId,
-    });
+    const session = await mongoose.startSession();
 
-    // 포스트 검증
-    if (!deletedCategory) {
-      throw new ServiceError("Failed to delete category item", 404);
+    session.startTransaction();
+
+    try {
+      const isExistCategory = await Category.exists({
+        _id: categoryId,
+        authorId: user.userId,
+      });
+
+      // 카테고리 존재여부 검증
+      if (!isExistCategory) {
+        throw new ServiceError("Invalid category ID.", 404);
+      }
+
+      const category = await Category.findById(categoryId).session(session);
+      const postIds = category?.posts;
+
+      // 포스트에서 해당 카테고리 ID 제거
+      await Post.updateMany(
+        { _id: { $in: postIds }, authorId: user.userId },
+        { $unset: { categories: "" } }, // categories 필드 제거
+        { session }
+      );
+
+      // 카테고리에서 포스트 ID 제거
+      await Category.updateMany(
+        { posts: { $in: postIds }, authorId: user.userId },
+        { $pull: { posts: { $in: postIds } } },
+        { session }
+      );
+
+      const deletedCategory = await Category.findOneAndDelete(
+        {
+          _id: categoryId,
+          authorId: user.userId,
+        },
+        { session }
+      );
+
+      if (!deletedCategory) {
+        throw new ServiceError("Failed to delete the category.", 404);
+      }
+
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+
+      // 예외 던지기
+      throw error;
+    } finally {
+      await session.endSession();
     }
   }
 

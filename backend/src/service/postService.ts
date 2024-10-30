@@ -353,14 +353,14 @@ export class PostService implements IPostService {
       const updatedCategory = await Category.findOneAndUpdate(
         { _id: categoryId, authorId: user.userId },
         { $pull: { posts: postId } }, // 카테고리의 posts 배열에서 포스트 ID 제거
-        { new: true, runValidators: true, session }
+        { new: true, session }
       );
 
       // 포스트에서 카테고리 ID 제거
       const updatedPost = await Post.findOneAndUpdate(
         { _id: postId, authorId: user.userId },
         { $unset: { categories: "" } }, // 포스트에서 categoryId 필드 제거
-        { new: true, runValidators: true, session }
+        { new: true, session }
       );
 
       if (!updatedCategory || !updatedPost) {

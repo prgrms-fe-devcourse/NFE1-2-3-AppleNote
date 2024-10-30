@@ -3,8 +3,8 @@ import { httpClient } from "@common/api/fetch";
 export type User = {
   name: string;
   email: string;
-  profileImg: string;
-  bannerImg: string;
+  profileImage: string;
+  bannerImage: string;
 };
 interface PasswordForm {
   oldPassword: string;

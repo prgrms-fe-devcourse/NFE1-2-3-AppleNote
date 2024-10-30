@@ -38,9 +38,6 @@ const Header: React.FC = () => {
   const handleUploadClick = () => {
     navigate("/create-post");
   };
-  const handleSettingsClick = () => {
-    navigate("/setting");
-  };
 
   const handleSettingsClick = () => {
     navigate("/setting");

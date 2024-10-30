@@ -133,20 +133,20 @@ const Input = styled.input`
 
 const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
 `;
 
 const Button = styled.button`
   padding: 10px 20px;
-  border: none;
+  margin-left: 20px;
+  border: 1px solid black;
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+  background-color: white;
   cursor: pointer;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #f0f0f0;
   }
 `;
 

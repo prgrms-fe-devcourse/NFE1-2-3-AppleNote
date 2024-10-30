@@ -63,7 +63,7 @@ const SettingPage = () => {
         <Wrapper>
           <ProfileWrapper>
             <ImgWrapper>
-              <UserImg src={user?.profileImg || DEFAULT_PROFILE_IMAGE} />
+              <UserImg src={user?.profileImage || DEFAULT_PROFILE_IMAGE} />
 
               <ImgEditBtn onClick={editImg}>
                 <img src={edit} />

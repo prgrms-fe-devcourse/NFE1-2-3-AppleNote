@@ -94,7 +94,12 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const postList = await Post.find({ authorId: user.userId }).lean();
+    const postList = await Post.find({ authorId: user.userId })
+      .populate<{
+        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
+      }>("categories")
+      .lean();
+
     const mappedPosts = postList.map((post) => ({
       postId: post._id,
       title: post.title,
@@ -103,6 +108,16 @@ export class PostService implements IPostService {
       authorId: post.authorId,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
+      categories: post.categories
+        ? [
+            {
+              name: post.categories.name,
+              categoryId: post.categories._id,
+              createdAt: post.categories.createdAt,
+              updatedAt: post.categories.updatedAt,
+            },
+          ]
+        : [],
     }));
 
     return mappedPosts;

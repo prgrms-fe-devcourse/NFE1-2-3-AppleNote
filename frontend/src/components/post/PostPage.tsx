@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchPost } from "./postAPI";
 import styled from "styled-components";
@@ -8,6 +8,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const fetchPostData = async () => {
     try {
       const data = await fetchPost(id as string);
@@ -39,10 +40,26 @@ const PostPage = () => {
       </IconWrapper>
       <NaviWrapper>
         <NaviContent>
-          <IoIosArrowBack size={50} color="#fff" />
+          <IoIosArrowBack
+            onClick={() => {
+              if (id) {
+                navigate(`/posts/${Number(id) - 1}`);
+              }
+            }}
+            size={50}
+            color="#fff"
+          />
         </NaviContent>
         <NaviContent>
-          <IoIosArrowForward size={50} color="#fff" />
+          <IoIosArrowForward
+            onClick={() => {
+              if (id) {
+                navigate(`/posts/${Number(id) + 1}`);
+              }
+            }}
+            size={50}
+            color="#fff"
+          />
         </NaviContent>
       </NaviWrapper>
     </Wrapper>

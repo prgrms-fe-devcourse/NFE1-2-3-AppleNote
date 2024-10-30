@@ -12,7 +12,8 @@ export interface IPostService {
   getPosts(arg: GetPostsArg): Promise<GetPostReturn>;
   updatePost(arg: UpdatePostArg): Promise<UpdatePostReturn>;
   deletePost(arg: DeletePostArg): Promise<void>;
-  addCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
+  addPostFromCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
+  deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
 }
 
 // 재사용 가능한 기본 타입
@@ -29,14 +30,16 @@ type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 type GetPostsArg = WithUser;
 type CreatePostArg = WithUser & { header: RequestHeader; data: RequestData };
 type UpdatePostArg = CreatePostArg & WithPostId;
-type DeletePostArg = GetPostsArg & WithPostId;
-type AddCategoryArg = GetPostsArg & WithPostId & { data: WithCategories };
+type DeletePostArg = WithUser & WithPostId;
+type AddCategoryArg = WithUser & WithPostId & { data: WithCategories };
+type RemoveCategoryArg = WithUser & WithPostId & { data: WithCategories };
 
 // 반환 타입
 type GetPostReturn = PostWithoutId[];
 type CreatePostReturn = PostWithId;
 type UpdatePostReturn = PostWithId;
 type AddCategoryReturn = WithCategories;
+type RemoveCategoryReturn = WithCategories;
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
@@ -166,7 +169,7 @@ export class PostService implements IPostService {
     }
   }
 
-  async addCategory({ data, user, postId }: AddCategoryArg): Promise<AddCategoryReturn> {
+  async addPostFromCategory({ data, user, postId }: AddCategoryArg): Promise<AddCategoryReturn> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new ServiceError("Invalid postId", 404);
@@ -202,10 +205,10 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid category ID.", 404);
     }
 
-    // 카테고리 검증
-    const categoryExist = await Category.findOne({ posts: postId, authorId: user.userId });
+    // 포스트 카테고리 존재여부 검증
+    const isExistCategoryByPost = await Category.findOne({ posts: postId, authorId: user.userId });
 
-    if (categoryExist) {
+    if (isExistCategoryByPost) {
       throw new ServiceError("Category already exists", 409);
     }
 
@@ -213,6 +216,67 @@ export class PostService implements IPostService {
       { _id: categoryId, authorId: user.userId },
       { $addToSet: { posts: postId } },
       { new: true, runValidators: true }
+    );
+
+    // 카테고리 업데이트 여부
+    if (!updatedCategory) {
+      throw new ServiceError("Failed to update category item", 404);
+    }
+
+    return { categories: [categoryId] };
+  }
+
+  async deletePostFromCategory({
+    data,
+    user,
+    postId,
+  }: RemoveCategoryArg): Promise<RemoveCategoryReturn> {
+    // postId 검증
+    if (!validators.isObjectId(postId)) {
+      throw new ServiceError("Invalid postId", 404);
+    }
+
+    // 유저 필드 타입 검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    // 필드 검증
+    if (!validators.keys(data, ["categories"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 단일 카테고리 처리
+    if ((!data.categories && !validators.isArray(data.categories)) || data.categories.length > 1) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    const categoryId = data.categories[0];
+    const isExistPost = await Post.exists({ _id: postId, authorId: user.userId });
+
+    // 포스트 존재여부 검증
+    if (!isExistPost) {
+      throw new ServiceError("There are no items with that postId.", 404);
+    }
+
+    const isExistCategory = await Category.exists({ _id: categoryId, authorId: user.userId });
+
+    // 카테고리 존재여부 검증
+    if (!isExistCategory) {
+      throw new ServiceError("Invalid category ID.", 404);
+    }
+
+    // 포스트 카테고리 존재여부 검증
+    const isExistCategoryByPost = await Category.findOne({ posts: postId, authorId: user.userId });
+
+    if (!isExistCategoryByPost) {
+      throw new ServiceError("No post information in the category", 404);
+    }
+
+    const updatedCategory = await Category.findOneAndUpdate(
+      { posts: postId, authorId: user.userId },
+      { $pull: { posts: postId } },
+      { new: true }
     );
 
     // 카테고리 업데이트 여부

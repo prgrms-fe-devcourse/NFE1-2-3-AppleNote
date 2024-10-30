@@ -6,6 +6,7 @@ import HorizontalPostCard from "./HorizontalPostCard";
 import { fetchCategories } from "../category/categoryApi";
 import { useNavigate } from "react-router-dom";
 import CategorySection from "./CategorySection";
+import MoreButton from "@common/components/MoreButton";
 
 const CategoryLatestPosts: React.FC = () => {
   const { selectedCategoryId, setSelectedCategoryId } = useCategory(); // 카테고리 상태 공유
@@ -70,7 +71,7 @@ const CategoryLatestPosts: React.FC = () => {
     <Container>
       <Header>
         <CategorySection title={selectedCategoryName} /> {/* CategorySection 적용 */}
-        <MoreButton onClick={handleMoreButtonClick}>&gt;&gt;</MoreButton>
+        <AlignedMoreButton onClick={handleMoreButtonClick} />
       </Header>
 
       <PostsGrid>
@@ -102,21 +103,9 @@ const Header = styled.div`
   gap: 1rem;
 `;
 
-const MoreButton = styled.button`
+// MoreButton에 스타일 확장 적용
+const AlignedMoreButton = styled(MoreButton)`
   align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-  background-color: ${({ theme }) => theme.background.primary};
-  color: ${({ theme }) => theme.text.primary};
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  letter-spacing: -0.5rem;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-
-  &:hover {
-    opacity: 0.6;
-  }
 `;
 
 const PostsGrid = styled.div`

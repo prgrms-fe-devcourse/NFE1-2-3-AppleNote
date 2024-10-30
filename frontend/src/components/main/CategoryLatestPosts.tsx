@@ -107,7 +107,7 @@ const MoreButton = styled.button`
   background-color: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.text.primary};
   border: none;
-  font-size: 2rem;
+  font-size: 1.8rem;
   cursor: pointer;
   letter-spacing: -0.5rem;
   transition:

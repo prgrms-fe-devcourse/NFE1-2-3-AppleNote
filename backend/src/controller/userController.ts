@@ -182,7 +182,7 @@ export class UserController {
       const user = await this.userService.getUserById(userId);
 
       if (!user) {
-        return res.status(404).json(createErrorResponse(404, "Password is not correct"));
+        return res.status(404).json(createErrorResponse(404, "User not found"));
       }
       const updateData: UserSchemaType = {
         name: name,
@@ -213,7 +213,7 @@ export class UserController {
       const user = await this.userService.getUserById(userId);
 
       if (!user) {
-        return res.status(404).json(createErrorResponse(404, "Password is not correct"));
+        return res.status(404).json(createErrorResponse(404, "User not found"));
       }
       const updateData: UserSchemaType = {
         name: user.name || "",

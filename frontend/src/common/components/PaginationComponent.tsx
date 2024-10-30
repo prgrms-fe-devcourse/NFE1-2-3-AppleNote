@@ -39,7 +39,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
 const PaginationWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 3.5rem;
   gap: 0.2rem;
 `;
 

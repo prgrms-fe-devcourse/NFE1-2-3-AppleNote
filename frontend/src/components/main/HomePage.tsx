@@ -34,7 +34,9 @@ const HomePage: React.FC<HomePageProps> = () => {
   return (
     <CategoryContext.Provider value={{ selectedCategoryId, setSelectedCategoryId }}>
       <Container>
-        <LatestPosts />
+        <ContentWrapper>
+          <LatestPosts />
+        </ContentWrapper>
         <ContentWrapper>
           <ContentRow>
             <CategoryLatestPosts />
@@ -49,7 +51,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 };
 
 const Container = styled.div`
-  padding: 2rem;
+  padding: 0;
 `;
 
 const ContentWrapper = styled.div`

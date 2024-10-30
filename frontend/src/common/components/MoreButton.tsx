@@ -18,7 +18,7 @@ const Button = styled.button`
   color: ${({ theme }) => theme.text.primary};
   border: none;
   font-size: 1.8rem;
-  margin-right: 20px;
+  margin-right: 25px;
   cursor: pointer;
   letter-spacing: -0.5rem;
   transition:

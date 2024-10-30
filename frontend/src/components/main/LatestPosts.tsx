@@ -39,15 +39,17 @@ const LatestPosts: React.FC = () => {
         <Title>LATEST POSTS</Title>
         <MoreButton onClick={handleMoreButtonClick} />
       </Header>
-      <PostsGrid>
-        {posts.map((post) => (
-          <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
-            <Thumbnail src={post.images[0]} alt={post.title} />
-            <PostTitle>{post.title}</PostTitle>
-            <PostContent>{post.content}</PostContent>
-          </PostCard>
-        ))}
-      </PostsGrid>
+      <PostsGridWrapper>
+        <PostsGrid>
+          {posts.map((post) => (
+            <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
+              <Thumbnail src={post.images[0]} alt={post.title} />
+              <PostTitle>{post.title}</PostTitle>
+              <PostContent>{post.content}</PostContent>
+            </PostCard>
+          ))}
+        </PostsGrid>
+      </PostsGridWrapper>
       <Divider />
     </Container>
   );
@@ -55,8 +57,11 @@ const LatestPosts: React.FC = () => {
 
 const Container = styled.div`
   width: 1205px;
-  margin: 0 auto;
-  padding: 1rem;
+  min-width: 500px;
+  margin: 0;
+  @media (max-width: 1205px) {
+    width: 100%;
+  }
 `;
 
 const Header = styled.div`
@@ -65,32 +70,52 @@ const Header = styled.div`
   align-items: flex-end;
   margin-bottom: 1rem;
   position: relative;
+  width: 100%;
+  max-width: 1205px;
 `;
 
 const Title = styled.h2`
-  font-size: 6rem;
+  font-size: clamp(3.5rem, 5vw, 6rem);
   font-weight: bold;
   margin-bottom: 3rem;
   margin-left: 20px;
   align-self: flex-start;
 `;
 
+/* PostsGrid를 중앙 정렬하고 양 옆에 여백을 추가 */
+const PostsGridWrapper = styled.div`
+  display: flex;
+  justify-content: center; /* 그리드 전체를 중앙 정렬 */
+  padding: 0;
+`;
+
 const PostsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 369px);
   gap: 1.5rem;
-  justify-content: center;
+  justify-content: center; /* 가로 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
+  padding: 0 16px;
 
-  @media (max-width: 768px) {
+  /* 기본 3개씩 */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  /* 화면 너비가 줄어들 때 2개로 조정 */
+  @media (max-width: 1236px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* 더 좁아지면 1개로 조정 */
+  @media (max-width: 850px) {
     grid-template-columns: 1fr;
   }
 `;
 
 const PostCard = styled.div`
-  width: 369px;
+  width: 100%;
+  max-width: 369px;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0.2rem;
 
   &:hover {
     transform: scale(1.02);

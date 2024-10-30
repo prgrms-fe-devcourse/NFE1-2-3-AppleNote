@@ -1,4 +1,5 @@
 import React, { useReducer } from "react";
+import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -64,12 +65,14 @@ const CreatePostPage: React.FC = () => {
           type="file"
           accept="image/*"
           onChange={handleImageUpload}
-          // style={{
-          //   pointerEvents: state.previewModalOpen || state.deleteModalOpen ? "none" : "auto",
-          // }}
           isModalOpen={state.previewModalOpen || state.deleteModalOpen}
         />
-        {!state.image && <PlaceholderText>이미지 추가하기</PlaceholderText>}
+        {!state.image && (
+          <PlaceholderText>
+            <FaPlus size={50} />
+            <div>이미지 추가하기</div>
+          </PlaceholderText>
+        )}
         {state.image && <Image src={state.image} alt="Uploaded preview" />}
       </ImageWrapper>
 
@@ -218,6 +221,10 @@ const PlaceholderText = styled.div`
   font-size: 18px;
   position: absolute;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 `;
 
 const ContentText = styled.textarea`

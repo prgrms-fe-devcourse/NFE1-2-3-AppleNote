@@ -15,6 +15,7 @@ export interface IPostService {
   addPostFromCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
   deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
   getPost(arg: GetPostArg): Promise<GetPostReturn>;
+  searchPostList(arg: SearchPostListArg): Promise<SearchPostListReturn>;
 }
 
 // 재사용 가능한 기본 타입
@@ -35,6 +36,7 @@ type DeletePostArg = WithUser & WithPostId;
 type AddCategoryArg = WithUser & WithPostId & { data: WithCategories };
 type RemoveCategoryArg = WithUser & WithPostId & { data: WithCategories };
 type GetPostArg = WithUser & WithPostId;
+type SearchPostListArg = WithUser & { data: { query: string } };
 
 // 반환 타입
 type GetPostListReturn = Omit<PostWithId, "categories">[];
@@ -45,6 +47,7 @@ type RemoveCategoryReturn = WithCategories;
 type GetPostReturn = Omit<PostSchemaType, "categories"> & { postId: Types.ObjectId } & {
   categories: { name: string; categoryId: Types.ObjectId; createdAt: Date; updatedAt: Date }[];
 };
+type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
   // TODO: 이미지 URL 변환 작업하기
@@ -420,5 +423,51 @@ export class PostService implements IPostService {
           ]
         : [],
     };
+  }
+
+  async searchPostList({ user, data }: SearchPostListArg): Promise<SearchPostListReturn> {
+    // 유저 필드 타입 검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    // 필드검증
+    if (!validators.keys(data, ["query"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    const regexSearchResults = await Post.find({
+      authorId: user.userId,
+      $or: [
+        { title: { $regex: new RegExp(data.query, "i") } },
+        { content: { $regex: new RegExp(data.query, "i") } },
+      ],
+    })
+      .populate<{
+        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
+      }>("categories")
+      .lean();
+
+    const mappedPosts = regexSearchResults.map((post) => ({
+      postId: post._id,
+      title: post.title,
+      content: post.content,
+      images: post.images,
+      authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      categories: post.categories
+        ? [
+            {
+              name: post.categories.name,
+              categoryId: post.categories._id,
+              createdAt: post.categories.createdAt,
+              updatedAt: post.categories.updatedAt,
+            },
+          ]
+        : [],
+    }));
+
+    return mappedPosts;
   }
 }

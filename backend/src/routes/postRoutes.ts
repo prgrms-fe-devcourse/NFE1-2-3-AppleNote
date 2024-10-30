@@ -26,5 +26,6 @@ route.patch(
 route.delete("/:postId", postController.delete.bind(postController));
 route.post("/:postId/categories", postController.addCategory.bind(postController));
 route.delete("/:postId/categories", postController.removeCategory.bind(postController));
+route.post("/search", postController.searchPost.bind(postController));
 
 export default route;

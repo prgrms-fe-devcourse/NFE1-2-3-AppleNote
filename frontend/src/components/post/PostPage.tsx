@@ -25,6 +25,10 @@ const PostPage = () => {
     // eslint-disable-next-line
   }, []);
 
+  // useEffect(() => {
+  //   httpClient.get("/posts/67231cd50375ce8bdfeae5d1").then(console.log);
+  // }, []);
+
   return (
     <Wrapper>
       <Title>임시데이터</Title>

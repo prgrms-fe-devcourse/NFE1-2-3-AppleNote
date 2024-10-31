@@ -63,6 +63,11 @@ const ProfileIcon = styled.img`
   height: 40px;
   border-radius: 50%;
   background-color: #ccc;
+
+  /* 화면 너비가 520px 이하일 때 숨기기 */
+  @media (max-width: 520px) {
+    display: none;
+  }
 `;
 
 export default Header;

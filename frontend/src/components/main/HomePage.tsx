@@ -39,7 +39,7 @@ const HomePage: React.FC<HomePageProps> = () => {
         </ContentWrapper>
         <ContentWrapper>
           <ContentRow>
-            <CategoryLatestPosts />
+            <ResponsiveCategoryLatestPosts />
             <CategoryWrapper>
               <Category />
             </CategoryWrapper>
@@ -62,6 +62,7 @@ const ContentWrapper = styled.div`
 const ContentRow = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 0 5px;
   gap: 2rem;
   max-width: 1200px;
   margin-left: auto;
@@ -73,11 +74,28 @@ const ContentRow = styled.div`
   }
 `;
 
+const ResponsiveCategoryLatestPosts = styled(CategoryLatestPosts)`
+  flex: 1;
+  max-width: 800px; /* 기본 너비 */
+
+  @media (max-width: 1024px) {
+    max-width: 600px; /* 더 작은 화면에서 너비 줄임 */
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%; /* 모바일에서 전체 너비 사용 */
+  }
+`;
+
 const CategoryWrapper = styled.div`
   min-width: 220px;
   padding-top: 150px;
   box-sizing: border-box;
   padding-left: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 50px 0 20px 35px;
+  }
 `;
 
 export default HomePage;

@@ -75,9 +75,14 @@ const PostListPage: React.FC = () => {
 };
 
 const Container = styled.div`
-  width: 1205px;
-  margin: 40px auto 0;
+  width: 100%;
+  max-width: 1205px;
+  margin: 0 auto;
   padding: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -104,6 +109,10 @@ const CategoryWrapper = styled.div`
   position: sticky; /* 스크롤 시 고정 */
   top: 20px; /* 화면 상단에서 떨어진 위치 */
   align-self: flex-start; /* 상단에 정렬 */
+
+  @media (max-width: 768px) {
+    padding-top: 50px;
+  }
 `;
 
 export default PostListPage;

@@ -84,23 +84,21 @@ const CategoryLatestPosts: React.FC = () => {
 };
 
 const Container = styled.div`
-  flex: 1;
-  padding: 2rem 1.5rem;
-  max-width: 1400px; /* 더 넓은 너비 설정 */
+  width: 100%;
+  max-width: 1205px;
   margin: 0 auto;
-  box-sizing: border-box;
+  padding: 1rem;
 
   @media (max-width: 768px) {
-    padding: 1rem; /* 모바일에서 여백 축소 */
+    padding: 1rem;
   }
 `;
 
 const Header = styled.div`
   display: flex;
-  flex-direction: column; /* 타이틀과 버튼을 수직 정렬 */
-  align-items: flex-start; /* 타이틀을 왼쪽 정렬 */
-  margin-bottom: 2rem; /* 타이틀과 포스트 사이의 여백 */
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 `;
 
 // MoreButton에 스타일 확장 적용
@@ -113,11 +111,10 @@ const PostsGrid = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   margin-right: 3rem; /* MoreButton 크기만큼 오른쪽 여백 추가 */
-  max-width: 1000px; /* 목록의 최대 너비 */
-  min-width: 769px;
+  max-width: 100%; /* 목록의 최대 너비 */
+  min-width: 0; /* 화면 너비에 맞춰 줄어듦 */
 
   @media (max-width: 768px) {
-    max-width: 100%;
     margin-right: 0; /* 모바일에서는 오른쪽 여백 제거 */
     padding: 0 1rem;
   }

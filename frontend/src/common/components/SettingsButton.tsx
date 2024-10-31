@@ -12,7 +12,7 @@ const SettingsButton: React.FC = () => {
 
   return (
     <StyledSettingsButton onClick={handleSettingsClick} aria-label="Settings">
-      <FaCog size={25} />
+      <FaCog size={30} />
     </StyledSettingsButton>
   );
 };
@@ -22,8 +22,8 @@ const StyledSettingsButton = styled.button`
   color: ${({ theme }) => theme.text.primary};
   border: none;
   border-radius: 50%; /* 버튼을 원형으로 만듦 */
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,8 +33,8 @@ const StyledSettingsButton = styled.button`
     color 0.3s;
 
   /* 화면이 좁아져도 크기 유지 */
-  min-width: 50px;
-  min-height: 50px;
+  min-width: 40px;
+  min-height: 40px;
 
   &:hover {
     opacity: 0.8;

@@ -71,8 +71,8 @@ const SearchInput = styled.input`
 
 /* 검색 버튼 */
 const SearchButton = styled.button`
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,8 +90,8 @@ const SearchButton = styled.button`
     color 0.3s;
 
   /* 크기 고정 */
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 38px;
+  min-height: 38px;
   flex-shrink: 0;
 
   &:hover {

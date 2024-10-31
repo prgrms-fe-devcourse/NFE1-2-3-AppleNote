@@ -56,4 +56,11 @@ export const validators = {
 
     return env;
   },
+  convertArray: <T>(value: T) => {
+    if (validators.isArray(value)) {
+      return value as T[];
+    }
+
+    return [value];
+  },
 };

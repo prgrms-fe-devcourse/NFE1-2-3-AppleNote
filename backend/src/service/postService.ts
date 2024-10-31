@@ -69,9 +69,18 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
+    const fileToUrls = data.images?.files
+      ? await this.fileService.uploadImageList(data.images.files)
+      : [];
+
+    const validUrls = validators
+      .convertArray(data.images?.urls)
+      .flat()
+      .filter((value) => typeof value === "string" && value !== "");
+
     const postData = new Post({
       ...data,
-      images: data.images ? await this.fileService.uploadImageList(data.images) : [],
+      images: [...fileToUrls, ...validUrls],
       authorId: user.userId,
     });
 
@@ -146,9 +155,31 @@ export class PostService implements IPostService {
       throw new ServiceError("There are no items with that userId.", 404);
     }
 
+    const fileToUrls = data.images?.files
+      ? await this.fileService.uploadImageList(data.images.files)
+      : [];
+
+    const validUrls = validators
+      .convertArray(data.images?.urls)
+      .flat()
+      .filter((value) => typeof value === "string" && value !== "");
+
+    const updatedImages = validators.cleanedValue({
+      ...data,
+      images: [...fileToUrls, ...validUrls],
+    });
+
+    const emptyImageList = {
+      ...updatedImages,
+      images: [],
+    };
+
+    // 데이터 삭제 플래그에 따라 적절한 데이터 할당
+    const finalData = data.deleteImages === "true" ? emptyImageList : updatedImages;
+
     const updatedPost = await Post.findOneAndUpdate(
       { authorId: user.userId, _id: postId },
-      validators.cleanedValue(data),
+      finalData,
       { new: true, runValidators: true }
     );
 

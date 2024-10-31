@@ -10,12 +10,13 @@ export class PostController implements IController {
 
   async create(req: Request, res: Response) {
     try {
-      const { title, content } = req.body;
+      const { title, content, images: urls } = req.body;
       const files = req.files;
+
       const post = await this.postService.createPost({
         header: req.headers["content-type"],
         user: req.user,
-        data: { title, content, images: files },
+        data: { title, content, images: { files, urls } },
       });
 
       return res.status(201).json(createSuccessResponse(201, post));
@@ -48,13 +49,13 @@ export class PostController implements IController {
 
   async update(req: Request, res: Response) {
     try {
-      const { title, content } = req.body;
+      const { title, content, images: urls, deleteImages } = req.body;
       const files = req.files;
       const post = await this.postService.updatePost({
         postId: req.params.postId,
         header: req.headers["content-type"],
         user: req.user,
-        data: { title, content, images: files },
+        data: { title, content, images: { files, urls }, deleteImages },
       });
 
       return res.status(200).json(createSuccessResponse(200, post));

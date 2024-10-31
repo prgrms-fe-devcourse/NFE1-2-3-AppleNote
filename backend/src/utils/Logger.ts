@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import chalk from "chalk";
 
 export class Logger {
-  public static log = (args: unknown): void => {
-    // eslint-disable-next-line no-console
+  public static log = (args: unknown, hidden: boolean = false): void => {
+    if (hidden) return;
+
     console.log(
       chalk.blue(`
 [${new Date().toLocaleString()}]
@@ -11,8 +13,9 @@ export class Logger {
     );
   };
 
-  public static warn = (args: unknown): void => {
-    // eslint-disable-next-line no-console
+  public static warn = (args: unknown, hidden: boolean = false): void => {
+    if (hidden) return;
+
     console.log(
       chalk.yellow(`
 [${new Date().toLocaleString()}]
@@ -21,8 +24,9 @@ export class Logger {
     );
   };
 
-  public static error = (args: unknown): void => {
-    // eslint-disable-next-line no-console
+  public static error = (args: unknown, hidden: boolean = false): void => {
+    if (hidden) return;
+
     console.log(
       chalk.red(`
 [${new Date().toLocaleString()}]
@@ -31,8 +35,9 @@ export class Logger {
     );
   };
 
-  public static success = (args: unknown): void => {
-    // eslint-disable-next-line no-console
+  public static success = (args: unknown, hidden: boolean = false): void => {
+    if (hidden) return;
+
     console.log(
       chalk.green(`
 [${new Date().toLocaleString()}]

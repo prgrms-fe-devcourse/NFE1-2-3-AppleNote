@@ -13,8 +13,14 @@ export interface PostSchemaType {
   updatedAt: Date;
 }
 
+export type FormDataImages = {
+  files: Images | undefined;
+  urls: string | string[] | undefined;
+};
+
 export type FormDataPost = Omit<PostSchemaType, "images"> & {
-  images: Images;
+  images: FormDataImages;
+  deleteImages?: "true" | string;
 };
 
 const postSchema = new Schema<PostSchemaType>(

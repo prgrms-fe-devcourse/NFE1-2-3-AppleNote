@@ -71,7 +71,7 @@ export const deletePost = async (id: string): Promise<DeletePostResponse> => {
  */
 export const patchPost = async (id: string, payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts/${id}`;
-  const { data } = await httpClient.patch(URL, payload);
+  const { data } = await httpClientMultipart.patch(URL, payload);
 
   return data;
 };

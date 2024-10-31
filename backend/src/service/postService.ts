@@ -17,6 +17,7 @@ export interface IPostService {
   deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
   getPost(arg: GetPostArg): Promise<GetPostReturn>;
   searchPostList(arg: SearchPostListArg): Promise<SearchPostListReturn>;
+  getTempPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
 }
 
 // 재사용 가능한 기본 타입
@@ -497,6 +498,41 @@ export class PostService implements IPostService {
       .lean();
 
     const mappedPosts = regexSearchResults.map((post) => ({
+      postId: post._id,
+      title: post.title,
+      content: post.content,
+      images: post.images,
+      authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      categories: post.categories
+        ? [
+            {
+              name: post.categories.name,
+              categoryId: post.categories._id,
+              createdAt: post.categories.createdAt,
+              updatedAt: post.categories.updatedAt,
+            },
+          ]
+        : [],
+    }));
+
+    return mappedPosts;
+  }
+
+  async getTempPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const postList = await Post.find({ authorId: user.userId, temp: true })
+      .populate<{
+        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
+      }>("categories")
+      .lean();
+
+    const mappedPosts = postList.map((post) => ({
       postId: post._id,
       title: post.title,
       content: post.content,

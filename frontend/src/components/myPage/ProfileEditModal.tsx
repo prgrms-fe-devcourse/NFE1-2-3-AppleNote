@@ -1,47 +1,73 @@
 import styled from "styled-components";
-import { changeName } from "./userApi";
+import { changeProfile } from "./userApi";
 import { useState } from "react";
 
 const closeBtn = "/closeBtn.png";
+const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
-interface NameEditModalProps {
+interface ImageEditModalProps {
   onClose: () => void;
 }
-const NameEditModal: React.FC<NameEditModalProps> = ({ onClose }) => {
-  const [name, setNewName] = useState("");
+
+//프로필 이미지 수정 모달
+const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
+  const isValidImageUrl = (url: string) => {
+    const regex = /^https?:\/\/.*\.(jpeg|jpg|gif|png|bmp|webp|svg)/i;
+
+    return regex.test(url);
+  };
+
+  const [profileImage, setNewImg] = useState("");
   const handleConfirm = async () => {
-    const isChangeSuccessful = await changeName({ name });
+    if (!isValidImageUrl(profileImage)) {
+      alert("유효하지 않은 이미지 형식입니다.");
+    } else {
+      const isChangeSuccessful = await changeProfile({ profileImage });
+
+      if (isChangeSuccessful) {
+        alert("프로필 이미지가 변경되었습니다.");
+        onClose();
+      } else {
+        alert("프로필 이미지 변경에 실패했습니다.");
+      }
+    }
+  };
+  const handleDefault = async () => {
+    const isChangeSuccessful = await changeProfile({ profileImage: DEFAULT_PROFILE_IMAGE });
 
     if (isChangeSuccessful) {
-      alert("이름이 변경되었습니다.");
+      alert("프로필 이미지가 변경되었습니다.");
       onClose();
     } else {
-      alert("이름 변경에 실패했습니다.");
+      alert("프로필 이미지 변경에 실패했습니다.");
     }
   };
 
   return (
     <>
-      {" "}
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>이름 변경</h3>
+            <h3>프로필 이미지 변경</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
           </Header>
-          <Input type="text" value={name} onChange={(e) => setNewName(e.target.value.trim())} />
+          <Input
+            type="text"
+            value={profileImage}
+            onChange={(e) => setNewImg(e.target.value.trim())}
+          />
+
           <ButtonWrapper>
             <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={onClose}>닫기</Button>
+            <Button onClick={handleDefault}>삭제</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>
     </>
   );
 };
-
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -64,7 +90,6 @@ const ModalContent = styled.div`
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
-
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
@@ -78,7 +103,6 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: 0;
 `;
-
 const Input = styled.input`
   width: 100%;
   padding: 10px;
@@ -105,4 +129,4 @@ const Button = styled.button`
   }
 `;
 
-export default NameEditModal;
+export default ProfileEditModal;

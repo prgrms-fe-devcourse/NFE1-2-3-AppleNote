@@ -20,7 +20,7 @@ export type FormDataImages = {
 
 export type FormDataPost = Omit<PostSchemaType, "images"> & {
   images: FormDataImages;
-  deleteImages?: "true" | string;
+  deleteImages?: "true";
 };
 
 const postSchema = new Schema<PostSchemaType>(

@@ -4,6 +4,7 @@ import { CategorySchemaType } from "./categoryModel";
 import { Images } from "@src/types";
 
 export interface PostSchemaType {
+  temp: boolean;
   title: string;
   content: string;
   images: string[];
@@ -25,6 +26,7 @@ export type FormDataPost = Omit<PostSchemaType, "images"> & {
 
 const postSchema = new Schema<PostSchemaType>(
   {
+    temp: { type: Boolean, default: false },
     title: { type: String, required: true },
     content: { type: String, required: true },
     images: { type: [String], default: [] },

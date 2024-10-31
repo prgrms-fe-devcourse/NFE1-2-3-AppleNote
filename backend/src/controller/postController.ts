@@ -10,13 +10,13 @@ export class PostController implements IController {
 
   async create(req: Request, res: Response) {
     try {
-      const { title, content, images: urls } = req.body;
+      const { title, content, temp, images: urls } = req.body;
       const files = req.files;
 
       const post = await this.postService.createPost({
         header: req.headers["content-type"],
         user: req.user,
-        data: { title, content, images: { files, urls } },
+        data: { title, content, temp, images: { files, urls } },
       });
 
       return res.status(201).json(createSuccessResponse(201, post));

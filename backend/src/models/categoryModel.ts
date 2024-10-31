@@ -5,7 +5,7 @@ import { PostSchemaType } from "./postModel";
 export interface CategorySchemaType {
   name: string;
   authorId: Types.ObjectId;
-  posts: Omit<PostSchemaType, "categories">[];
+  posts: Omit<PostSchemaType, "categories" | "temp">[];
   createdAt: Date;
   updatedAt: Date;
 }

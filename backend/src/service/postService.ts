@@ -26,7 +26,7 @@ type RequestData = Partial<FormDataPost>;
 type WithPostId = { postId: string };
 type WithUser = { user: RequestUser };
 type WithCategories = { categories: string[] };
-type PostWithoutId = Omit<PostSchemaType, "_id">;
+type PostWithoutId = Omit<PostSchemaType, "_id" | "temp">;
 type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
 // 요청 인자 타입
@@ -45,7 +45,7 @@ type CreatePostReturn = Omit<PostWithId, "categories">;
 type UpdatePostReturn = Omit<PostWithId, "categories">;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
-type GetPostReturn = Omit<PostSchemaType, "categories"> & { postId: Types.ObjectId } & {
+type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Types.ObjectId } & {
   categories: { name: string; categoryId: Types.ObjectId; createdAt: Date; updatedAt: Date }[];
 };
 type SearchPostListReturn = Omit<PostWithId, "categories">[];
@@ -60,7 +60,12 @@ export class PostService implements IPostService {
     }
 
     // 필드검증
-    if (!validators.keys(data, ["title", "content", "images"])) {
+    if (!validators.keys(data, ["title", "content", "images", "temp"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["title", "content", "images"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -103,7 +108,7 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const postList = await Post.find({ authorId: user.userId })
+    const postList = await Post.find({ authorId: user.userId, temp: false })
       .populate<{
         categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
       }>("categories")
@@ -264,6 +269,11 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
+    // 필드값 검증
+    if (!validators.values(data, ["categories"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
     // 단일 카테고리 처리
     if ((!data.categories && !validators.isArray(data.categories)) || data.categories.length > 1) {
       throw new ServiceError("Invalid request field.", 422);
@@ -344,6 +354,11 @@ export class PostService implements IPostService {
 
     // 필드 검증
     if (!validators.keys(data, ["categories"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["categories"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -463,8 +478,14 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
+    // 필드값 검증
+    if (!validators.values(data, ["query"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
     const regexSearchResults = await Post.find({
       authorId: user.userId,
+      temp: false,
       $or: [
         { title: { $regex: new RegExp(data.query, "i") } },
         { content: { $regex: new RegExp(data.query, "i") } },

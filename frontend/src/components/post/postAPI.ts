@@ -6,7 +6,8 @@ export type Post = {
   content: string;
   images: string[];
   authorId: string;
-  category: string[];
+  categories: string[];
+  createdAt: Date;
 };
 export type FetchPostResponse = {
   statusCode: number;

@@ -17,6 +17,7 @@ route.post(
   upload.array("images", IMAGE_MAX_COUNT),
   postController.create.bind(postController)
 );
+route.get("/:postId", postController.getPostDetail.bind(postController));
 route.patch(
   "/:postId",
   upload.array("images", IMAGE_MAX_COUNT),
@@ -24,5 +25,7 @@ route.patch(
 );
 route.delete("/:postId", postController.delete.bind(postController));
 route.post("/:postId/categories", postController.addCategory.bind(postController));
+route.delete("/:postId/categories", postController.excludeCategory.bind(postController));
+route.post("/search", postController.getPostListByQuery.bind(postController));
 
 export default route;

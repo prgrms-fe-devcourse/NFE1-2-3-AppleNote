@@ -20,3 +20,9 @@ export interface IController {
   update(req: Request, res: Response): ControllerResponse;
   delete(req: Request, res: Response): ControllerResponse;
 }
+
+export type Images =
+  | {
+      [fieldname: string]: Express.Multer.File[];
+    }
+  | Express.Multer.File[];

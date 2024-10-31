@@ -6,6 +6,7 @@ import Category from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
+import { IFileService } from "./fileService";
 
 export interface IPostService {
   createPost(arg: CreatePostArg): Promise<CreatePostReturn>;
@@ -50,7 +51,8 @@ type GetPostReturn = Omit<PostSchemaType, "categories"> & { postId: Types.Object
 type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
-  // TODO: 이미지 URL 변환 작업하기
+  constructor(private fileService: IFileService) {}
+
   async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
@@ -69,7 +71,7 @@ export class PostService implements IPostService {
 
     const postData = new Post({
       ...data,
-      images: ["test.url"],
+      images: data.images ? await this.fileService.uploadImageList(data.images) : [],
       authorId: user.userId,
     });
 

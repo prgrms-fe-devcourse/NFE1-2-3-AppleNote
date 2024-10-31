@@ -49,4 +49,11 @@ export const validators = {
       return acc;
     }, {}) as Partial<T>;
   },
+  getValidatedENV: (env: string | undefined) => {
+    if (typeof env !== "string" || env.length <= 0) {
+      throw new Error("Invalid env");
+    }
+
+    return env;
+  },
 };

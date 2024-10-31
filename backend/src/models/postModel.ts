@@ -1,6 +1,7 @@
 import { Schema, Types, model } from "mongoose";
 
 import { CategorySchemaType } from "./categoryModel";
+import { Images } from "@src/types";
 
 export interface PostSchemaType {
   title: string;
@@ -13,11 +14,7 @@ export interface PostSchemaType {
 }
 
 export type FormDataPost = Omit<PostSchemaType, "images"> & {
-  images:
-    | {
-        [fieldname: string]: Express.Multer.File[];
-      }
-    | Express.Multer.File[];
+  images: Images;
 };
 
 const postSchema = new Schema<PostSchemaType>(

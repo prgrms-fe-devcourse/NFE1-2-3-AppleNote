@@ -1,10 +1,14 @@
+import { FirebaseStorage } from "@src/config/FirebaseStorage";
 import { PostController } from "@src/controller/postController";
+import { FileService } from "@src/service/fileService";
 import { PostService } from "@src/service/postService";
 import express from "express";
 import multer from "multer";
 
 const route = express.Router();
-const postService = new PostService();
+
+const fileService = new FileService(new FirebaseStorage());
+const postService = new PostService(fileService);
 const postController = new PostController(postService);
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });

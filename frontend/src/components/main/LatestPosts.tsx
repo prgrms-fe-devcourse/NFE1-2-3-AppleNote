@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { fetchLatestPosts, Post } from "./postApi";
+import MoreButton from "@common/components/MoreButton";
 
 const LatestPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -36,7 +37,7 @@ const LatestPosts: React.FC = () => {
     <Container>
       <Header>
         <Title>LATEST POSTS</Title>
-        <MoreButton onClick={handleMoreButtonClick}>&gt;&gt;</MoreButton>
+        <MoreButton onClick={handleMoreButtonClick} />
       </Header>
       <PostsGrid>
         {posts.map((post) => (
@@ -72,23 +73,6 @@ const Title = styled.h2`
   margin-bottom: 3rem;
   margin-left: 20px;
   align-self: flex-start;
-`;
-
-const MoreButton = styled.button`
-  background-color: ${({ theme }) => theme.background.primary};
-  color: ${({ theme }) => theme.text.primary};
-  border: none;
-  font-size: 1.8rem;
-  margin-right: 20px;
-  cursor: pointer;
-  letter-spacing: -0.5rem;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
-
-  &:hover {
-    opacity: 0.6;
-  }
 `;
 
 const PostsGrid = styled.div`

@@ -22,8 +22,8 @@ const formatDate = (dateString?: Date) => {
 const HorizontalPostCard: React.FC<HorizontalPostCardProps> = ({ post }) => {
   const navigate = useNavigate();
   const thumbnailSrc = post.images?.[0] || "/default-thumbnail.png"; // 유효성 검사
-  const categoryName = post.category?.[0]?.name || ""; // 유효성 검사
-  const formattedDate = formatDate(post.createAt);
+  const categoryName = post.categories?.[0]?.name || ""; // 유효성 검사
+  const formattedDate = formatDate(post.createdAt);
   const handleCardClick = () => {
     navigate(`/posts/${post.postId}`); // 포스트 상세 페이지로 이동
   };

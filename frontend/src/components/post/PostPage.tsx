@@ -1,22 +1,28 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { fetchPost } from "./postAPI";
 import styled from "styled-components";
+import { LuPencilLine } from "react-icons/lu";
+import { FaRegTrashCan } from "react-icons/fa6";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const fetchPostData = async () => {
     try {
       const data = await fetchPost(id as string);
-
+      // eslint-disable-next-line
       console.log(data);
     } catch (error) {
+      // eslint-disable-next-line
       console.error(error);
     }
   };
 
   useEffect(() => {
     fetchPostData();
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -28,9 +34,53 @@ const PostPage = () => {
       </PostInfoWrapper>
       <Image src="/default-banner-image.png" />
       <Content>임시데이터</Content>
+      <IconWrapper>
+        <LuPencilLine onClick={() => {}} size={30} />
+        <FaRegTrashCan onClick={() => {}} size={30} />
+      </IconWrapper>
+      <NaviWrapper>
+        <NaviContent>
+          <IoIosArrowBack
+            onClick={() => {
+              if (id) {
+                navigate(`/posts/${Number(id) - 1}`);
+              }
+            }}
+            size={50}
+            color="#fff"
+          />
+        </NaviContent>
+        <NaviContent>
+          <IoIosArrowForward
+            onClick={() => {
+              if (id) {
+                navigate(`/posts/${Number(id) + 1}`);
+              }
+            }}
+            size={50}
+            color="#fff"
+          />
+        </NaviContent>
+      </NaviWrapper>
     </Wrapper>
   );
 };
+
+const NaviContent = styled.div`
+  width: 50px;
+  background-color: black;
+`;
+const NaviWrapper = styled.div`
+  width: 90%;
+  display: inline-flex;
+  justify-content: space-between;
+  margin-top: 50px;
+`;
+const IconWrapper = styled.div`
+  width: 600px;
+  display: flex;
+  gap: 15px;
+`;
 
 const Content = styled.div``;
 const Image = styled.img`
@@ -44,7 +94,7 @@ const PostInfo = styled.div`
   color: gray;
 `;
 const PostInfoWrapper = styled.div`
-  width: 100%;
+  width: 600px;
   display: inline-flex;
   justify-content: flex-end;
   gap: 20px;
@@ -54,7 +104,7 @@ const Title = styled.div`
   font-weight: 900;
 `;
 const Wrapper = styled.div`
-  width: 600px;
+  width: 100%;
   display: flex;
   align-items: center;
   flex-direction: column;

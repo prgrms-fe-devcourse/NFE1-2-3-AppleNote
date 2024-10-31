@@ -170,8 +170,71 @@ export class UserController {
       return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
+  // 이름 변경
+  async updateName(req: Request, res: Response) {
+    try {
+      const { name } = req.body;
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
+      }
+      const user = await this.userService.getUserById(userId);
+
+      if (!user) {
+        return res.status(404).json(createErrorResponse(404, "User not found"));
+      }
+      const updateData: UserSchemaType = {
+        name: name,
+        email: user.email || "",
+        description: user.description || "",
+        password: user.password || "",
+      };
+
+      await this.userService.updateUser(userId, updateData);
+
+      return res.status(200).json({
+        statusCode: 200,
+        payload: { isChange: true },
+      });
+    } catch (error) {
+      return res.status(500).json(createErrorResponse(500, `${error}`));
+    }
+  }
+  // 프로필이미지 변경
+  async updateProfile(req: Request, res: Response) {
+    try {
+      const { profileImage } = req.body;
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
+      }
+      const user = await this.userService.getUserById(userId);
+
+      if (!user) {
+        return res.status(404).json(createErrorResponse(404, "User not found"));
+      }
+      const updateData: UserSchemaType = {
+        name: user.name || "",
+        email: user.email || "",
+        description: user.description || "",
+        password: user.password || "",
+        profileImage: profileImage,
+      };
+
+      await this.userService.updateUser(userId, updateData);
+
+      return res.status(200).json({
+        statusCode: 200,
+        payload: { isChange: true },
+      });
+    } catch (error) {
+      return res.status(500).json(createErrorResponse(500, `${error}`));
+    }
+  }
   //비밀번호 변경
-  async update(req: Request, res: Response) {
+  async updatePw(req: Request, res: Response) {
     try {
       const { oldPassword, newPassword } = req.body;
 

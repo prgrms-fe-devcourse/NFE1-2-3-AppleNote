@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { UserSchemaType } from "@src/types";
 import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
-import { IUserService } from "@src/service/userService";
+import { IUserService } from "@src/services/userService";
 import { IUserWithId } from "@src/models/userModel";
 
 export class UserController {

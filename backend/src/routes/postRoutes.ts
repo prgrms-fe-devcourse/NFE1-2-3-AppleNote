@@ -1,7 +1,7 @@
 import { FirebaseStorage } from "@src/config/FirebaseStorage";
-import { PostController } from "@src/controller/postController";
-import { FileService } from "@src/service/fileService";
-import { PostService } from "@src/service/postService";
+import { PostController } from "@src/controllers/postController";
+import { FileService } from "@src/services/fileService";
+import { PostService } from "@src/services/postService";
 import express from "express";
 import multer from "multer";
 

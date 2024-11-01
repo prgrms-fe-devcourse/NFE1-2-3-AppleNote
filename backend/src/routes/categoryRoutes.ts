@@ -1,7 +1,7 @@
 import express from "express";
 
-import { CategoryController } from "@src/controller/categoryController";
-import { CategoryService } from "@src/service/categoryService";
+import { CategoryController } from "@src/controllers/categoryController";
+import { CategoryService } from "@src/services/categoryService";
 
 const route = express.Router();
 const categoryService = new CategoryService();

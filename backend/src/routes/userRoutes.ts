@@ -1,7 +1,7 @@
 import express from "express";
 
-import { UserController } from "@src/controller/userController";
-import { UserService } from "@src/service/userService";
+import { UserController } from "@src/controllers/userController";
+import { UserService } from "@src/services/userService";
 
 const route = express.Router();
 const userService = new UserService();

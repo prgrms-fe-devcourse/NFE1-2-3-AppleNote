@@ -11,7 +11,7 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import postRoutes from "./routes/postRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
-import { verifyToken } from "./middleware/middleware";
+import { verifyToken } from "./middleware";
 import { createErrorResponse } from "./utils/createError";
 
 const app = express();

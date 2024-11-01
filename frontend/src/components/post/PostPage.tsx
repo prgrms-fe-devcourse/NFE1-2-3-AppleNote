@@ -51,7 +51,12 @@ const PostPage = () => {
       <Image src={postInfo?.payload.images[0]} />
       <Content>{postInfo?.payload.content}</Content>
       <IconWrapper>
-        <LuPencilLine onClick={() => {}} size={30} />
+        <LuPencilLine
+          onClick={() => {
+            navigate(`/edit-post/${id}`);
+          }}
+          size={30}
+        />
         <FaRegTrashCan
           onClick={() => {
             deletePostData();

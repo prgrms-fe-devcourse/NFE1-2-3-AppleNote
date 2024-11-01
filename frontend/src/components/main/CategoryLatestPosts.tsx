@@ -70,10 +70,9 @@ const CategoryLatestPosts: React.FC = () => {
   return (
     <Container>
       <Header>
-        <CategorySection title={selectedCategoryName} /> {/* CategorySection 적용 */}
-        <AlignedMoreButton onClick={handleMoreButtonClick} />
+        <CategorySection title={selectedCategoryName} />
+        <MoreButton onClick={handleMoreButtonClick} />
       </Header>
-
       <PostsGrid>
         {posts.map((post) => (
           <HorizontalPostCard key={post.postId} post={post} />
@@ -96,27 +95,22 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  justify-content: space-between; /* 카테고리 제목을 왼쪽에 정렬하고 버튼을 오른쪽으로 */
+  gap: 1rem; /* CategorySection과 AlignedMoreButton 사이의 간격 추가 */
 `;
 
-// MoreButton에 스타일 확장 적용
-const AlignedMoreButton = styled(MoreButton)`
-  align-self: flex-end; /* 버튼을 오른쪽으로 정렬 */
-`;
-
+// PostsGrid에 포함된 각 카드의 정렬 및 레이아웃 정의
 const PostsGrid = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-right: 3rem; /* MoreButton 크기만큼 오른쪽 여백 추가 */
-  max-width: 100%; /* 목록의 최대 너비 */
-  min-width: 0; /* 화면 너비에 맞춰 줄어듦 */
+  max-width: 100%;
 
   @media (max-width: 768px) {
-    margin-right: 0; /* 모바일에서는 오른쪽 여백 제거 */
-    padding: 0 1rem;
+    padding: 0 1rem; /* 모바일에서는 좌우 여백 추가 */
   }
 `;
 

@@ -18,9 +18,10 @@ const Button = styled.button`
   color: ${({ theme }) => theme.text.primary};
   border: none;
   font-size: 1.8rem;
-  margin-right: 25px;
   cursor: pointer;
   letter-spacing: -0.5rem;
+  align-self: flex-end; /* 오른쪽 정렬 */
+  margin-left: auto;
   transition:
     background-color 0.3s,
     color 0.3s;

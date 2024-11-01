@@ -9,12 +9,13 @@ import { useNavigate } from "react-router-dom";
 import NameEditModal from "./modals/NameEditModal";
 import ProfileEditModal from "./modals/ProfileEditModal";
 import BannerEditModal from "./modals/BannerEditModal";
+import { useBannerModal } from "./BannerModalContext";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
   const [isImageModalOpen, setImageModalOpen] = useState(false);
-  const [isBannerModalOpen, setBannerModalOpen] = useState(false);
+  const { isBannerModalOpen, setBannerModalOpen } = useBannerModal();
   const [isNameModalOpen, setNameModalOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const SettingPage = () => {
 
     fetchUser();
   }, [isImageModalOpen, isNameModalOpen, isBannerModalOpen]);
+
   const changePw = () => {
     setStatus(true);
   };

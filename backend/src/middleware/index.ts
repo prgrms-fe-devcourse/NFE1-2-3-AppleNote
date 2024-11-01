@@ -2,6 +2,7 @@ import { IUserWithId } from "@src/models/userModel";
 import { createErrorResponse } from "@src/utils/createError";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   // Authorization 헤더가 없을 경우
@@ -32,3 +33,9 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
   return;
 };
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const IMAGE_MAX_COUNT = 10;
+
+export const uploadImages = upload.array("images", IMAGE_MAX_COUNT);

@@ -1,18 +1,19 @@
+import express from "express";
+
 import { FirebaseStorage } from "@src/config/FirebaseStorage";
 import { PostController } from "@src/controllers/postController";
+import { uploadImages } from "@src/middleware";
+import { MongoPostRepository } from "@src/repositories/postRepository";
 import { FileService } from "@src/services/fileService";
 import { PostService } from "@src/services/postService";
-import express from "express";
-import multer from "multer";
 
 const route = express.Router();
 
-const fileService = new FileService(new FirebaseStorage());
-const postService = new PostService(fileService);
+const firebaseStorage = new FirebaseStorage();
+const fileService = new FileService(firebaseStorage);
+const mongoPostRepository = new MongoPostRepository();
+const postService = new PostService(fileService, mongoPostRepository);
 const postController = new PostController(postService);
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
-const IMAGE_MAX_COUNT = 10;
 
 //posts
 
@@ -26,18 +27,10 @@ route.get("/:postId", postController.getPostDetail.bind(postController));
 route.get("/", postController.read.bind(postController));
 
 // 포스트 생성
-route.post(
-  "/",
-  upload.array("images", IMAGE_MAX_COUNT),
-  postController.create.bind(postController)
-);
+route.post("/", uploadImages, postController.create.bind(postController));
 
 // 포스트 수정
-route.patch(
-  "/:postId",
-  upload.array("images", IMAGE_MAX_COUNT),
-  postController.update.bind(postController)
-);
+route.patch("/:postId", uploadImages, postController.update.bind(postController));
 
 // 포스트 삭제
 route.delete("/:postId", postController.delete.bind(postController));

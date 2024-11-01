@@ -8,25 +8,48 @@ interface CategorySectionProps {
 
 const CategorySection: React.FC<CategorySectionProps> = ({ title, small }) => {
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const [dividerWidth, setDividerWidth] = useState(300); // 기본 너비
+  const [dividerWidth, setDividerWidth] = useState(0);
+  const [additionalWidth, setAdditionalWidth] = useState(0);
 
   // Title의 길이에 따라 Divider의 너비 조정
-  useEffect(() => {
+  const updateDividerWidth = () => {
     if (titleRef.current) {
       const titleWidth = titleRef.current.getBoundingClientRect().width;
-      const adjustedWidth = small ? titleWidth + 60 : titleWidth + 100;
+      const computedAdditionalWidth = small
+        ? Math.max(60, Math.min(100, window.innerWidth * 0.1)) // small일 때 비율 계산
+        : Math.max(100, Math.min(140, window.innerWidth * 0.15)); // 기본일 때 비율 계산
 
-      setDividerWidth(adjustedWidth); // // small 여부에 따라 Divider 너비 설정
+      setAdditionalWidth(computedAdditionalWidth);
+
+      setDividerWidth(titleWidth + computedAdditionalWidth);
     }
+  };
+
+  useEffect(() => {
+    // 초기 설정
+    updateDividerWidth();
+
+    // ResizeObserver를 사용하여 title의 크기 변화를 감지하고 너비를 업데이트
+    const observer = new ResizeObserver(updateDividerWidth);
+
+    if (titleRef.current) observer.observe(titleRef.current);
+
+    // 윈도우 리사이즈 이벤트 핸들러 등록
+    window.addEventListener("resize", updateDividerWidth);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateDividerWidth);
+    };
   }, [title, small]);
 
   return (
     <Container>
-      <Title ref={titleRef} small={small}>
+      <Title ref={titleRef} small={small} margin={additionalWidth / 2}>
         {title}
       </Title>
       <DividerWrapper>
-        <Divider small={small} style={{ width: `${dividerWidth}px` }} />
+        <Divider small={small} width={dividerWidth} />
       </DividerWrapper>
     </Container>
   );
@@ -41,17 +64,16 @@ const Container = styled.div`
   gap: 0.5rem; /* Title과 Divider 사이의 간격 */
 `;
 
-const Title = styled.h2<{ small?: boolean }>`
-  font-size: 3rem;
+const Title = styled.h2<{ small?: boolean; margin: number }>`
+  font-size: clamp(2rem, 3vw, 3rem);
   font-weight: bold;
-  margin: 0 0 0 50px;
+  margin-left: ${({ margin }) => `${margin}px`};
+  margin-right: ${({ margin }) => `${margin}px`};
 
-  /* 작은 크기일 때 스타일 조정 */
   ${({ small }) =>
     small &&
     css`
-      font-size: 2rem; /* 작은 크기 */
-      margin: 0 0 0 30px; /* 여백 조정 */
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
     `}
 `;
 
@@ -61,15 +83,10 @@ const DividerWrapper = styled.div`
   width: 100%; /* 부모 너비에 맞춤 */
 `;
 
-const Divider = styled.div<{ small?: boolean }>`
-  height: 3px;
-  border-top: 7px solid;
-  ${({ small }) =>
-    small &&
-    css`
-      height: 2px;
-      border-top: 4px solid;
-    `}
+const Divider = styled.div<{ small?: boolean; width: number }>`
+  height: ${({ small }) => (small ? "clamp(4px, 1vw, 6px)" : "clamp(4px, 1.5vw, 7px)")};
+  background-color: ${({ theme }) => theme.text.primary};
+  width: ${({ width }) => `${width}px`};
 `;
 
 export default CategorySection;

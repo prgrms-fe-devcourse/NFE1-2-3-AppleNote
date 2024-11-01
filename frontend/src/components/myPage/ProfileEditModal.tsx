@@ -12,9 +12,7 @@ interface ImageEditModalProps {
 //프로필 이미지 수정 모달
 const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
   const isValidImageUrl = (url: string) => {
-    const regex = /^https?:\/\/.*\.(jpeg|jpg|gif|png|bmp|webp|svg)/i;
-
-    return regex.test(url);
+    return /^https?:\/\//i.test(url);
   };
 
   const [profileImage, setNewImg] = useState("");

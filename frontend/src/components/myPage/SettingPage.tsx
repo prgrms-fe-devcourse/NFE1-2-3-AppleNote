@@ -7,13 +7,14 @@ import ChangePw from "./ChangePw";
 import { useAuth } from "@components/auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import NameEditModal from "./NameEditModal";
+import ProfileEditModal from "./ProfileEditModal";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
-  // const [isImageModalOpen, setImageModalOpen] = useState(false);
+  const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [isNameModalOpen, setNameModalOpen] = useState(false);
-  const [name, setName] = useState(user?.name ?? "");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ const SettingPage = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [isImageModalOpen, isNameModalOpen]);
   const changePw = () => {
     setStatus(true);
   };
@@ -46,9 +47,9 @@ const SettingPage = () => {
       }
     }
   };
-  // const editImg = () => {
-  //   setImageModalOpen(true); // 이미지 모달 열기
-  // };
+  const editImg = () => {
+    setImageModalOpen(true); // 이미지 모달 열기
+  };
 
   const editName = () => {
     setNameModalOpen(true); // 이름 모달 열기
@@ -79,9 +80,9 @@ const SettingPage = () => {
         <Wrapper>
           <ProfileWrapper>
             <ImgWrapper>
-              <UserImg src={user?.profileImage || DEFAULT_PROFILE_IMAGE} />
+              <UserImg src={user?.profileImage ?? DEFAULT_PROFILE_IMAGE} />
 
-              <ImgEditBtn>
+              <ImgEditBtn onClick={editImg}>
                 <img src={edit} />
               </ImgEditBtn>
             </ImgWrapper>
@@ -99,11 +100,9 @@ const SettingPage = () => {
               <Button onClick={handleLogout}>로그아웃</Button>
             </UserProfile>
           </ProfileWrapper>
-          {/* {isImageModalOpen && <ImageEditModal onClose={() => setImageModalOpen(false)} />} */}
+          {isImageModalOpen && <ProfileEditModal onClose={() => setImageModalOpen(false)} />}
           {isNameModalOpen && (
             <NameEditModal
-              name={name}
-              setName={setName}
               onClose={() => {
                 setNameModalOpen(false);
               }}
@@ -114,22 +113,6 @@ const SettingPage = () => {
     </>
   );
 };
-
-//  모달 인터페이스
-// interface ImageEditModalProps {
-//   onClose: () => void;
-// }
-
-// //프로필 이미지 수정 모달
-// const ImageEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => (
-//   <ModalOverlay>
-//     <ModalContent>
-//       <h3>프로필 이미지 변경</h3>
-//       <button>확인</button>
-//       <button onClick={onClose}>닫기</button>
-//     </ModalContent>
-//   </ModalOverlay>
-// );
 
 const Wrapper = styled.div`
   display: flex;
@@ -158,6 +141,7 @@ const UserImg = styled.div<{ src: string }>`
   background-image: url(${(props) => props.src});
   background-size: cover;
   background-position: center;
+  border: 0.5px solid gray;
 `;
 const UserProfile = styled.div`
   display: flex;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { changePassword } from "./userApi"; // changePassword API 함수 임포트
+import { changePassword } from "./api/userApi"; // changePassword API 함수 임포트
 
 interface ChangePwProps {
   setStatus: React.Dispatch<React.SetStateAction<boolean>>;

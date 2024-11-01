@@ -1,4 +1,4 @@
-import { httpClient } from "@common/api/fetch";
+import { httpClient, httpClientMultipart } from "@common/api/fetch";
 
 export type Post = {
   postId: string;
@@ -6,7 +6,8 @@ export type Post = {
   content: string;
   images: string[];
   authorId: string;
-  category: string[];
+  categories: string[];
+  createdAt: Date;
 };
 export type FetchPostResponse = {
   statusCode: number;
@@ -33,7 +34,7 @@ export type CreatePostResponse = {
 export type PostPayload = {
   title?: string;
   content?: string;
-  images?: string[];
+  images?: string | null;
 };
 
 /**
@@ -70,7 +71,7 @@ export const deletePost = async (id: string): Promise<DeletePostResponse> => {
  */
 export const patchPost = async (id: string, payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts/${id}`;
-  const { data } = await httpClient.patch(URL, payload);
+  const { data } = await httpClientMultipart.patch(URL, payload);
 
   return data;
 };
@@ -83,7 +84,7 @@ export const patchPost = async (id: string, payload: PostPayload): Promise<Patch
  */
 export const createPost = async (payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts`;
-  const { data } = await httpClient.post(URL, payload);
+  const { data } = await httpClientMultipart.post(URL, payload);
 
   return data;
 };

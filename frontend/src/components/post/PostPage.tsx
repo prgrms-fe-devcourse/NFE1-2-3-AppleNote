@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { fetchPost } from "./postAPI";
+import { useEffect, useState } from "react";
+import { fetchPost, FetchPostResponse } from "./postAPI";
 import styled from "styled-components";
 import { LuPencilLine } from "react-icons/lu";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -9,11 +9,12 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [postInfo, setPostInfo] = useState<FetchPostResponse>();
   const fetchPostData = async () => {
     try {
       const data = await fetchPost(id as string);
-      // eslint-disable-next-line
-      console.log(data);
+
+      setPostInfo(data);
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
@@ -27,13 +28,19 @@ const PostPage = () => {
 
   return (
     <Wrapper>
-      <Title>임시데이터</Title>
+      <Title>{postInfo?.payload.title}</Title>
       <PostInfoWrapper>
-        <PostInfo>카테고리 임시</PostInfo>
-        <PostInfo>생성일 임시</PostInfo>
+        <PostInfo>{postInfo?.payload.categories}</PostInfo>
+        <PostInfo>
+          {new Date(postInfo?.payload.createdAt as Date).toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </PostInfo>
       </PostInfoWrapper>
-      <Image src="/default-banner-image.png" />
-      <Content>임시데이터</Content>
+      <Image src={postInfo?.payload.images[0]} />
+      <Content>{postInfo?.payload.content}</Content>
       <IconWrapper>
         <LuPencilLine onClick={() => {}} size={30} />
         <FaRegTrashCan onClick={() => {}} size={30} />

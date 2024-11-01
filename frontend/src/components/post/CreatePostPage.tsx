@@ -2,6 +2,7 @@ import React, { useReducer } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { createPost } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -43,6 +44,21 @@ const CreatePostPage: React.FC = () => {
     deleteModalOpen: false,
   });
 
+  const savePostData = async () => {
+    try {
+      const payload = {
+        title: state.title,
+        content: state.content,
+        images: state.image,
+      };
+      const data = await createPost(payload);
+
+      navigate(`/posts/${data.payload.postId}`);
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+    }
+  };
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -82,9 +98,7 @@ const CreatePostPage: React.FC = () => {
       <ButtonWrapper>
         <Button
           onClick={() => {
-            // API 추후 적용 예정 + 페이지 이동
-            // eslint-disable-next-line no-console
-            console.log(state.title, state.image, state.content);
+            savePostData();
           }}>
           확인
         </Button>

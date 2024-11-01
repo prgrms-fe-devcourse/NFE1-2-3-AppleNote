@@ -81,9 +81,11 @@ const SettingPage = () => {
 
   return (
     <>
-      <ImgEditBtn onClick={editBanner}>
-        <img src={edit} />
-      </ImgEditBtn>
+      <BtnWrapper>
+        <BannerEditBtn onClick={editBanner}>
+          <img src={edit} />
+        </BannerEditBtn>
+      </BtnWrapper>
       {status ? (
         <ChangePw setStatus={setStatus} /> // status가 true이면 ChangePw 컴포넌트 렌더링
       ) : (
@@ -136,7 +138,10 @@ const SettingPage = () => {
     </>
   );
 };
-
+const BtnWrapper = styled.div`
+  margin-top: -25px;
+  margin-right: -16px;
+`;
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -185,6 +190,13 @@ const UserName = styled.p`
   align-items: center;
 `;
 
+const BannerEditBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 98%;
+  padding-top: 10px;
+`;
 const NameEditBtn = styled.button`
   background-color: transparent;
   border: none;

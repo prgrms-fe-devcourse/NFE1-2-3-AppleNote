@@ -1,8 +1,10 @@
 import { Schema, Types, model } from "mongoose";
 
 import { CategorySchemaType } from "./categoryModel";
+import { Images } from "@src/types";
 
 export interface PostSchemaType {
+  temp: boolean;
   title: string;
   content: string;
   images: string[];
@@ -12,16 +14,19 @@ export interface PostSchemaType {
   updatedAt: Date;
 }
 
+export type FormDataImages = {
+  files: Images | undefined;
+  urls: string | string[] | undefined;
+};
+
 export type FormDataPost = Omit<PostSchemaType, "images"> & {
-  images:
-    | {
-        [fieldname: string]: Express.Multer.File[];
-      }
-    | Express.Multer.File[];
+  images: FormDataImages;
+  deleteImages?: "true";
 };
 
 const postSchema = new Schema<PostSchemaType>(
   {
+    temp: { type: Boolean, default: false },
     title: { type: String, required: true },
     content: { type: String, required: true },
     images: { type: [String], default: [] },

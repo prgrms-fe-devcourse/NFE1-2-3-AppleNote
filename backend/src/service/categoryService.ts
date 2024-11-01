@@ -19,9 +19,9 @@ type RequestUser = IUserWithId | undefined;
 type RequestData = Partial<CategorySchemaType>;
 type WithCategoryId = { categoryId: string };
 type WithUser = { user: RequestUser };
-type Post = PostSchemaType & { postId: Types.ObjectId };
+type PostItem = Omit<PostSchemaType & { postId: Types.ObjectId }, "temp" | "categories">;
 type WithPosts = {
-  posts: Array<Omit<Post, "categories">>;
+  posts: PostItem[];
 };
 type CategoryWithId = RequestData & { categoryId: Types.ObjectId };
 
@@ -42,6 +42,11 @@ export class CategoryService implements ICategoryService {
   async createCategory({ data, user }: CreateCategoryArg): Promise<CreateCategoryReturn> {
     // 필드검증
     if (!validators.keys(data, ["name"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["name"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -105,6 +110,11 @@ export class CategoryService implements ICategoryService {
 
     // 필드검증
     if (!validators.keys(data, ["name"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["name"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -210,8 +220,11 @@ export class CategoryService implements ICategoryService {
 
     const category = await Category.findOne({ _id: categoryId, authorId: user.userId })
       .populate<{
-        posts: (Post & { _id: Types.ObjectId })[];
-      }>("posts")
+        posts: (PostItem & { _id: Types.ObjectId })[];
+      }>({
+        path: "posts",
+        match: { temp: false },
+      })
       .lean();
 
     // 카테고리 존재여부 검증

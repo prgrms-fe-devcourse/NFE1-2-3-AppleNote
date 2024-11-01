@@ -1,22 +1,14 @@
 import mongoose from "mongoose";
 
 import { IDatabase } from "./index";
+import { validators } from "@src/utils/validators";
 
-// Mongoose DB 연결 클래스
 export class MongooseDatabase implements IDatabase {
-  private getValidatedURL(): string {
-    const URI = process.env.DB_URI;
-
-    if (typeof URI !== "string" || URI.length <= 0) {
-      throw new Error("Invalid DB URI");
-    }
-
-    return URI;
-  }
-
   async connect(): Promise<void> {
     try {
-      const mongooseInstance = await mongoose.connect(this.getValidatedURL());
+      const mongooseInstance = await mongoose.connect(
+        validators.getValidatedENV(process.env.DB_URI)
+      );
 
       if (!mongooseInstance) {
         throw new Error("Could not connect");
@@ -27,5 +19,9 @@ export class MongooseDatabase implements IDatabase {
 
       throw new Error(`DB connection failed: ${errorInstance}`);
     }
+  }
+
+  async close(): Promise<void> {
+    mongoose.connection.close();
   }
 }

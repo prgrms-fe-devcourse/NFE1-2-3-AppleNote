@@ -6,6 +6,7 @@ import Category from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
+import { IFileService } from "./fileService";
 
 export interface IPostService {
   createPost(arg: CreatePostArg): Promise<CreatePostReturn>;
@@ -16,6 +17,7 @@ export interface IPostService {
   deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
   getPost(arg: GetPostArg): Promise<GetPostReturn>;
   searchPostList(arg: SearchPostListArg): Promise<SearchPostListReturn>;
+  getTempPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
 }
 
 // 재사용 가능한 기본 타입
@@ -25,7 +27,7 @@ type RequestData = Partial<FormDataPost>;
 type WithPostId = { postId: string };
 type WithUser = { user: RequestUser };
 type WithCategories = { categories: string[] };
-type PostWithoutId = Omit<PostSchemaType, "_id">;
+type PostWithoutId = Omit<PostSchemaType, "_id" | "temp">;
 type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
 // 요청 인자 타입
@@ -44,13 +46,14 @@ type CreatePostReturn = Omit<PostWithId, "categories">;
 type UpdatePostReturn = Omit<PostWithId, "categories">;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
-type GetPostReturn = Omit<PostSchemaType, "categories"> & { postId: Types.ObjectId } & {
+type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Types.ObjectId } & {
   categories: { name: string; categoryId: Types.ObjectId; createdAt: Date; updatedAt: Date }[];
 };
 type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
-  // TODO: 이미지 URL 변환 작업하기
+  constructor(private fileService: IFileService) {}
+
   async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
@@ -58,7 +61,12 @@ export class PostService implements IPostService {
     }
 
     // 필드검증
-    if (!validators.keys(data, ["title", "content", "images"])) {
+    if (!validators.keys(data, ["title", "content", "images", "temp"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["title", "content", "images"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -67,9 +75,18 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
+    const fileToUrls = data.images?.files
+      ? await this.fileService.uploadImageList(data.images.files)
+      : [];
+
+    const validUrls = validators
+      .convertArray(data.images?.urls)
+      .flat()
+      .filter((value) => typeof value === "string" && value !== "");
+
     const postData = new Post({
       ...data,
-      images: ["test.url"],
+      images: [...fileToUrls, ...validUrls],
       authorId: user.userId,
     });
 
@@ -92,7 +109,7 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const postList = await Post.find({ authorId: user.userId })
+    const postList = await Post.find({ authorId: user.userId, temp: false })
       .populate<{
         categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
       }>("categories")
@@ -144,9 +161,31 @@ export class PostService implements IPostService {
       throw new ServiceError("There are no items with that userId.", 404);
     }
 
+    const fileToUrls = data.images?.files
+      ? await this.fileService.uploadImageList(data.images.files)
+      : [];
+
+    const validUrls = validators
+      .convertArray(data.images?.urls)
+      .flat()
+      .filter((value) => typeof value === "string" && value !== "");
+
+    const updatedImages = validators.cleanedValue({
+      ...data,
+      images: [...fileToUrls, ...validUrls],
+    });
+
+    const emptyImageList = {
+      ...updatedImages,
+      images: [],
+    };
+
+    // 데이터 삭제 플래그에 따라 적절한 데이터 할당
+    const finalData = data.deleteImages === "true" ? emptyImageList : updatedImages;
+
     const updatedPost = await Post.findOneAndUpdate(
       { authorId: user.userId, _id: postId },
-      validators.cleanedValue(data),
+      finalData,
       { new: true, runValidators: true }
     );
 
@@ -231,6 +270,11 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
+    // 필드값 검증
+    if (!validators.values(data, ["categories"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
     // 단일 카테고리 처리
     if ((!data.categories && !validators.isArray(data.categories)) || data.categories.length > 1) {
       throw new ServiceError("Invalid request field.", 422);
@@ -311,6 +355,11 @@ export class PostService implements IPostService {
 
     // 필드 검증
     if (!validators.keys(data, ["categories"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
+    // 필드값 검증
+    if (!validators.values(data, ["categories"])) {
       throw new ServiceError("Invalid request field.", 422);
     }
 
@@ -430,8 +479,14 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
+    // 필드값 검증
+    if (!validators.values(data, ["query"])) {
+      throw new ServiceError("Invalid request field.", 422);
+    }
+
     const regexSearchResults = await Post.find({
       authorId: user.userId,
+      temp: false,
       $or: [
         { title: { $regex: new RegExp(data.query, "i") } },
         { content: { $regex: new RegExp(data.query, "i") } },
@@ -443,6 +498,41 @@ export class PostService implements IPostService {
       .lean();
 
     const mappedPosts = regexSearchResults.map((post) => ({
+      postId: post._id,
+      title: post.title,
+      content: post.content,
+      images: post.images,
+      authorId: post.authorId,
+      createdAt: post.createdAt,
+      updatedAt: post.updatedAt,
+      categories: post.categories
+        ? [
+            {
+              name: post.categories.name,
+              categoryId: post.categories._id,
+              createdAt: post.categories.createdAt,
+              updatedAt: post.categories.updatedAt,
+            },
+          ]
+        : [],
+    }));
+
+    return mappedPosts;
+  }
+
+  async getTempPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const postList = await Post.find({ authorId: user.userId, temp: true })
+      .populate<{
+        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
+      }>("categories")
+      .lean();
+
+    const mappedPosts = postList.map((post) => ({
       postId: post._id,
       title: post.title,
       content: post.content,

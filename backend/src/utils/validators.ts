@@ -15,6 +15,14 @@ export const validators = {
 
     return hasAllKeys && !hasInvalidKeys;
   },
+  values: <T extends object, K extends keyof T>(obj: T, keys: K[]) => {
+    //모든 키에 대해 값이 존재하는지 확인
+    const hasAllValues = keys.every(
+      (key) => key in obj && obj[key] !== undefined && obj[key] !== null
+    );
+
+    return hasAllValues;
+  },
   checkContentType: (
     inputValue: string | undefined,
     expectedType: "multipart/form-data" | "application/json"
@@ -48,5 +56,19 @@ export const validators = {
 
       return acc;
     }, {}) as Partial<T>;
+  },
+  getValidatedENV: (env: string | undefined) => {
+    if (typeof env !== "string" || env.length <= 0) {
+      throw new Error("Invalid env");
+    }
+
+    return env;
+  },
+  convertArray: <T>(value: T) => {
+    if (validators.isArray(value)) {
+      return value as T[];
+    }
+
+    return [value];
   },
 };

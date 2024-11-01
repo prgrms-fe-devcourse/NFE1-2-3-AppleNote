@@ -13,6 +13,9 @@ interface PasswordForm {
 interface ProfileForm {
   profileImage: string;
 }
+interface BannerForm {
+  bannerImage: string;
+}
 interface NameForm {
   name: string;
 }
@@ -45,6 +48,19 @@ export const changePassword = async (payload: PasswordForm): Promise<boolean> =>
 export const changeProfile = async (payload: ProfileForm): Promise<boolean> => {
   try {
     const URL = `/users/profile`;
+
+    const { data } = await httpClient.patch(URL, payload);
+
+    return data.payload.isChange;
+  } catch {
+    return false;
+  }
+};
+
+//배너 이미지 변경 API
+export const changeBanner = async (payload: BannerForm): Promise<boolean> => {
+  try {
+    const URL = `/users/banner`;
 
     const { data } = await httpClient.patch(URL, payload);
 

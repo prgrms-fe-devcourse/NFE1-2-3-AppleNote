@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import { ICategoryService } from "@src/service/categoryService";
+import { ICategoryService } from "@src/services/categoryService";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { ServiceError } from "@src/utils/Error";
 import { IController } from "@src/types";

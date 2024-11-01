@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { ServiceError } from "@src/utils/Error";
-import { IPostService } from "@src/service/postService";
+import { IPostService } from "@src/services/postService";
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}

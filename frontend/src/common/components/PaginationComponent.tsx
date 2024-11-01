@@ -19,6 +19,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
   const handleClick = (page: number) => {
     if (page !== currentPage) {
       setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // 페이지 최상단으로 스크롤 이동
     }
   };
 

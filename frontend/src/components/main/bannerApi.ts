@@ -1,11 +1,10 @@
 import { httpClient } from "@common/api/fetch";
-
 export interface User {
   bannerImage: string | null;
 }
-
 export const fetchBannerImage = async (): Promise<string | null> => {
-  const response = await httpClient.get<User>("/users/me");
+  const URL = "users/me";
+  const { data } = await httpClient.get<{ payload: User }>(URL);
 
-  return response.data.bannerImage;
+  return data.payload.bannerImage;
 };

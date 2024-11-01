@@ -1,13 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import useCustomTheme from "@common/hooks/useCustomTheme";
 
 const LogoSection: React.FC = () => {
-  const { themeType } = useCustomTheme(); // 테마 정보 가져오기
   const navigate = useNavigate();
-
-  const icon = themeType === "light" ? "/logo.png" : "/logo(darkmode).png"; // 테마에 따른 로고 선택
 
   const handleLogoClick = () => {
     navigate("/home"); // 로고 클릭 시 홈으로 이동
@@ -15,7 +11,10 @@ const LogoSection: React.FC = () => {
 
   return (
     <StyledLogoSection onClick={handleLogoClick}>
-      <Logo src={icon} alt="AppleNote Logo" />
+      <LogoText>
+        <AppleText>Apple</AppleText>
+        <NoteText>Note.</NoteText>
+      </LogoText>
     </StyledLogoSection>
   );
 };
@@ -28,16 +27,40 @@ const StyledLogoSection = styled.div`
   justify-content: center; /* 로고를 가운데 정렬 */
   width: 198px; /* 고정된 너비 */
   height: 70px; /* 고정된 높이 */
+
+  /* 헤더가 좁아진 이후 로고 크기를 줄이기 시작 */
+  @media (max-width: 520px) {
+    width: 150px;
+    height: auto;
+  }
 `;
 
-/* 로고 크기 고정 및 비율 유지 */
-const Logo = styled.img`
-  width: 100%;
-  height: auto;
-  max-width: 198px; /* 최대 너비 198px */
-  min-width: 130px; /* 최소 너비 130px */
-  max-height: 70px; /* 최대 높이 70px */
-  object-fit: contain; /* 비율 유지하며 이미지 조정 */
+/* 텍스트 기반 로고 */
+const LogoText = styled.div`
+  display: flex;
+  align-items: baseline;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: bold;
+
+  @media (max-width: 520px) {
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+  }
+`;
+
+const AppleText = styled.span`
+  background-color: ${({ theme }) => theme.logo.primary.background};
+  color: ${({ theme }) => theme.logo.primary.text};
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+`;
+
+const NoteText = styled.span`
+  background-color: ${({ theme }) => theme.logo.secondary.background};
+  color: ${({ theme }) => theme.logo.secondary.text};
+  transition:
+    background-color 0.3s,
+    color 0.3s;
 `;
 
 export default LogoSection;

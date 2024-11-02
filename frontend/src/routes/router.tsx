@@ -12,6 +12,7 @@ import PostPage from "@components/post/PostPage";
 import Login from "@components/auth/Login";
 import Signup from "@components/auth/Signup";
 import LandingPage from "@components/landing/LandingPage";
+import EditPostPage from "@components/post/EditPostPage";
 
 // TODO: Creating protected routes
 const router = createBrowserRouter([
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
       { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
       { path: "/search", element: <SearchResultPage /> }, // 검색 페이지
       { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
+      { path: "/edit-post/:id", element: <EditPostPage /> }, // 포스트 수정 페이지
       { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
     ],
   },

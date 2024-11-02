@@ -24,11 +24,7 @@ export const useCategory = () => {
   return context;
 };
 
-interface HomePageProps {
-  data?: null;
-}
-
-const HomePage: React.FC<HomePageProps> = () => {
+const HomePage: React.FC = () => {
   // 선택된 카테고리 ID와 업데이트 함수
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);

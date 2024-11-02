@@ -99,7 +99,7 @@ const Header = styled.div`
   align-items: center;
   margin-bottom: 1rem;
   justify-content: space-between; /* 카테고리 제목을 왼쪽에 정렬하고 버튼을 오른쪽으로 */
-  gap: 1rem; /* CategorySection과 AlignedMoreButton 사이의 간격 추가 */
+  gap: 1rem; /* CategorySection과 MoreButton 사이의 간격 추가 */
 `;
 
 // PostsGrid에 포함된 각 카드의 정렬 및 레이아웃 정의

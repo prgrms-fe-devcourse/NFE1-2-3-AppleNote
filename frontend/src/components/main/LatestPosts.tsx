@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { fetchLatestPosts, Post } from "./postApi";
 import MoreButton from "@common/components/MoreButton";
+import DefaultThumbnail from "../../assets/images/default-thumbnail.jpg";
 
 const LatestPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -22,6 +23,11 @@ const LatestPosts: React.FC = () => {
 
     getPosts();
   }, []);
+
+  // 썸네일 이미지 소스를 가져오는 함수
+  const getThumbnailSrc = (images: string[]): string => {
+    return images[0] || DefaultThumbnail;
+  };
 
   // 포스트 클릭 핸들러
   const handlePostClick = (postId: string) => {
@@ -43,7 +49,7 @@ const LatestPosts: React.FC = () => {
         <PostsGrid>
           {posts.map((post) => (
             <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
-              <Thumbnail src={post.images[0]} alt={post.title} />
+              <Thumbnail src={getThumbnailSrc(post.images)} alt={post.title} />
               <PostTitle>{post.title}</PostTitle>
               <PostContent>{post.content}</PostContent>
             </PostCard>
@@ -100,22 +106,24 @@ const PostsGrid = styled.div`
   grid-template-columns: repeat(3, minmax(0, 1fr));
 
   /* 화면 너비가 줄어들 때 2개로 조정 */
-  @media (max-width: 1236px) {
+  @media (max-width: 768px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   /* 더 좁아지면 1개로 조정 */
-  @media (max-width: 850px) {
+  @media (max-width: 576px) {
     grid-template-columns: 1fr;
   }
 `;
 
 const PostCard = styled.div`
-  width: 100%;
-  max-width: 369px;
+  width: clamp(280px, 30vw, 369px); /* 최소 300px, 최대 369px */
+  height: clamp(300px, 28vw, 342.4px); /* 최소 300px, 최대 342.4px */
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   padding: 0.2rem;
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.02);
@@ -125,28 +133,29 @@ const PostCard = styled.div`
 
 const Thumbnail = styled.img`
   width: 100%;
-  height: 200px;
+  height: clamp(150px, 16vw, 200px); /* 최소 150px, 최대 200px */
   object-fit: cover;
 `;
 
 const PostTitle = styled.h3`
-  display: -webkit-box; /* Flexbox 대체로 줄 제한 */
-  -webkit-line-clamp: 3; /* 최대 줄 수: 3줄 */
-  -webkit-box-orient: vertical; /* 세로 방향 박스 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* 줄임표(...) 표시 */
-  white-space: normal; /* 자동 줄바꿈 허용 */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
   margin: 1rem 0 1.5rem;
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 1.8vw, 2rem); /* 최소 1.5rem, 최대 2rem */
 `;
 
 const PostContent = styled.p`
-  display: -webkit-box; /* Flexbox 대체로 줄 제한 */
-  -webkit-line-clamp: 2; /* 최대 줄 수: 2줄 */
-  -webkit-box-orient: vertical; /* 세로 방향 박스 */
-  overflow: hidden; /* 넘치는 내용 숨김 */
-  text-overflow: ellipsis; /* 줄임표(...) 표시 */
-  white-space: normal; /* 자동 줄바꿈 허용 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  font-size: clamp(1rem, 1.5vw, 1.2rem); /* 최소 1rem, 최대 1.2rem */
 `;
 
 const Divider = styled.hr`

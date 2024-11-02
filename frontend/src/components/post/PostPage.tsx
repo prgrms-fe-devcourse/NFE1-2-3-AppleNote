@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchPost, FetchPostResponse } from "./postAPI";
+import { deletePost, fetchPost, FetchPostResponse } from "./postAPI";
 import styled from "styled-components";
 import { LuPencilLine } from "react-icons/lu";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -15,6 +15,15 @@ const PostPage = () => {
       const data = await fetchPost(id as string);
 
       setPostInfo(data);
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error);
+    }
+  };
+  const deletePostData = async () => {
+    try {
+      await deletePost(id as string);
+      navigate("/home");
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
@@ -42,8 +51,18 @@ const PostPage = () => {
       <Image src={postInfo?.payload.images[0]} />
       <Content>{postInfo?.payload.content}</Content>
       <IconWrapper>
-        <LuPencilLine onClick={() => {}} size={30} />
-        <FaRegTrashCan onClick={() => {}} size={30} />
+        <LuPencilLine
+          onClick={() => {
+            navigate(`/edit-post/${id}`);
+          }}
+          size={30}
+        />
+        <FaRegTrashCan
+          onClick={() => {
+            deletePostData();
+          }}
+          size={30}
+        />
       </IconWrapper>
       <NaviWrapper>
         <NaviContent>

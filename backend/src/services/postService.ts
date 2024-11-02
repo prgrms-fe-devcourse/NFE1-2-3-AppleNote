@@ -7,9 +7,10 @@ import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
 import { IFileService } from "./fileService";
+import { IRepository, PostDTO, PostPayload } from "@src/repositories/postRepository";
 
 export interface IPostService {
-  createPost(arg: CreatePostArg): Promise<CreatePostReturn>;
+  createPost(arg: CreatePostArg): Promise<PostPayload>;
   getPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
   updatePost(arg: UpdatePostArg): Promise<UpdatePostReturn>;
   deletePost(arg: DeletePostArg): Promise<void>;
@@ -42,7 +43,7 @@ type SearchPostListArg = WithUser & { data: { query: string } };
 
 // 반환 타입
 type GetPostListReturn = Omit<PostWithId, "categories">[];
-type CreatePostReturn = Omit<PostWithId, "categories">;
+// type CreatePostReturn = Omit<PostWithId, "categories">;
 type UpdatePostReturn = Omit<PostWithId, "categories">;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
@@ -52,9 +53,12 @@ type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Typ
 type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
-  constructor(private fileService: IFileService) {}
+  constructor(
+    private fileService: IFileService,
+    private repository: IRepository<PostDTO, PostPayload>
+  ) {}
 
-  async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
+  async createPost({ header, data, user }: CreatePostArg) {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
       throw new ServiceError("The content-type is invalid.", 400);
@@ -80,27 +84,17 @@ export class PostService implements IPostService {
       : [];
 
     const validUrls = validators
-      .convertArray(data.images?.urls)
+      .convertArray(data.images?.urls ?? "")
       .flat()
       .filter((value) => typeof value === "string" && value !== "");
 
-    const postData = new Post({
+    const payload = await this.repository.create({
       ...data,
       images: [...fileToUrls, ...validUrls],
       authorId: user.userId,
     });
 
-    const post = await postData.save();
-
-    return {
-      postId: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      authorId: post.authorId,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-    };
+    return payload;
   }
 
   async getPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {

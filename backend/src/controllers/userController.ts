@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { UserSchemaType } from "@src/types";
 import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
-import { IUserService } from "@src/service/userService";
+import { IUserService } from "@src/services/userService";
 import { IUserWithId } from "@src/models/userModel";
 
 export class UserController {
@@ -221,6 +221,38 @@ export class UserController {
         description: user.description || "",
         password: user.password || "",
         profileImage: profileImage,
+      };
+
+      await this.userService.updateUser(userId, updateData);
+
+      return res.status(200).json({
+        statusCode: 200,
+        payload: { isChange: true },
+      });
+    } catch (error) {
+      return res.status(500).json(createErrorResponse(500, `${error}`));
+    }
+  }
+  //배너 이미지 변경
+  async updateBanner(req: Request, res: Response) {
+    try {
+      const { bannerImage } = req.body;
+      const userId = req.user?.userId;
+
+      if (!userId) {
+        return res.status(400).json(createErrorResponse(400, "User ID is required"));
+      }
+      const user = await this.userService.getUserById(userId);
+
+      if (!user) {
+        return res.status(404).json(createErrorResponse(404, "User not found"));
+      }
+      const updateData: UserSchemaType = {
+        name: user.name || "",
+        email: user.email || "",
+        description: user.description || "",
+        password: user.password || "",
+        bannerImage: bannerImage,
       };
 
       await this.userService.updateUser(userId, updateData);

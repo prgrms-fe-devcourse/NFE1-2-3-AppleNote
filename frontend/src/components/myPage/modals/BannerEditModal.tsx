@@ -1,43 +1,43 @@
 import styled from "styled-components";
-import { changeProfile } from "./userApi";
+import { changeBanner } from "../api/userApi";
 import { useState } from "react";
 
 const closeBtn = "/closeBtn.png";
-const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
+const DEFAULT_PROFILE_IMAGE = "/default-banner-image.png";
 
 interface ImageEditModalProps {
   onClose: () => void;
 }
 
-//프로필 이미지 수정 모달
+//배너 이미지 수정 모달
 const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
   const isValidImageUrl = (url: string) => {
     return /^https?:\/\//i.test(url);
   };
 
-  const [profileImage, setNewImg] = useState("");
+  const [bannerImage, setNewImg] = useState("");
   const handleConfirm = async () => {
-    if (!isValidImageUrl(profileImage)) {
+    if (!isValidImageUrl(bannerImage)) {
       alert("유효하지 않은 이미지 형식입니다.");
     } else {
-      const isChangeSuccessful = await changeProfile({ profileImage });
+      const isChangeSuccessful = await changeBanner({ bannerImage });
 
       if (isChangeSuccessful) {
-        alert("프로필 이미지가 변경되었습니다.");
+        alert("배너 이미지가 변경되었습니다.");
         onClose();
       } else {
-        alert("프로필 이미지 변경에 실패했습니다.");
+        alert("배너 이미지 변경에 실패했습니다.");
       }
     }
   };
   const handleDefault = async () => {
-    const isChangeSuccessful = await changeProfile({ profileImage: DEFAULT_PROFILE_IMAGE });
+    const isChangeSuccessful = await changeBanner({ bannerImage: DEFAULT_PROFILE_IMAGE });
 
     if (isChangeSuccessful) {
-      alert("프로필 이미지가 변경되었습니다.");
+      alert("배너 이미지가 변경되었습니다.");
       onClose();
     } else {
-      alert("프로필 이미지 변경에 실패했습니다.");
+      alert("배너 이미지 변경에 실패했습니다.");
     }
   };
 
@@ -46,14 +46,14 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>프로필 이미지 변경</h3>
+            <h3>배너 이미지 변경</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
           </Header>
           <Input
             type="text"
-            value={profileImage}
+            value={bannerImage}
             onChange={(e) => setNewImg(e.target.value.trim())}
           />
 

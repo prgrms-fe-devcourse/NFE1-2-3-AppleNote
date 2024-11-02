@@ -1,18 +1,21 @@
 import styled from "styled-components";
 import edit from "@assets/icons/edit.svg";
-import { deleteUser, getUser } from "./userApi";
+import { deleteUser, getUser } from "./api/userApi";
 import { useEffect, useState } from "react";
-import { User } from "./userApi";
+import { User } from "./api/userApi";
 import ChangePw from "./ChangePw";
 import { useAuth } from "@components/auth/useAuth";
 import { useNavigate } from "react-router-dom";
-import NameEditModal from "./NameEditModal";
-import ProfileEditModal from "./ProfileEditModal";
+import NameEditModal from "./modals/NameEditModal";
+import ProfileEditModal from "./modals/ProfileEditModal";
+import BannerEditModal from "./modals/BannerEditModal";
+import { useBannerModal } from "./BannerModalContext";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
   const [isImageModalOpen, setImageModalOpen] = useState(false);
+  const { isBannerModalOpen, setBannerModalOpen } = useBannerModal();
   const [isNameModalOpen, setNameModalOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -25,7 +28,8 @@ const SettingPage = () => {
     };
 
     fetchUser();
-  }, [isImageModalOpen, isNameModalOpen]);
+  }, [isImageModalOpen, isNameModalOpen, isBannerModalOpen]);
+
   const changePw = () => {
     setStatus(true);
   };
@@ -48,11 +52,14 @@ const SettingPage = () => {
     }
   };
   const editImg = () => {
-    setImageModalOpen(true); // 이미지 모달 열기
+    setImageModalOpen(true); // 프로필 이미지 모달 열기
   };
 
   const editName = () => {
     setNameModalOpen(true); // 이름 모달 열기
+  };
+  const editBanner = () => {
+    setBannerModalOpen(true); // 배너 이미지 모달 열기
   };
   const { logout } = useAuth();
 
@@ -74,6 +81,11 @@ const SettingPage = () => {
 
   return (
     <>
+      <BtnWrapper>
+        <BannerEditBtn onClick={editBanner}>
+          <img src={edit} />
+        </BannerEditBtn>
+      </BtnWrapper>
       {status ? (
         <ChangePw setStatus={setStatus} /> // status가 true이면 ChangePw 컴포넌트 렌더링
       ) : (
@@ -100,7 +112,20 @@ const SettingPage = () => {
               <Button onClick={handleLogout}>로그아웃</Button>
             </UserProfile>
           </ProfileWrapper>
-          {isImageModalOpen && <ProfileEditModal onClose={() => setImageModalOpen(false)} />}
+          {isBannerModalOpen && (
+            <BannerEditModal
+              onClose={() => {
+                setBannerModalOpen(false);
+              }}
+            />
+          )}
+          {isImageModalOpen && (
+            <ProfileEditModal
+              onClose={() => {
+                setImageModalOpen(false);
+              }}
+            />
+          )}
           {isNameModalOpen && (
             <NameEditModal
               onClose={() => {
@@ -113,7 +138,10 @@ const SettingPage = () => {
     </>
   );
 };
-
+const BtnWrapper = styled.div`
+  margin-top: -25px;
+  margin-right: -16px;
+`;
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -162,6 +190,13 @@ const UserName = styled.p`
   align-items: center;
 `;
 
+const BannerEditBtn = styled.button`
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 98%;
+  padding-top: 10px;
+`;
 const NameEditBtn = styled.button`
   background-color: transparent;
   border: none;

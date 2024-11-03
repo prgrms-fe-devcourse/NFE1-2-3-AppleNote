@@ -13,8 +13,8 @@ import Login from "@components/auth/Login";
 import Signup from "@components/auth/Signup";
 import LandingPage from "@components/landing/LandingPage";
 import EditPostPage from "@components/post/EditPostPage";
+import ProtectedRoute from "./ProtectedRoute";
 
-// TODO: Creating protected routes
 const router = createBrowserRouter([
   {
     path: "/",
@@ -22,14 +22,19 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { path: "/", element: <LandingPage /> }, // 루트 경로에서 랜딩 페이지 표시
-      { path: "/home", element: <HomePage /> }, // 메인 페이지
-      { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
-      { path: "/posts/:id", element: <PostPage /> }, // 포스트 상세 페이지
-      { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
-      { path: "/search", element: <SearchResultPage /> }, // 검색 페이지
-      { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
-      { path: "/edit-post/:id", element: <EditPostPage /> }, // 포스트 수정 페이지
-      { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
+      {
+        element: <ProtectedRoute />, // 보호된 경로 설정
+        children: [
+          { path: "/home", element: <HomePage /> }, // 메인 페이지
+          { path: "/posts", element: <PostListPage /> }, // 포스트 목록 페이지
+          { path: "/posts/:id", element: <PostPage /> }, // 포스트 상세 페이지
+          { path: "/categories/:categoryId", element: <PostListPage /> }, // 특정 카테고리별 포스트 목록 페이지
+          { path: "/search", element: <SearchResultPage /> }, // 검색 페이지
+          { path: "/create-post", element: <CreatePostPage /> }, // 포스트 작성 페이지
+          { path: "/edit-post/:id", element: <EditPostPage /> }, // 포스트 수정 페이지
+          { path: "/setting", element: <SettingPage /> }, // 세팅 페이지
+        ],
+      },
     ],
   },
   { path: "/login", element: <Login /> }, // 로그인 페이지

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Post } from "./postApi";
+import { Post } from "../../components/main/postApi";
 import { useNavigate } from "react-router-dom";
 
 interface HorizontalPostCardProps {

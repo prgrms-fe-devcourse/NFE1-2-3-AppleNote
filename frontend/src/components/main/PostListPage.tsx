@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation } from "react-router-dom";
 import { fetchPostsByCategoryId, fetchPostsByPage, Post } from "./postApi";
-import Category from "../category/Category";
 import PaginationComponent from "../../common/components/PaginationComponent";
-import HorizontalPostCard from "./HorizontalPostCard";
-import CategorySection from "./CategorySection";
+import HorizontalPostCard from "../../common/components/HorizontalPostCard";
+import CategorySection from "../../common/components/CategorySection";
+import DesktopCategoryWrapper from "../../common/components/DesktopCategoryWrapper";
+import FaBarsWrapper from "../../common/components/FaBarsWrapper";
+import Category from "@components/category/Category";
 
 const PostListPage: React.FC = () => {
   const { categoryId: paramCategoryId } = useParams<{ categoryId?: string }>();
@@ -18,6 +20,9 @@ const PostListPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSticky, setIsSticky] = useState(false);
+  const [rightOffset, setRightOffset] = useState(0);
+  const [initialRightOffset, setInitialRightOffset] = useState(0);
   const postsPerPage = 4;
 
   // 포스트 데이터 로드
@@ -51,18 +56,44 @@ const PostListPage: React.FC = () => {
     loadPosts();
   }, [categoryId, currentPage]);
 
+  useEffect(() => {
+    const contentRow = document.getElementById("content-row");
+
+    const handleScroll = () => {
+      const contentRowRect = contentRow?.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      if (contentRowRect) {
+        const initialRightSpace = viewportWidth - contentRowRect.right;
+
+        setInitialRightOffset(initialRightSpace + 20);
+        setRightOffset(isSticky ? initialRightSpace + 20 : 0);
+        setIsSticky(contentRowRect.top <= 10);
+      }
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isSticky]);
+
   return (
     <Container>
-      <CategorySection title={categoryName} small /> {/* 작은 크기로 표시 */}
-      <ContentWrapper>
+      <CategorySection title={categoryName} small />
+      <ContentWrapper id="content-row">
         <HorizontalPostGrid>
           {posts.map((post) => (
             <HorizontalPostCard key={post.postId} post={post} />
           ))}
         </HorizontalPostGrid>
-        <CategoryWrapper>
+        <DesktopCategoryWrapper marginTop={0}>
           <Category />
-        </CategoryWrapper>
+        </DesktopCategoryWrapper>
+        <FaBarsWrapper
+          isSticky={isSticky}
+          rightOffset={isSticky ? rightOffset : initialRightOffset}
+        />
       </ContentWrapper>
       <PaginationComponent
         totalPosts={totalPosts}
@@ -87,8 +118,8 @@ const Container = styled.div`
 
 const ContentWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
   margin-top: 80px;
+  gap: 2rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -101,18 +132,7 @@ const HorizontalPostGrid = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-`;
-
-const CategoryWrapper = styled.div`
-  width: 20%;
-  box-sizing: border-box;
-  position: sticky; /* 스크롤 시 고정 */
-  top: 20px; /* 화면 상단에서 떨어진 위치 */
-  align-self: flex-start; /* 상단에 정렬 */
-
-  @media (max-width: 768px) {
-    padding-top: 50px;
-  }
+  margin-right: 50px;
 `;
 
 export default PostListPage;

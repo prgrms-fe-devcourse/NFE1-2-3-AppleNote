@@ -1,4 +1,4 @@
-import { createContext, Dispatch, PropsWithChildren, useEffect, useMemo, useReducer } from "react";
+import { createContext, Dispatch, PropsWithChildren, useMemo, useReducer } from "react";
 
 import { AuthLocalStorage, authLocalStorage, AuthLocalStorageInitial } from "./localStorage";
 import { LoginResponse } from "./api";
@@ -108,10 +108,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     return onFailure && onFailure();
   };
 
-  useEffect(() => {
-    saveAuthData(authLocalStorage.get());
-  }, []);
-
   const value = useMemo(() => ({ login, logout }), []);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -150,3 +146,5 @@ const removeAuthData = () => {
     return false;
   }
 };
+
+saveAuthData(authLocalStorage.get());

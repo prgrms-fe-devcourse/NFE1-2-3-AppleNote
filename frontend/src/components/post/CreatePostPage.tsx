@@ -4,21 +4,21 @@ import { useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost, createPostCagegory } from "./postAPI";
+import { createPost, createPostCagegory, PostPayload } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
   deleteModalOpen: boolean;
   title: string;
   content: string;
-  image: string | null;
+  image: { files: File; urls: string } | null;
 };
 type Action =
   | { type: "TOGGLE_PREVIEW_MODAL"; payload: boolean }
   | { type: "TOGGLE_DELETE_MODAL"; payload: boolean }
   | { type: "SET_TITLE"; payload: string }
   | { type: "SET_CONTENT"; payload: string }
-  | { type: "SET_IMAGE"; payload: string | null };
+  | { type: "SET_IMAGE"; payload: { files: File; urls: string } | null };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -49,21 +49,18 @@ const CreatePostPage: React.FC = () => {
 
   const savePostData = async () => {
     try {
-      const payload = {
+      const payload: PostPayload = {
         title: state.title,
         content: state.content,
-        images: state.image,
+        images: state.image ? [state.image.files] : undefined,
       };
       const data = await createPost(payload);
 
-      console.log(data);
       if (selectedCategory) {
         await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
-
         navigate(`/posts/${data.payload.postId}`);
       }
     } catch (error) {
-      // eslint-disable-next-line
       console.error(error);
     }
   };
@@ -73,7 +70,13 @@ const CreatePostPage: React.FC = () => {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
 
-      dispatch({ type: "SET_IMAGE", payload: imageUrl });
+      dispatch({
+        type: "SET_IMAGE",
+        payload: {
+          files: file,
+          urls: imageUrl,
+        },
+      });
     }
   };
 
@@ -99,7 +102,7 @@ const CreatePostPage: React.FC = () => {
               <div>이미지 추가하기</div>
             </PlaceholderText>
           )}
-          {state.image && <Image src={state.image} alt="Uploaded preview" />}
+          {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
         </ImageWrapper>
 
         <Title>본문</Title>
@@ -171,7 +174,7 @@ const CreatePostPage: React.FC = () => {
               e.stopPropagation();
             }}>
             {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
-            {state.image && <PreviewImg src={state.image} />}
+            {state.image && <PreviewImg src={state.image.urls} />}
             {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>

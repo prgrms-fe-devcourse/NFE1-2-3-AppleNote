@@ -34,7 +34,7 @@ export type CreatePostResponse = {
 export type PostPayload = {
   title?: string;
   content?: string;
-  images?: string | null;
+  images?: (File | string)[];
 };
 
 export type CreatePostCagegoryResponse = {
@@ -76,7 +76,19 @@ export const deletePost = async (id: string): Promise<DeletePostResponse> => {
  */
 export const patchPost = async (id: string, payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts/${id}`;
-  const { data } = await httpClientMultipart.patch(URL, payload);
+  const formData = new FormData();
+
+  if (payload.title) formData.append("title", payload.title);
+  if (payload.content) formData.append("content", payload.content);
+  if (payload.images && Array.isArray(payload.images)) {
+    payload.images.forEach((image) => {
+      if (image instanceof File) {
+        formData.append("images", image);
+      }
+    });
+  }
+
+  const { data } = await httpClientMultipart.post(URL, formData);
 
   return data;
 };
@@ -89,7 +101,19 @@ export const patchPost = async (id: string, payload: PostPayload): Promise<Patch
  */
 export const createPost = async (payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts`;
-  const { data } = await httpClientMultipart.post(URL, payload);
+  const formData = new FormData();
+
+  if (payload.title) formData.append("title", payload.title);
+  if (payload.content) formData.append("content", payload.content);
+  if (payload.images && Array.isArray(payload.images)) {
+    payload.images.forEach((image) => {
+      if (image instanceof File) {
+        formData.append("images", image);
+      }
+    });
+  }
+
+  const { data } = await httpClientMultipart.post(URL, formData);
 
   return data;
 };

@@ -1,3 +1,4 @@
+import SelectCategory from "@components/category/SelectCategory";
 import React, { useReducer } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -70,52 +71,57 @@ const CreatePostPage: React.FC = () => {
 
   return (
     <Wrapper>
-      <Title>제목</Title>
-      <TitleInput
-        onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
-        type="text"
-      />
-
-      <ImageWrapper>
-        <ImageInput
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+      <LeftContent>
+        <Title>제목</Title>
+        <TitleInput
+          onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
+          type="text"
         />
-        {!state.image && (
-          <PlaceholderText>
-            <FaPlus size={50} />
-            <div>이미지 추가하기</div>
-          </PlaceholderText>
-        )}
-        {state.image && <Image src={state.image} alt="Uploaded preview" />}
-      </ImageWrapper>
 
-      <Title>본문</Title>
-      <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+        <ImageWrapper>
+          <ImageInput
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+          />
+          {!state.image && (
+            <PlaceholderText>
+              <FaPlus size={50} />
+              <div>이미지 추가하기</div>
+            </PlaceholderText>
+          )}
+          {state.image && <Image src={state.image} alt="Uploaded preview" />}
+        </ImageWrapper>
 
-      <ButtonWrapper>
-        <Button
-          onClick={() => {
-            savePostData();
-          }}>
-          확인
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
-          }}>
-          삭제
-        </Button>
-        <Button>임시저장</Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
-          }}>
-          미리보기
-        </Button>
-      </ButtonWrapper>
+        <Title>본문</Title>
+        <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+
+        <ButtonWrapper>
+          <Button
+            onClick={() => {
+              savePostData();
+            }}>
+            확인
+          </Button>
+          <Button
+            onClick={() => {
+              dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
+            }}>
+            삭제
+          </Button>
+          <Button>임시저장</Button>
+          <Button
+            onClick={() => {
+              dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
+            }}>
+            미리보기
+          </Button>
+        </ButtonWrapper>
+      </LeftContent>
+      <RightContent>
+        <SelectCategory />
+      </RightContent>
 
       {state.deleteModalOpen && (
         <ModalOverlay
@@ -162,6 +168,10 @@ const CreatePostPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+const RightContent = styled.div``;
+
+const LeftContent = styled.div``;
 
 const PreviewContent = styled.div``;
 const PreviewImg = styled.img`
@@ -261,7 +271,7 @@ const Wrapper = styled.div`
   width: 100%;
   display: inline-flex;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 `;
 

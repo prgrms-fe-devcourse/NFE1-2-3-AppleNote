@@ -39,7 +39,7 @@ const postSchema = new Schema<PostSchemaType>(
     content: { type: String, required: true },
     images: { type: [String], default: [] },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    categories: { type: Schema.Types.ObjectId, ref: "Category" },
+    categories: [{ type: Schema.Types.ObjectId, ref: "Category", default: [] }],
   },
   { timestamps: true }
 );

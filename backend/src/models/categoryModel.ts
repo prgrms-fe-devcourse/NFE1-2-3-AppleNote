@@ -12,9 +12,9 @@ export interface CategorySchemaType {
 
 const categorySchema = new Schema<CategorySchemaType>(
   {
-    name: { type: String, required: true, unique: false },
+    name: { type: String, required: true },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    posts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
+    posts: [{ type: Schema.Types.ObjectId, ref: "Post", default: [] }],
   },
   { timestamps: true }
 );

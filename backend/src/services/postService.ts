@@ -1,24 +1,26 @@
-import mongoose, { Types } from "mongoose";
-
-import Post, { FormDataPost, PostSchemaType } from "@src/models/postModel";
+import { FormDataPost } from "@src/models/postModel";
 import User from "@src/models/userModel";
-import Category from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
 import { IFileService } from "./fileService";
-import { IRepository, PostDTO, PostPayload } from "@src/repositories/postRepository";
+import {
+  IPostRepository,
+  PostDTO,
+  PostPayload,
+  PostPayloadWithCategory,
+} from "@src/repositories/postRepository";
 
 export interface IPostService {
   createPost(arg: CreatePostArg): Promise<PostPayload>;
-  getPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
-  updatePost(arg: UpdatePostArg): Promise<UpdatePostReturn>;
+  getPostList(arg: GetPostListArg): Promise<PostPayloadWithCategory[]>;
+  updatePost(arg: UpdatePostArg): Promise<PostPayload>;
   deletePost(arg: DeletePostArg): Promise<void>;
-  addPostFromCategory(arg: AddCategoryArg): Promise<AddCategoryReturn>;
-  deletePostFromCategory(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
-  getPost(arg: GetPostArg): Promise<GetPostReturn>;
-  searchPostList(arg: SearchPostListArg): Promise<SearchPostListReturn>;
-  getTempPostList(arg: GetPostListArg): Promise<GetPostListReturn>;
+  addCategoryToPost(arg: AddCategoryArg): Promise<AddCategoryReturn>;
+  removeCategoryToPost(arg: RemoveCategoryArg): Promise<RemoveCategoryReturn>;
+  getPost(arg: GetPostArg): Promise<PostPayloadWithCategory>;
+  searchPostList(arg: SearchPostListArg): Promise<PostPayloadWithCategory[]>;
+  getTempPostList(arg: GetPostListArg): Promise<PostPayloadWithCategory[]>;
 }
 
 // 재사용 가능한 기본 타입
@@ -28,8 +30,8 @@ type RequestData = Partial<FormDataPost>;
 type WithPostId = { postId: string };
 type WithUser = { user: RequestUser };
 type WithCategories = { categories: string[] };
-type PostWithoutId = Omit<PostSchemaType, "_id" | "temp">;
-type PostWithId = PostWithoutId & { postId: Types.ObjectId };
+// type PostWithoutId = Omit<PostSchemaType, "_id" | "temp">;
+// type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
 // 요청 인자 타입
 type GetPostListArg = WithUser;
@@ -42,20 +44,19 @@ type GetPostArg = WithUser & WithPostId;
 type SearchPostListArg = WithUser & { data: { query: string } };
 
 // 반환 타입
-type GetPostListReturn = Omit<PostWithId, "categories">[];
+// type GetPostListReturn = Omit<PostWithId, "categories">[];
 // type CreatePostReturn = Omit<PostWithId, "categories">;
-type UpdatePostReturn = Omit<PostWithId, "categories">;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
-type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Types.ObjectId } & {
-  categories: { name: string; categoryId: Types.ObjectId; createdAt: Date; updatedAt: Date }[];
-};
-type SearchPostListReturn = Omit<PostWithId, "categories">[];
+// type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Types.ObjectId } & {
+//   categories: { name: string; categoryId: string; createdAt: Date; updatedAt: Date }[];
+// };
+// type SearchPostListReturn = Omit<PostWithId, "categories">[];
 
 export class PostService implements IPostService {
   constructor(
     private fileService: IFileService,
-    private repository: IRepository<PostDTO, PostPayload>
+    private postRepository: IPostRepository
   ) {}
 
   async createPost({ header, data, user }: CreatePostArg) {
@@ -88,7 +89,7 @@ export class PostService implements IPostService {
       .flat()
       .filter((value) => typeof value === "string" && value !== "");
 
-    const payload = await this.repository.create({
+    const payload = await this.postRepository.create({
       ...data,
       images: [...fileToUrls, ...validUrls],
       authorId: user.userId,
@@ -97,42 +98,18 @@ export class PostService implements IPostService {
     return payload;
   }
 
-  async getPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
+  async getPostList({ user }: GetPostListArg) {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const postList = await Post.find({ authorId: user.userId, temp: false })
-      .populate<{
-        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
-      }>("categories")
-      .lean();
+    const payload = await this.postRepository.findAll({ userId: user.userId });
 
-    const mappedPosts = postList.map((post) => ({
-      postId: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      authorId: post.authorId,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      categories: post.categories
-        ? [
-            {
-              name: post.categories.name,
-              categoryId: post.categories._id,
-              createdAt: post.categories.createdAt,
-              updatedAt: post.categories.updatedAt,
-            },
-          ]
-        : [],
-    }));
-
-    return mappedPosts;
+    return payload;
   }
 
-  async updatePost({ header, user, data, postId }: UpdatePostArg): Promise<UpdatePostReturn> {
+  async updatePost({ header, user, data, postId }: UpdatePostArg): Promise<PostPayload> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new ServiceError("Invalid postId", 404);
@@ -160,7 +137,7 @@ export class PostService implements IPostService {
       : [];
 
     const validUrls = validators
-      .convertArray(data.images?.urls)
+      .convertArray(data.images?.urls ?? "")
       .flat()
       .filter((value) => typeof value === "string" && value !== "");
 
@@ -174,32 +151,20 @@ export class PostService implements IPostService {
       images: [],
     };
 
-    // 데이터 삭제 플래그에 따라 적절한 데이터 할당
-    const finalData = data.deleteImages === "true" ? emptyImageList : updatedImages;
-
-    const updatedPost = await Post.findOneAndUpdate(
-      { authorId: user.userId, _id: postId },
-      finalData,
-      { new: true, runValidators: true }
-    );
+    const payload = await this.postRepository.update({
+      authorId: user.userId,
+      postId,
+      data: (data.deleteImages === "true" ? emptyImageList : updatedImages) as PostDTO,
+    });
 
     // 포스트 업데이트 여부
-    if (!updatedPost) {
+    if (!payload) {
       throw new ServiceError("Failed to update post item", 404);
     }
 
-    return {
-      postId: updatedPost._id,
-      title: updatedPost.title,
-      content: updatedPost.content,
-      images: updatedPost.images,
-      authorId: updatedPost.authorId,
-      createdAt: updatedPost.createdAt,
-      updatedAt: updatedPost.updatedAt,
-    };
+    return payload;
   }
 
-  // DONE: 사용자 유저의 포스트만 삭제 가능하도록 구현하기 [V]
   async deletePost({ postId, user }: DeletePostArg): Promise<void> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
@@ -211,44 +176,18 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const session = await mongoose.startSession();
+    const state = await this.postRepository.delete({ postId, userId: user.userId });
 
-    session.startTransaction();
+    if (!state.isExistPost) {
+      throw new ServiceError("No posts with that postId were found.", 404);
+    }
 
-    try {
-      const isExistPost = await Post.exists({ _id: postId, authorId: user.userId });
-
-      // 포스트 검증
-      if (!isExistPost) {
-        throw new ServiceError("No posts with that postId were found.", 404);
-      }
-
-      // 포스트 삭제
-      const deletedPost = await Post.deleteOne({ _id: postId, authorId: user.userId }, { session });
-
-      if (deletedPost.deletedCount === 0) {
-        throw new ServiceError("Failed to delete the post.", 404);
-      }
-
-      // 카테고리에서 포스트 ID 제거
-      await Category.updateMany(
-        { posts: postId, authorId: user.userId },
-        { $pull: { posts: postId } },
-        { session }
-      );
-
-      await session.commitTransaction();
-    } catch (error) {
-      await session.abortTransaction();
-
-      // 예외 던지기
-      throw error;
-    } finally {
-      await session.endSession();
+    if (!state.isDeleted) {
+      throw new ServiceError("Failed to delete the post.", 404);
     }
   }
 
-  async addPostFromCategory({ data, user, postId }: AddCategoryArg): Promise<AddCategoryReturn> {
+  async addCategoryToPost({ data, user, postId }: AddCategoryArg): Promise<AddCategoryReturn> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new ServiceError("Invalid postId", 404);
@@ -274,65 +213,36 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
-    const categoryId = data.categories[0];
-    const isExistPost = await Post.exists({ _id: postId, authorId: user.userId });
+    const state = await this.postRepository.relateCategory({
+      postId,
+      userId: user.userId,
+      categoryId: data.categories[0],
+    });
 
     // 포스트 존재여부 검증
-    if (!isExistPost) {
+    if (!state.isExistPost) {
       throw new ServiceError("There are no items with that postId.", 404);
     }
 
-    const isExistCategory = await Category.exists({ _id: categoryId, authorId: user.userId });
-
     // 카테고리 존재여부 검증
-    if (!isExistCategory) {
+    if (!state.isExistCategory) {
       throw new ServiceError("Invalid category ID.", 404);
     }
 
-    // 포스트 카테고리 존재여부 검증
-    const isExistCategoryByPost = await Category.findOne({ posts: postId, authorId: user.userId });
-
-    if (isExistCategoryByPost) {
+    // 카테고리와 포스트 조인여부 검증
+    if (state.isExistCategoryToPost) {
       throw new ServiceError("Category already exists", 409);
     }
 
-    const session = await mongoose.startSession();
-
-    session.startTransaction();
-
-    try {
-      // 카테고리 업데이트 (카테고리의 posts 배열에 포스트 ID 추가)
-      const updatedCategory = await Category.findOneAndUpdate(
-        { _id: categoryId, authorId: user.userId },
-        { $addToSet: { posts: postId } },
-        { new: true, runValidators: true, session }
-      );
-
-      // 포스트에 카테고리 ID 추가
-      const updatedPost = await Post.findOneAndUpdate(
-        { _id: postId, authorId: user.userId },
-        { categories: categoryId }, // 포스트에 카테고리 ID 업데이트
-        { new: true, runValidators: true, session }
-      );
-
-      if (!updatedCategory || !updatedPost) {
-        throw new ServiceError("Failed to update item", 404);
-      }
-
-      await session.commitTransaction();
-
-      return { categories: [categoryId] };
-    } catch (error) {
-      await session.abortTransaction();
-
-      // 예외 던지기
-      throw error;
-    } finally {
-      await session.endSession();
+    // 작업 성공 여부 검증
+    if (!state.isUpdatedCategory || !state.isUpdatedPost) {
+      throw new ServiceError("Failed to update item", 404);
     }
+
+    return { categories: state.categories };
   }
 
-  async deletePostFromCategory({
+  async removeCategoryToPost({
     data,
     user,
     postId,
@@ -362,65 +272,36 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
-    const categoryId = data.categories[0];
-    const isExistPost = await Post.exists({ _id: postId, authorId: user.userId });
+    const state = await this.postRepository.detachCategory({
+      postId,
+      userId: user.userId,
+      categoryId: data.categories[0],
+    });
 
     // 포스트 존재여부 검증
-    if (!isExistPost) {
+    if (!state.isExistPost) {
       throw new ServiceError("There are no items with that postId.", 404);
     }
 
-    const isExistCategory = await Category.exists({ _id: categoryId, authorId: user.userId });
-
     // 카테고리 존재여부 검증
-    if (!isExistCategory) {
+    if (!state.isExistCategory) {
       throw new ServiceError("Invalid category ID.", 404);
     }
 
-    // 포스트 카테고리 존재여부 검증
-    const isExistCategoryByPost = await Category.findOne({ posts: postId, authorId: user.userId });
-
-    if (!isExistCategoryByPost) {
+    // 카테고리와 포스트 조인여부 검증
+    if (!state.isExistCategoryToPost) {
       throw new ServiceError("No post information in the category", 404);
     }
 
-    const session = await mongoose.startSession();
-
-    session.startTransaction();
-
-    try {
-      // 카테고리에서 포스트 ID 제거
-      const updatedCategory = await Category.findOneAndUpdate(
-        { _id: categoryId, authorId: user.userId },
-        { $pull: { posts: postId } }, // 카테고리의 posts 배열에서 포스트 ID 제거
-        { new: true, session }
-      );
-
-      // 포스트에서 카테고리 ID 제거
-      const updatedPost = await Post.findOneAndUpdate(
-        { _id: postId, authorId: user.userId },
-        { $unset: { categories: "" } }, // 포스트에서 categoryId 필드 제거
-        { new: true, session }
-      );
-
-      if (!updatedCategory || !updatedPost) {
-        throw new ServiceError("Failed to update item", 404);
-      }
-
-      await session.commitTransaction();
-
-      return { categories: [categoryId] };
-    } catch (error) {
-      await session.abortTransaction();
-
-      // 예외 던지기
-      throw error;
-    } finally {
-      await session.endSession();
+    // 작업 성공 여부 검증
+    if (!state.isUpdatedCategory || !state.isUpdatedPost) {
+      throw new ServiceError("Failed to update item", 404);
     }
+
+    return { categories: state.categories };
   }
 
-  async getPost({ postId, user }: GetPostArg): Promise<GetPostReturn> {
+  async getPost({ postId, user }: GetPostArg): Promise<PostPayloadWithCategory> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new ServiceError("Invalid postId", 404);
@@ -431,38 +312,27 @@ export class PostService implements IPostService {
       throw new ServiceError("The request does not have valid user information.", 403);
     }
 
-    const post = await Post.findOne({ _id: postId, authorId: user.userId })
-      .populate<{
-        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
-      }>("categories")
-      .lean();
+    const payload = await this.postRepository.find({ postId, userId: user.userId });
 
-    if (!post) {
+    if (!payload) {
       throw new ServiceError("There are no items with that postId.", 404);
     }
 
-    return {
-      postId: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      authorId: post.authorId,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      categories: post.categories
-        ? [
-            {
-              name: post.categories.name,
-              categoryId: post.categories._id,
-              createdAt: post.categories.createdAt,
-              updatedAt: post.categories.updatedAt,
-            },
-          ]
-        : [],
-    };
+    return payload;
   }
 
-  async searchPostList({ user, data }: SearchPostListArg): Promise<SearchPostListReturn> {
+  async getTempPostList({ user }: GetPostListArg): Promise<PostPayloadWithCategory[]> {
+    // 유저정보검증
+    if (!validators.checkRequestUser(user)) {
+      throw new ServiceError("The request does not have valid user information.", 403);
+    }
+
+    const payload = await this.postRepository.findAll({ userId: user.userId, temp: true });
+
+    return payload;
+  }
+
+  async searchPostList({ user, data }: SearchPostListArg): Promise<PostPayloadWithCategory[]> {
     // 유저 필드 타입 검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
@@ -478,74 +348,8 @@ export class PostService implements IPostService {
       throw new ServiceError("Invalid request field.", 422);
     }
 
-    const regexSearchResults = await Post.find({
-      authorId: user.userId,
-      temp: false,
-      $or: [
-        { title: { $regex: new RegExp(data.query, "i") } },
-        { content: { $regex: new RegExp(data.query, "i") } },
-      ],
-    })
-      .populate<{
-        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
-      }>("categories")
-      .lean();
+    const payload = await this.postRepository.search({ userId: user.userId, query: data.query });
 
-    const mappedPosts = regexSearchResults.map((post) => ({
-      postId: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      authorId: post.authorId,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      categories: post.categories
-        ? [
-            {
-              name: post.categories.name,
-              categoryId: post.categories._id,
-              createdAt: post.categories.createdAt,
-              updatedAt: post.categories.updatedAt,
-            },
-          ]
-        : [],
-    }));
-
-    return mappedPosts;
-  }
-
-  async getTempPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
-    // 유저정보검증
-    if (!validators.checkRequestUser(user)) {
-      throw new ServiceError("The request does not have valid user information.", 403);
-    }
-
-    const postList = await Post.find({ authorId: user.userId, temp: true })
-      .populate<{
-        categories: { _id: Types.ObjectId; name: string; createdAt: Date; updatedAt: Date };
-      }>("categories")
-      .lean();
-
-    const mappedPosts = postList.map((post) => ({
-      postId: post._id,
-      title: post.title,
-      content: post.content,
-      images: post.images,
-      authorId: post.authorId,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      categories: post.categories
-        ? [
-            {
-              name: post.categories.name,
-              categoryId: post.categories._id,
-              createdAt: post.categories.createdAt,
-              updatedAt: post.categories.updatedAt,
-            },
-          ]
-        : [],
-    }));
-
-    return mappedPosts;
+    return payload;
   }
 }

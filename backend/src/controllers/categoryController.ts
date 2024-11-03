@@ -4,6 +4,9 @@ import { ICategoryService } from "@src/services/categoryService";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { ServiceError } from "@src/utils/Error";
 import { IController } from "@src/types";
+import { Logger } from "@src/utils/Logger";
+
+const isShowLog = !(process.env.SHOW_LOG && process.env.SHOW_LOG === "true");
 
 export class CategoryController implements IController {
   constructor(private categoryService: ICategoryService) {}
@@ -22,6 +25,7 @@ export class CategoryController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -38,6 +42,7 @@ export class CategoryController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -58,6 +63,7 @@ export class CategoryController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -77,6 +83,7 @@ export class CategoryController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -84,7 +91,7 @@ export class CategoryController implements IController {
 
   async getPostListByCategory(req: Request, res: Response) {
     try {
-      const categories = await this.categoryService.getPostsByCategory({
+      const categories = await this.categoryService.getCategoryWithPosts({
         categoryId: req.params.categoryId,
         user: req.user,
       });
@@ -96,6 +103,7 @@ export class CategoryController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }

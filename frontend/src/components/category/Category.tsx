@@ -10,6 +10,7 @@ import {
 import { FaCog, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 // 컴포넌트의 상태 유형 정의
 type CategoryState = {
@@ -73,6 +74,7 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
 
 const Category: React.FC = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const navigate = useNavigate(); // navigate 훅 사용
 
   // API 호출에서 발생하는 에러 처리 함수
   const handleApiError = (error: unknown) => {
@@ -170,6 +172,11 @@ const Category: React.FC = () => {
     dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
   };
 
+  // 카테고리 클릭 시 포스트 목록으로 이동
+  const handleCategoryClick = (categoryId: string) => {
+    navigate(`/posts/${categoryId}`);
+  };
+
   if (state.loading) return <div>Loading...</div>;
   if (state.error) return <div>Error: {state.error}</div>;
 
@@ -209,7 +216,9 @@ const Category: React.FC = () => {
                 onBlur={handleEditBlur}
               />
             ) : (
-              <CategoryName>{category.name}</CategoryName>
+              <CategoryName onClick={() => handleCategoryClick(category.categoryId)}>
+                {category.name}
+              </CategoryName>
             )}
             {state.cogClicked && !state.isEditing && (
               <>

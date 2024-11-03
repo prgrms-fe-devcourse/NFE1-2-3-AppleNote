@@ -6,7 +6,7 @@ export type Post = {
   content: string;
   images: string[];
   authorId: string;
-  categories: string[];
+  categories: { categoryId: string; name: string }[];
   createdAt: Date;
 };
 export type FetchPostResponse = {
@@ -35,6 +35,11 @@ export type PostPayload = {
   title?: string;
   content?: string;
   images?: string | null;
+};
+
+export type CreatePostCagegoryResponse = {
+  statusCode: number;
+  payload: string[];
 };
 
 /**
@@ -85,6 +90,20 @@ export const patchPost = async (id: string, payload: PostPayload): Promise<Patch
 export const createPost = async (payload: PostPayload): Promise<PatchPostResponse> => {
   const URL = `/posts`;
   const { data } = await httpClientMultipart.post(URL, payload);
+
+  return data;
+};
+
+/**
+ * POST /posts/{postId}/categories
+ * @requires Authorization Bearer {access-token}
+ * @param payload category[]
+ * @returns 완료
+ */
+export const createPostCagegory = async (postId: string, payload: string[]) => {
+  const URL = `/posts/${postId}/categories`;
+
+  const { data } = await httpClient.post(URL, { categories: payload });
 
   return data;
 };

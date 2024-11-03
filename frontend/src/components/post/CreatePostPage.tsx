@@ -4,7 +4,7 @@ import { useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost } from "./postAPI";
+import { createPost, createPostCagegory } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -56,12 +56,18 @@ const CreatePostPage: React.FC = () => {
       };
       const data = await createPost(payload);
 
-      navigate(`/posts/${data.payload.postId}`);
+      console.log(data);
+      if (selectedCategory) {
+        await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
+
+        navigate(`/posts/${data.payload.postId}`);
+      }
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
     }
   };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];

@@ -1,29 +1,29 @@
+import mongoose from "mongoose";
+
 import Category from "@src/models/categoryModel";
-import Post from "@src/models/postModel";
+import Post, { PostSchemaType } from "@src/models/postModel";
 import { Logger } from "@src/utils/Logger";
-import mongoose, { Types } from "mongoose";
-import { PostPayload, PostSchema } from "./postRepository";
+import { PostPayload } from "./postRepository";
 
 // 공통 타입 정의
-type ObjectId = string | Types.ObjectId;
 type Timestamp = { createdAt: Date; updatedAt: Date };
 
 // 인자에 사용될 타입 정의
-type CreateArg = { userId: ObjectId; name: string };
-type FindAllArg = { userId: ObjectId };
-type UpdateArg = { categoryId: ObjectId; name: string };
-type DeleteArg = { categoryId: ObjectId; userId: ObjectId };
-type FindCategoryPostsArg = { categoryId: ObjectId; userId: ObjectId };
+type CreateArg = { userId: string; name: string };
+type FindAllArg = { userId: string };
+type UpdateArg = { categoryId: string; name: string };
+type DeleteArg = { categoryId: string; userId: string };
+type FindCategoryPostsArg = { categoryId: string; userId: string };
 
 // 반환 타입 정의
 export interface CategoryPayload extends Timestamp {
   name: string;
-  categoryId: ObjectId;
+  categoryId: string;
 }
 
 export interface CategoryPayloadWithPosts extends Timestamp {
   name: string;
-  categoryId: ObjectId;
+  categoryId: string;
   posts: PostPayload[];
 }
 
@@ -201,7 +201,7 @@ export class MongoCategoryRepository implements ICategoryRepository {
   }: FindCategoryPostsArg): Promise<FindCategoryPostsResult> {
     const category = await Category.findOne({ _id: categoryId, authorId: userId })
       .populate<{
-        posts: PostSchema[];
+        posts: PostSchemaType[];
       }>({
         path: "posts",
         match: { temp: false },

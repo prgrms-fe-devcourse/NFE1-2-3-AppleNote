@@ -3,6 +3,7 @@ import { Schema, Types, model } from "mongoose";
 import { PostSchemaType } from "./postModel";
 
 export interface CategorySchemaType {
+  _id: Types.ObjectId;
   name: string;
   authorId: Types.ObjectId;
   posts: Omit<PostSchemaType, "categories" | "temp">[];

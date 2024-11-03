@@ -1,9 +1,10 @@
-import { Schema, Types, model, Document } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 import { CategorySchemaType } from "./categoryModel";
 import { Images } from "@src/types";
 
 export interface PostSchemaType {
+  _id: Types.ObjectId;
   temp: boolean;
   title: string;
   content: string;
@@ -14,7 +15,7 @@ export interface PostSchemaType {
   updatedAt: Date;
 }
 
-export type FormDataImages = {
+type FormDataImages = {
   files: Images | undefined;
   urls: string | string[] | undefined;
 };
@@ -23,14 +24,6 @@ export type FormDataPost = Omit<PostSchemaType, "images"> & {
   images: FormDataImages;
   deleteImages?: "true";
 };
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type PostDocument = Document<unknown, {}, PostSchemaType> &
-  PostSchemaType & {
-    _id: Types.ObjectId;
-  } & {
-    __v?: number;
-  };
 
 const postSchema = new Schema<PostSchemaType>(
   {

@@ -1,9 +1,25 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 
 import Post from "@src/models/postModel";
-import Category from "@src/models/categoryModel";
+import Category, { CategorySchemaType } from "@src/models/categoryModel";
+import { CategoryPayload } from "./categoryRepository";
+
+// 공통 타입 정의
+type Timestamp = { createdAt: Date; updatedAt: Date };
+export type PostData = { images?: string[]; temp?: boolean; title: string; content: string };
+
+// 인자에 사용될 타입 정의
+type CreateArg = { data: PostData & { authorId: string } };
+type SearchArg = { userId: string; query: string };
+type FindArg = { userId: string; postId: string };
+type FindAllArg = { userId: string; temp?: boolean };
+type UpdateArg = { authorId: string; postId: string; data: PostData };
+type DeleteArg = { userId: string; postId: string };
+type AddCategoryToPostArg = { categoryId: string; userId: string; postId: string };
+type DetachCategoryArg = { categoryId: string; userId: string; postId: string };
+
 export interface IPostRepository {
-  create(arg: PostDTO): Promise<PostPayload>;
+  create(arg: CreateArg): Promise<PostPayload>;
   search(arg: SearchArg): Promise<PostPayloadWithCategory[]>;
   find(arg: FindArg): Promise<PostPayloadWithCategory | null>;
   findAll(arg: FindAllArg): Promise<PostPayloadWithCategory[]>;
@@ -30,101 +46,12 @@ export interface IPostRepository {
   }>;
 }
 
-type SearchArg = {
-  userId: string;
-  query: string;
-};
-
-type FindArg = {
-  userId: string;
-  postId: string;
-};
-
-type FindAllArg = {
-  userId: string;
-  temp?: boolean;
-};
-
-type DetachCategoryArg = {
-  categoryId: string;
-  userId: string;
-  postId: string;
-};
-
-type AddCategoryToPostArg = {
-  categoryId: string;
-  userId: string;
-  postId: string;
-};
-
-type DeleteArg = {
-  userId: string;
-  postId: string;
-};
-
-type UpdateArg = {
-  authorId: string;
-  postId: string;
-  data: PostDTO;
-};
-
-// DTO 정의
-export interface PostDTO {
-  images?: string[];
-  authorId: string | Types.ObjectId;
-  temp?: boolean;
-  title?: string;
-  content?: string;
-  categories?: CategoryDTO;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deleteImages?: "true";
-}
-
-export interface PostPayload {
+export interface PostPayload extends Timestamp {
   postId: string;
   title: string;
   content: string;
   images: string[];
   authorId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface CategoryPayload {
-  name: string;
-  categoryId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// 임시
-interface CategoryDTO {
-  name?: string;
-  authorId?: string | Types.ObjectId;
-  posts?: Omit<PostDTO, "categories" | "temp">[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-interface CategorySchema {
-  _id: Types.ObjectId;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  posts: Omit<PostSchema, "categories" | "temp">[];
-}
-
-export interface PostSchema {
-  _id: Types.ObjectId;
-  temp: boolean;
-  title: string;
-  content: string;
-  images: string[];
-  authorId: Types.ObjectId;
-  categories: CategorySchema[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface PostPayloadWithCategory extends PostPayload {
@@ -132,7 +59,7 @@ export interface PostPayloadWithCategory extends PostPayload {
 }
 
 export class MongoPostRepository implements IPostRepository {
-  async create(data: PostDTO): Promise<PostPayload> {
+  async create({ data }: CreateArg): Promise<PostPayload> {
     const newPostData = new Post(data);
 
     const post = await newPostData.save();
@@ -158,8 +85,7 @@ export class MongoPostRepository implements IPostRepository {
       ],
     })
       .populate<{
-        categories: CategorySchema[];
-        // TODO: 하드코딩된 문자열 대신 상수처리하기
+        categories: CategorySchemaType[];
       }>("categories")
       .lean();
 
@@ -190,8 +116,7 @@ export class MongoPostRepository implements IPostRepository {
   async find({ postId, userId }: FindArg): Promise<PostPayloadWithCategory | null> {
     const post = await Post.findOne({ _id: postId, authorId: userId })
       .populate<{
-        categories: CategorySchema[];
-        // TODO: 하드코딩된 문자열 대신 상수처리하기
+        categories: CategorySchemaType[];
       }>("categories")
       .lean();
 
@@ -224,8 +149,7 @@ export class MongoPostRepository implements IPostRepository {
   async findAll({ userId, temp = false }: FindAllArg): Promise<PostPayloadWithCategory[]> {
     const postList = await Post.find({ authorId: userId, temp })
       .populate<{
-        categories: CategorySchema[];
-        // TODO: 하드코딩된 문자열 대신 상수처리하기
+        categories: CategorySchemaType[];
       }>("categories")
       .lean();
 

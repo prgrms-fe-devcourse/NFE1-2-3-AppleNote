@@ -22,6 +22,7 @@ export class PostController implements IController {
 
       return res.status(201).json(createSuccessResponse(201, post));
     } catch (error) {
+      Logger.log(error);
       if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)

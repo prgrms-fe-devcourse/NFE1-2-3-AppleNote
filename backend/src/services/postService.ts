@@ -6,7 +6,7 @@ import { IUserWithId } from "@src/models/userModel";
 import { IFileService } from "./fileService";
 import {
   IPostRepository,
-  PostDTO,
+  PostData,
   PostPayload,
   PostPayloadWithCategory,
 } from "@src/repositories/postRepository";
@@ -30,8 +30,6 @@ type RequestData = Partial<FormDataPost>;
 type WithPostId = { postId: string };
 type WithUser = { user: RequestUser };
 type WithCategories = { categories: string[] };
-// type PostWithoutId = Omit<PostSchemaType, "_id" | "temp">;
-// type PostWithId = PostWithoutId & { postId: Types.ObjectId };
 
 // 요청 인자 타입
 type GetPostListArg = WithUser;
@@ -44,14 +42,12 @@ type GetPostArg = WithUser & WithPostId;
 type SearchPostListArg = WithUser & { data: { query: string } };
 
 // 반환 타입
-// type GetPostListReturn = Omit<PostWithId, "categories">[];
-// type CreatePostReturn = Omit<PostWithId, "categories">;
+type GetPostListReturn = PostPayloadWithCategory[];
+type CreatePostReturn = PostPayload;
 type AddCategoryReturn = WithCategories;
 type RemoveCategoryReturn = WithCategories;
-// type GetPostReturn = Omit<PostSchemaType, "categories" | "temp"> & { postId: Types.ObjectId } & {
-//   categories: { name: string; categoryId: string; createdAt: Date; updatedAt: Date }[];
-// };
-// type SearchPostListReturn = Omit<PostWithId, "categories">[];
+type GetPostReturn = PostPayloadWithCategory;
+type SearchPostListReturn = PostPayloadWithCategory[];
 
 export class PostService implements IPostService {
   constructor(
@@ -59,7 +55,7 @@ export class PostService implements IPostService {
     private postRepository: IPostRepository
   ) {}
 
-  async createPost({ header, data, user }: CreatePostArg) {
+  async createPost({ header, data, user }: CreatePostArg): Promise<CreatePostReturn> {
     // 헤더검증
     if (!validators.checkContentType(header, "multipart/form-data")) {
       throw new ServiceError("The content-type is invalid.", 400);
@@ -90,15 +86,17 @@ export class PostService implements IPostService {
       .filter((value) => typeof value === "string" && value !== "");
 
     const payload = await this.postRepository.create({
-      ...data,
-      images: [...fileToUrls, ...validUrls],
-      authorId: user.userId,
+      data: {
+        ...data,
+        authorId: user.userId,
+        images: [...fileToUrls, ...validUrls],
+      },
     });
 
     return payload;
   }
 
-  async getPostList({ user }: GetPostListArg) {
+  async getPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
@@ -144,17 +142,17 @@ export class PostService implements IPostService {
     const updatedImages = validators.cleanedValue({
       ...data,
       images: [...fileToUrls, ...validUrls],
-    });
+    }) as PostData;
 
     const emptyImageList = {
       ...updatedImages,
       images: [],
-    };
+    } as PostData;
 
     const payload = await this.postRepository.update({
       authorId: user.userId,
       postId,
-      data: (data.deleteImages === "true" ? emptyImageList : updatedImages) as PostDTO,
+      data: data.deleteImages === "true" ? emptyImageList : updatedImages,
     });
 
     // 포스트 업데이트 여부
@@ -301,7 +299,7 @@ export class PostService implements IPostService {
     return { categories: state.categories };
   }
 
-  async getPost({ postId, user }: GetPostArg): Promise<PostPayloadWithCategory> {
+  async getPost({ postId, user }: GetPostArg): Promise<GetPostReturn> {
     // postId 검증
     if (!validators.isObjectId(postId)) {
       throw new ServiceError("Invalid postId", 404);
@@ -321,7 +319,7 @@ export class PostService implements IPostService {
     return payload;
   }
 
-  async getTempPostList({ user }: GetPostListArg): Promise<PostPayloadWithCategory[]> {
+  async getTempPostList({ user }: GetPostListArg): Promise<GetPostListReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
@@ -332,7 +330,7 @@ export class PostService implements IPostService {
     return payload;
   }
 
-  async searchPostList({ user, data }: SearchPostListArg): Promise<PostPayloadWithCategory[]> {
+  async searchPostList({ user, data }: SearchPostListArg): Promise<SearchPostListReturn> {
     // 유저 필드 타입 검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);

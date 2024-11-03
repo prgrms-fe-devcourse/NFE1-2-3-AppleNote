@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useReducer } from "react";
 import styled from "styled-components";
 import {
   fetchCategories,
@@ -72,9 +72,13 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
   }
 };
 
-const SelectCategory: React.FC = () => {
+type SelectCategoryProps = {
+  selectedCategory: Category | null;
+  setSelectedCategory: React.Dispatch<React.SetStateAction<Category | null>>;
+};
+
+const SelectCategory = ({ selectedCategory, setSelectedCategory }: SelectCategoryProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   // API 호출에서 발생하는 에러 처리 함수
   const handleApiError = (error: unknown) => {

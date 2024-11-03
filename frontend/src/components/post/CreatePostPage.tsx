@@ -1,5 +1,6 @@
+import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import React, { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -44,6 +45,7 @@ const CreatePostPage: React.FC = () => {
     previewModalOpen: false,
     deleteModalOpen: false,
   });
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const savePostData = async () => {
     try {
@@ -120,7 +122,10 @@ const CreatePostPage: React.FC = () => {
         </ButtonWrapper>
       </LeftContent>
       <RightContent>
-        <SelectCategory />
+        <SelectCategory
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
       </RightContent>
 
       {state.deleteModalOpen && (

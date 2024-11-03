@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 import Category from "@src/models/categoryModel";
 import Post, { PostSchemaType } from "@src/models/postModel";
-import { Logger } from "@src/utils/Logger";
 import { PostPayload } from "./postRepository";
 
 // 공통 타입 정의
@@ -89,8 +88,6 @@ export class MongoCategoryRepository implements ICategoryRepository {
 
   async findAll({ userId }: FindAllArg): Promise<FindAllCategoriesResult> {
     const categories = await Category.find({ authorId: userId }).lean();
-
-    Logger.log("findAll");
 
     return categories.map((category) => ({
       categoryId: category._id.toString(),

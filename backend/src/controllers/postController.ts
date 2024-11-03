@@ -6,6 +6,8 @@ import { ServiceError } from "@src/utils/Error";
 import { IPostService } from "@src/services/postService";
 import { Logger } from "@src/utils/Logger";
 
+const isShowLog = !(process.env.SHOW_LOG && process.env.SHOW_LOG === "true");
+
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
 
@@ -22,12 +24,12 @@ export class PostController implements IController {
 
       return res.status(201).json(createSuccessResponse(201, post));
     } catch (error) {
-      Logger.log(error);
       if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -39,12 +41,12 @@ export class PostController implements IController {
 
       return res.status(200).json(createSuccessResponse(200, postList));
     } catch (error) {
-      Logger.error(error);
       if (error instanceof ServiceError) {
         return res
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -68,6 +70,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -87,6 +90,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -107,6 +111,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -127,6 +132,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -146,6 +152,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -165,6 +172,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -181,6 +189,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }

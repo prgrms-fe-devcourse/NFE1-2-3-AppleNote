@@ -4,6 +4,9 @@ import { IController } from "@src/types";
 import { createErrorResponse, createSuccessResponse } from "@src/utils/createError";
 import { ServiceError } from "@src/utils/Error";
 import { IPostService } from "@src/services/postService";
+import { Logger } from "@src/utils/Logger";
+
+const isShowLog = !(process.env.SHOW_LOG && process.env.SHOW_LOG === "true");
 
 export class PostController implements IController {
   constructor(private postService: IPostService) {}
@@ -26,6 +29,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -42,6 +46,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -65,6 +70,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -84,6 +90,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -91,7 +98,7 @@ export class PostController implements IController {
 
   async addCategory(req: Request, res: Response) {
     try {
-      const categories = await this.postService.addPostFromCategory({
+      const categories = await this.postService.addCategoryToPost({
         postId: req.params.postId,
         data: { categories: req.body.categories },
         user: req.user,
@@ -104,6 +111,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -111,7 +119,7 @@ export class PostController implements IController {
 
   async excludeCategory(req: Request, res: Response) {
     try {
-      const categories = await this.postService.deletePostFromCategory({
+      const categories = await this.postService.removeCategoryToPost({
         postId: req.params.postId,
         data: { categories: req.body.categories },
         user: req.user,
@@ -124,6 +132,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -143,6 +152,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -162,6 +172,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }
@@ -178,6 +189,7 @@ export class PostController implements IController {
           .status(error.statusCode)
           .json(createErrorResponse(error.statusCode, error.message));
       }
+      Logger.error(error, isShowLog);
 
       return res.status(500).json(createErrorResponse(500, "Internal server error"));
     }

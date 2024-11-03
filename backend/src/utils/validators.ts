@@ -15,8 +15,11 @@ export const validators = {
 
     return hasAllKeys && !hasInvalidKeys;
   },
-  values: <T extends object, K extends keyof T>(obj: T, keys: K[]) => {
-    //모든 키에 대해 값이 존재하는지 확인
+  values: <T extends object, K extends keyof T>(
+    obj: T,
+    keys: K[]
+  ): obj is T & Required<Pick<T, K>> => {
+    // 모든 키에 대해 값이 존재하는지 확인
     const hasAllValues = keys.every(
       (key) => key in obj && obj[key] !== undefined && obj[key] !== null
     );

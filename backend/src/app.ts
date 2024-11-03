@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(
   rateLimit({
     windowMs: 5 * 60 * 1000, // 5분 간격
-    max: 100, // 15분 동안 최대 100개의 요청
+    max: 500, // 5분 동안 최대 500개의 요청
     message: createErrorResponse(429, "Too many requests, please try again later."),
   })
 );

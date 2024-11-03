@@ -2,9 +2,12 @@ import express from "express";
 
 import { CategoryController } from "@src/controllers/categoryController";
 import { CategoryService } from "@src/services/categoryService";
+import { MongoCategoryRepository } from "@src/repositories/categoryRepository";
 
 const route = express.Router();
-const categoryService = new CategoryService();
+
+const mongoCategoryRepository = new MongoCategoryRepository();
+const categoryService = new CategoryService(mongoCategoryRepository);
 const categoryController = new CategoryController(categoryService);
 
 //categories

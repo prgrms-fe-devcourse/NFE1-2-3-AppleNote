@@ -1,8 +1,11 @@
-import { CategorySchemaType } from "@src/models/categoryModel";
 import { ServiceError } from "@src/utils/Error";
 import { validators } from "@src/utils/validators";
 import { IUserWithId } from "@src/models/userModel";
-import { CategoryPayload, ICategoryRepository } from "@src/repositories/categoryRepository";
+import {
+  CategoryPayload,
+  CategoryPayloadWithPosts,
+  ICategoryRepository,
+} from "@src/repositories/categoryRepository";
 import { PostPayload } from "@src/repositories/postRepository";
 
 export interface ICategoryService {
@@ -16,33 +19,28 @@ export interface ICategoryService {
 }
 
 // 재사용 가능한 기본 타입
-type RequestUser = IUserWithId | undefined;
-type RequestData = Partial<CategorySchemaType>;
 type WithCategoryId = { categoryId: string };
-type WithUser = { user: RequestUser };
-// type PostItem = Omit<PostSchemaType & { postId: Types.ObjectId }, "temp" | "categories">;
-// type WithPosts = {
-//   posts: PostItem[];
-// };
-// type CategoryWithId = RequestData & { categoryId: Types.ObjectId };
+type WithUser = { user: IUserWithId | undefined };
+type WithNameData = { data: { name?: string } };
 
 // 요청 인자 타입
 type GetCategoriesArg = WithUser;
-type CreateCategoryArg = WithUser & { data: RequestData };
+type CreateCategoryArg = WithUser & WithNameData;
 type UpdateCategoryArg = CreateCategoryArg & WithCategoryId;
 type DeleteCategoryArg = GetCategoriesArg & WithCategoryId;
 type GetCategoryWithPostsArg = GetCategoriesArg & WithCategoryId;
 
 // 반환 타입
-// type GetCategoryReturn = CategoryWithId[];
-// type CreateCategoryReturn = CategoryWithId;
-// type UpdateCategoryReturn = CategoryWithId;
-// type GetPostsByCategoryReturn = CategoryWithId & WithPosts;
+type GetCategoryReturn = CategoryPayload[];
+type CreateCategoryReturn = CategoryPayload;
+type UpdateCategoryReturn = CategoryPayload;
+type DeleteCategoryReturn = void;
+type GetCategoryWithPostsReturn = CategoryPayloadWithPosts;
 
 export class CategoryService implements ICategoryService {
   constructor(private categoryRepository: ICategoryRepository) {}
 
-  async createCategory({ data, user }: CreateCategoryArg): Promise<CategoryPayload> {
+  async createCategory({ data, user }: CreateCategoryArg): Promise<CreateCategoryReturn> {
     // 필드검증
     if (!validators.keys(data, ["name"])) {
       throw new ServiceError("Invalid request field.", 422);
@@ -73,7 +71,7 @@ export class CategoryService implements ICategoryService {
     return payload.data;
   }
 
-  async getCategories({ user }: GetCategoriesArg): Promise<CategoryPayload[]> {
+  async getCategories({ user }: GetCategoriesArg): Promise<GetCategoryReturn> {
     // 유저정보검증
     if (!validators.checkRequestUser(user)) {
       throw new ServiceError("The request does not have valid user information.", 403);
@@ -84,7 +82,11 @@ export class CategoryService implements ICategoryService {
     return payload;
   }
 
-  async updateCategory({ user, data, categoryId }: UpdateCategoryArg): Promise<CategoryPayload> {
+  async updateCategory({
+    user,
+    data,
+    categoryId,
+  }: UpdateCategoryArg): Promise<UpdateCategoryReturn> {
     // categoryId 검증
     if (!validators.isObjectId(categoryId)) {
       throw new ServiceError("Invalid categoryId", 404);
@@ -115,7 +117,7 @@ export class CategoryService implements ICategoryService {
     return payload.data;
   }
 
-  async deleteCategory({ user, categoryId }: DeleteCategoryArg): Promise<void> {
+  async deleteCategory({ user, categoryId }: DeleteCategoryArg): Promise<DeleteCategoryReturn> {
     // categoryId 검증
     if (!validators.isObjectId(categoryId)) {
       throw new ServiceError("Invalid categoryId", 404);
@@ -142,7 +144,7 @@ export class CategoryService implements ICategoryService {
   async getCategoryWithPosts({
     categoryId,
     user,
-  }: GetCategoryWithPostsArg): Promise<CategoryPayload & { posts: PostPayload[] }> {
+  }: GetCategoryWithPostsArg): Promise<GetCategoryWithPostsReturn> {
     // categoryId 검증
     if (!validators.isObjectId(categoryId)) {
       throw new ServiceError("Invalid categoryId", 404);

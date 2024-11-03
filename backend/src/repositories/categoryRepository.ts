@@ -1,73 +1,64 @@
 import Category from "@src/models/categoryModel";
 import Post from "@src/models/postModel";
 import { Logger } from "@src/utils/Logger";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { PostPayload, PostSchema } from "./postRepository";
 
+// 공통 타입 정의
+type ObjectId = string | Types.ObjectId;
+type Timestamp = { createdAt: Date; updatedAt: Date };
+
+// 인자에 사용될 타입 정의
+type CreateArg = { userId: ObjectId; name: string };
+type FindAllArg = { userId: ObjectId };
+type UpdateArg = { categoryId: ObjectId; name: string };
+type DeleteArg = { categoryId: ObjectId; userId: ObjectId };
+type FindCategoryPostsArg = { categoryId: ObjectId; userId: ObjectId };
+
+// 반환 타입 정의
+export interface CategoryPayload extends Timestamp {
+  name: string;
+  categoryId: ObjectId;
+}
+
+export interface CategoryPayloadWithPosts extends Timestamp {
+  name: string;
+  categoryId: ObjectId;
+  posts: PostPayload[];
+}
+
+type CreateCategoryResult = {
+  isCategoryExist: boolean;
+  data: CategoryPayload | null;
+};
+
+type FindAllCategoriesResult = CategoryPayload[];
+
+type UpdateCategoryResult = {
+  isUpdatedCategory: boolean;
+  data: CategoryPayload | null;
+};
+
+type DeleteCategoryResult = {
+  isExistCategory: boolean;
+  isDeleted: boolean;
+};
+
+type FindCategoryPostsResult = CategoryPayloadWithPosts | null;
+
+// ICategoryRepository 인터페이스
 export interface ICategoryRepository {
-  create(arg: CreateArg): Promise<{
-    isCategoryExist: boolean;
-    data: CategoryPayload | null;
-  }>;
-  findAll(arg: FindAllArg): Promise<CategoryPayload[]>;
-  update(arg: UpdateArg): Promise<{
-    isUpdatedCategory: boolean;
-    data: CategoryPayload | null;
-  }>;
-  delete(arg: DeleteArg): Promise<{
-    isExistCategory: boolean;
-    isDeleted: boolean;
-  }>;
-  findCategoryPosts(
-    arg: FindCategoryPostsArg
-  ): Promise<(CategoryPayload & { posts: PostPayload[] }) | null>;
+  create(arg: CreateArg): Promise<CreateCategoryResult>;
+  findAll(arg: FindAllArg): Promise<FindAllCategoriesResult>;
+  update(arg: UpdateArg): Promise<UpdateCategoryResult>;
+  delete(arg: DeleteArg): Promise<DeleteCategoryResult>;
+  findCategoryPosts(arg: FindCategoryPostsArg): Promise<FindCategoryPostsResult>;
 }
 
-type CreateArg = {
-  userId: string;
-  name: string;
-};
-
-type FindAllArg = {
-  userId: string;
-};
-
-type UpdateArg = {
-  categoryId: string;
-  name: string;
-};
-
-type DeleteArg = {
-  categoryId: string;
-  userId: string;
-};
-
-type FindCategoryPostsArg = {
-  categoryId: string;
-  userId: string;
-};
-
-// interface CategoryDTO {
-//   name?: string;
-//   authorId: string | Types.ObjectId;
-//   posts?: Omit<PostDTO, "categories" | "temp">[];
-//   createdAt?: Date;
-//   updatedAt?: Date;
-// }
-
-export interface CategoryPayload {
-  name: string;
-  categoryId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+// MongoCategoryRepository 클래스
 export class MongoCategoryRepository implements ICategoryRepository {
-  async create({ name, userId }: CreateArg): Promise<{
-    isCategoryExist: boolean;
-    data: CategoryPayload | null;
-  }> {
-    const state = {
+  async create({ name, userId }: CreateArg): Promise<CreateCategoryResult> {
+    const state: CreateCategoryResult = {
       isCategoryExist: true,
       data: null,
     };
@@ -96,7 +87,7 @@ export class MongoCategoryRepository implements ICategoryRepository {
     };
   }
 
-  async findAll({ userId }: FindAllArg): Promise<CategoryPayload[]> {
+  async findAll({ userId }: FindAllArg): Promise<FindAllCategoriesResult> {
     const categories = await Category.find({ authorId: userId }).lean();
 
     Logger.log("findAll");
@@ -109,11 +100,8 @@ export class MongoCategoryRepository implements ICategoryRepository {
     }));
   }
 
-  async update({ categoryId, name }: UpdateArg): Promise<{
-    isUpdatedCategory: boolean;
-    data: CategoryPayload | null;
-  }> {
-    const state = {
+  async update({ categoryId, name }: UpdateArg): Promise<UpdateCategoryResult> {
+    const state: UpdateCategoryResult = {
       isUpdatedCategory: false,
       data: null,
     };
@@ -142,11 +130,8 @@ export class MongoCategoryRepository implements ICategoryRepository {
     };
   }
 
-  async delete({
-    categoryId,
-    userId,
-  }: DeleteArg): Promise<{ isExistCategory: boolean; isDeleted: boolean }> {
-    const state = {
+  async delete({ categoryId, userId }: DeleteArg): Promise<DeleteCategoryResult> {
+    const state: DeleteCategoryResult = {
       isExistCategory: false,
       isDeleted: false,
     };
@@ -213,7 +198,7 @@ export class MongoCategoryRepository implements ICategoryRepository {
   async findCategoryPosts({
     categoryId,
     userId,
-  }: FindCategoryPostsArg): Promise<(CategoryPayload & { posts: PostPayload[] }) | null> {
+  }: FindCategoryPostsArg): Promise<FindCategoryPostsResult> {
     const category = await Category.findOne({ _id: categoryId, authorId: userId })
       .populate<{
         posts: PostSchema[];

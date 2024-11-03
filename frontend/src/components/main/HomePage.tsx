@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
 import styled from "styled-components";
-import Category from "@components/category/Category";
 import LatestPosts from "@components/main/LatestPosts";
 import CategoryLatestPosts from "@components/main/CategoryLatestPosts";
 
@@ -23,11 +22,7 @@ export const useCategory = () => {
   return context;
 };
 
-interface HomePageProps {
-  data?: null;
-}
-
-const HomePage: React.FC<HomePageProps> = () => {
+const HomePage: React.FC = () => {
   // 선택된 카테고리 ID와 업데이트 함수
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
@@ -38,11 +33,8 @@ const HomePage: React.FC<HomePageProps> = () => {
           <LatestPosts />
         </ContentWrapper>
         <ContentWrapper>
-          <ContentRow>
-            <ResponsiveCategoryLatestPosts />
-            <CategoryWrapper>
-              <Category />
-            </CategoryWrapper>
+          <ContentRow id="content-row">
+            <CategoryLatestPosts />
           </ContentRow>
         </ContentWrapper>
       </Container>
@@ -57,6 +49,15 @@ const Container = styled.div`
 const ContentWrapper = styled.div`
   display: flex;
   justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto; /* 화면 중앙 정렬 */
+  padding: 0 16px; /* 양쪽 여백 추가로 중앙 정렬 유지 */
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    padding: 0;
+    justify-content: flex-start; /* 모바일에서는 왼쪽 정렬 */
+  }
 `;
 
 const ContentRow = styled.div`
@@ -64,37 +65,14 @@ const ContentRow = styled.div`
   justify-content: space-between;
   padding: 0 5px;
   gap: 2rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
+  max-width: 1000px;
+  position: relative;
 
   @media (max-width: 768px) {
-    flex-direction: column; /* 모바일에서는 수직 정렬 */
-    gap: 1rem;
-  }
-`;
-
-const ResponsiveCategoryLatestPosts = styled(CategoryLatestPosts)`
-  flex: 1;
-  max-width: 800px; /* 기본 너비 */
-
-  @media (max-width: 1024px) {
-    max-width: 600px; /* 더 작은 화면에서 너비 줄임 */
-  }
-
-  @media (max-width: 768px) {
-    max-width: 100%; /* 모바일에서 전체 너비 사용 */
-  }
-`;
-
-const CategoryWrapper = styled.div`
-  min-width: 220px;
-  padding-top: 150px;
-  box-sizing: border-box;
-  padding-left: 1rem;
-
-  @media (max-width: 768px) {
-    padding: 50px 0 20px 35px;
+    flex-direction: column;
+    align-items: flex-start; /* 모바일에서 왼쪽 정렬 */
+    padding: 0;
   }
 `;
 

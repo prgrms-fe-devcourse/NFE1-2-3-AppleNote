@@ -16,9 +16,28 @@ interface CustomTheme {
     secondary: string;
     warning: string;
   };
+  logo: {
+    primary: {
+      background: string;
+      text: string;
+    };
+    secondary: {
+      background: string;
+      text: string;
+    };
+  };
   button: {
     background: string;
     text: string;
+  };
+  boxShadow: {
+    primary: string;
+  };
+  divider: {
+    background: string;
+  };
+  footer: {
+    background: string;
   };
 }
 
@@ -32,12 +51,25 @@ export const lightTheme: DefaultTheme = {
     secondary: "#1C1C1C",
     warning: "#D32F2F",
   },
+  logo: {
+    primary: {
+      background: "#000000",
+      text: "#ffffff",
+    },
+    secondary: {
+      background: "#ffffff",
+      text: "#000000",
+    },
+  },
   button: {
     background: "#000000",
     text: "#ffffff",
   },
   boxShadow: {
     primary: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  },
+  divider: {
+    background: "#000000",
   },
   footer: {
     background: "#333333",
@@ -54,12 +86,25 @@ export const darkTheme: DefaultTheme = {
     secondary: "#E0E0E0",
     warning: "#FF6659",
   },
+  logo: {
+    primary: {
+      background: "#ffffff",
+      text: "#000000",
+    },
+    secondary: {
+      background: "#121212",
+      text: "#ffffff",
+    },
+  },
   button: {
     background: "#ffffff",
     text: "#000000",
   },
   boxShadow: {
     primary: "0 4px 8px rgba(255, 255, 255, 0.2)",
+  },
+  divider: {
+    background: "#ffffff",
   },
   footer: {
     background: "#000000",

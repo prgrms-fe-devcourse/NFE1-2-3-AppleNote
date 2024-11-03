@@ -14,9 +14,8 @@ export interface Post {
 
 // 최신 포스트 3개 가져오기
 export const fetchLatestPosts = async (): Promise<Post[]> => {
-  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
+  const response = await httpClient.get<{ payload: Post[] }>("/posts");
 
-  // 최신순 정렬 후 3개만 반환
   return response.data.payload
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 3);
@@ -24,23 +23,20 @@ export const fetchLatestPosts = async (): Promise<Post[]> => {
 
 // 전체 포스트 가져오기 (검색에서 사용)
 export const fetchAllPosts = async (): Promise<Post[]> => {
-  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
+  const response = await httpClient.get<{ payload: Post[] }>("/posts");
 
-  // 최신순 정렬 후 전체 반환
   return response.data.payload.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 };
 
-// 전체 포스트 목록 가져오기 (페이지네이션 적용)
+// 페이지네이션 적용한 전체 포스트 목록 가져오기
 export const fetchPostsByPage = async (page: number, postsPerPage: number): Promise<Post[]> => {
-  const response = await httpClient.get<{ payload: Post[] }>(`/posts`);
+  const response = await httpClient.get<{ payload: Post[] }>("/posts");
 
-  // 최신순 정렬 후 페이지에 맞는 포스트 반환
   const sortedPosts = response.data.payload.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
-
   const startIndex = (page - 1) * postsPerPage;
 
   return sortedPosts.slice(startIndex, startIndex + postsPerPage);
@@ -52,7 +48,6 @@ export const fetchLatestPostsByCategoryId = async (categoryId: string): Promise<
     `/categories/${categoryId}`
   );
 
-  // 최신순 정렬 후 최대 4개만 반환
   return response.data.payload.posts
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 4);

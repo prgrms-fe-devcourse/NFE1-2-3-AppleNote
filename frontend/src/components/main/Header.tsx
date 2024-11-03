@@ -47,6 +47,11 @@ const StyledHeader = styled.header`
   align-items: center;
   padding: 1rem 2rem;
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
 `;
 
 /* 검색창 및 아이콘 섹션 */

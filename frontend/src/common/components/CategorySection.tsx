@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { css } from "styled-components";
+import Divider from "@common/components/Divider";
 
 interface CategorySectionProps {
   title: string;
@@ -81,12 +82,6 @@ const DividerWrapper = styled.div`
   display: flex;
   justify-content: flex-start; /* 왼쪽 정렬 */
   width: 100%; /* 부모 너비에 맞춤 */
-`;
-
-const Divider = styled.div<{ small?: boolean; width: number }>`
-  height: ${({ small }) => (small ? "clamp(4px, 1vw, 6px)" : "clamp(4px, 1.5vw, 7px)")};
-  background-color: ${({ theme }) => theme.text.primary};
-  width: ${({ width }) => `${width}px`};
 `;
 
 export default CategorySection;

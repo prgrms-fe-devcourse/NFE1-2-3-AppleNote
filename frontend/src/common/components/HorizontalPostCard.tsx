@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Post } from "./postApi";
+import { Post } from "../../components/main/postApi";
 import { useNavigate } from "react-router-dom";
 
 interface HorizontalPostCardProps {
@@ -43,9 +43,11 @@ const HorizontalPostCard: React.FC<HorizontalPostCardProps> = ({ post }) => {
 
 const Card = styled.div`
   display: flex;
+  width: clamp(330px, 30vw, 906px); /* 최소 330px, 최대 906px */
   gap: 1rem;
   align-items: flex-start;
   width: 100%;
+  cursor: pointer;
 
   &:hover {
     transform: scale(1.02);
@@ -75,7 +77,7 @@ const Content = styled.div`
   min-width: 0;
 
   @media (max-width: 768px) {
-    max-width: 100%;
+    max-width: 260px;
     align-items: center;
   }
 `;
@@ -84,11 +86,19 @@ const Category = styled.span`
   font-size: clamp(1rem, 2vw, 1.2rem);
   color: #888;
   margin-top: 0.2rem;
+
+  @media (max-width: 768px) {
+    margin-top: 0.1rem;
+  }
 `;
 
 const Title = styled.h2`
   margin: 0.2rem 0 0.5rem;
   font-size: clamp(1.4rem, 2vw, 1.7rem);
+
+  @media (max-width: 768px) {
+    margin: 0.1rem 0 0.25rem;
+  }
 `;
 
 const CreateDate = styled.div`
@@ -105,6 +115,10 @@ const Description = styled.p`
   overflow: hidden; /* 넘치는 내용 숨김 */
   text-overflow: ellipsis; /* 넘치는 내용에 '...' 표시 */
   line-height: 1.5; /* 줄 간격 조절 */
+
+  @media (max-width: 768px) {
+    margin: 0.75rem 0 1rem;
+  }
 `;
 
 export default HorizontalPostCard;

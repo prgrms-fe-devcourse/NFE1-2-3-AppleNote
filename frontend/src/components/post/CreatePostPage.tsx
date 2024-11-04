@@ -13,6 +13,7 @@ import {
   tempCreatePost,
   tempPostList,
 } from "./postAPI";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 type State = {
   previewModalOpen: boolean;
@@ -274,7 +275,11 @@ const CreatePostPage: React.FC = () => {
               e.stopPropagation();
             }}>
             {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
-            {state.image && <PreviewImg src={state.image.urls} />}
+            {state.image ? (
+              <PreviewImg src={state.image.urls} />
+            ) : (
+              <PreviewImg src={getThumbnailSrc(undefined)} />
+            )}
             {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>
@@ -342,7 +347,9 @@ const RightContent = styled.div``;
 
 const LeftContent = styled.div``;
 
-const PreviewContent = styled.div``;
+const PreviewContent = styled.div`
+  margin-top: 10px;
+`;
 const PreviewImg = styled.img`
   width: 600px;
   height: 300px;

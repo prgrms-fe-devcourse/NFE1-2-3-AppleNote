@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Post } from "../../components/main/postApi";
 import { useNavigate } from "react-router-dom";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 interface HorizontalPostCardProps {
   post: Post;
@@ -21,7 +22,7 @@ const formatDate = (dateString?: Date) => {
 
 const HorizontalPostCard: React.FC<HorizontalPostCardProps> = ({ post }) => {
   const navigate = useNavigate();
-  const thumbnailSrc = post.images?.[0] || "/default-thumbnail.png"; // 유효성 검사
+  const thumbnailSrc = getThumbnailSrc(post.images); // 유효성 검사
   const categoryName = post.categories?.[0]?.name || ""; // 유효성 검사
   const formattedDate = formatDate(post.createdAt);
   const handleCardClick = () => {

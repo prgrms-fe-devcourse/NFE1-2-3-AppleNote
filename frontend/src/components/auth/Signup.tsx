@@ -296,7 +296,7 @@ const Submit = () => {
     if (isFulfilled) {
       login(data, {
         onSuccess: () => {
-          navigate("/", { replace: true });
+          navigate("/login", { replace: true });
         },
       });
     }

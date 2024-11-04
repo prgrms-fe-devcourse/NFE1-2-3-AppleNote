@@ -14,8 +14,10 @@ const PostListPage: React.FC = () => {
   const location = useLocation();
 
   // State 또는 URL 파라미터로부터 categoryId와 categoryName 설정
-  const categoryId = location.state?.categoryId || paramCategoryId || null;
-  const categoryName = location.state?.categoryName || "전체 포스트";
+  const [categoryId, setCategoryId] = useState(
+    location.state?.categoryId || paramCategoryId || null
+  );
+  const [categoryName, setCategoryName] = useState(location.state?.categoryName || "전체 포스트");
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -25,34 +27,34 @@ const PostListPage: React.FC = () => {
   const [initialRightOffset, setInitialRightOffset] = useState(0);
   const postsPerPage = 4;
 
-  // 포스트 데이터 로드
+  // 포스트 데이터 로드 함수 정의
+  const loadPosts = async () => {
+    try {
+      const fetchedPosts = categoryId
+        ? await fetchPostsByCategoryId(categoryId)
+        : await fetchPostsByPage(1, Number.MAX_SAFE_INTEGER); // 전체 포스트 로드
+
+      // 최신순으로 정렬된 데이터
+      const sortedPosts = fetchedPosts.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setTotalPosts(sortedPosts.length); // 전체 포스트 수 설정
+
+      // 현재 페이지에 해당하는 포스트 슬라이스
+      const paginatedPosts = sortedPosts.slice(
+        (currentPage - 1) * postsPerPage,
+        currentPage * postsPerPage
+      );
+
+      setPosts(paginatedPosts);
+    } catch (error) {
+      console.error("Failed to load posts:", error);
+    }
+  };
+
+  // 카테고리 ID 또는 페이지 변경 시 포스트 로드
   useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        // 전체 포스트 또는 카테고리별 포스트 가져오기
-        const fetchedPosts = categoryId
-          ? await fetchPostsByCategoryId(categoryId)
-          : await fetchPostsByPage(1, Number.MAX_SAFE_INTEGER); // 전체 포스트 로드
-
-        // 최신순으로 정렬된 데이터
-        const sortedPosts = fetchedPosts.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-
-        setTotalPosts(sortedPosts.length); // 전체 포스트 수 설정
-
-        // 현재 페이지에 해당하는 포스트 슬라이스
-        const paginatedPosts = sortedPosts.slice(
-          (currentPage - 1) * postsPerPage,
-          currentPage * postsPerPage
-        );
-
-        setPosts(paginatedPosts);
-      } catch (error) {
-        console.error("Failed to load posts:", error);
-      }
-    };
-
     loadPosts();
   }, [categoryId, currentPage]);
 
@@ -83,16 +85,25 @@ const PostListPage: React.FC = () => {
       <CategorySection title={categoryName} small />
       <ContentWrapper id="content-row">
         <HorizontalPostGrid>
-          {posts.map((post) => (
-            <HorizontalPostCard key={post.postId} post={post} />
-          ))}
+          {posts.length > 0 ? (
+            posts.map((post) => <HorizontalPostCard key={post.postId} post={post} />)
+          ) : (
+            <NoPostsMessage>해당 카테고리에는 아직 포스트가 존재하지 않습니다.</NoPostsMessage>
+          )}
         </HorizontalPostGrid>
         <DesktopCategoryWrapper marginTop={0}>
-          <Category />
+          <Category
+            setSelectedCategoryId={setCategoryId}
+            setSelectedCategoryName={setCategoryName} // 카테고리 이름 설정 함수 전달
+            onCategoryChange={loadPosts}
+          />
         </DesktopCategoryWrapper>
         <FaBarsWrapper
           isSticky={isSticky}
           rightOffset={isSticky ? rightOffset : initialRightOffset}
+          setSelectedCategoryId={setCategoryId}
+          setSelectedCategoryName={setCategoryName}
+          onCategoryChange={loadPosts}
         />
       </ContentWrapper>
       <PaginationComponent
@@ -133,6 +144,14 @@ const HorizontalPostGrid = styled.div`
   flex-direction: column;
   gap: 2rem;
   margin-right: 50px;
+`;
+
+// NoPostsMessage 스타일 추가
+const NoPostsMessage = styled.div`
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem;
 `;
 
 export default PostListPage;

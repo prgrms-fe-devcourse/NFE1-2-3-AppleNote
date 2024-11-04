@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import HorizontalPostCard from "../../common/components/HorizontalPostCard";
-import { Post } from "../main/postApi";
+import HorizontalPostCard from "@common/components/HorizontalPostCard";
+import { Post } from "@components/main/postApi";
 
 interface PostsGridProps {
   posts: Post[];

@@ -1,10 +1,16 @@
 import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost, createPostCagegory, PostPayload, tempCreatePost } from "./postAPI";
+import {
+  createPost,
+  createPostCagegory,
+  PostPayload,
+  tempCreatePost,
+  tempPostList,
+} from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -74,9 +80,7 @@ const CreatePostPage: React.FC = () => {
         temp: true,
       };
 
-      const data = await tempCreatePost(payload);
-
-      console.log(data);
+      await tempCreatePost(payload);
     } catch (error) {
       console.error(error);
     }
@@ -96,6 +100,20 @@ const CreatePostPage: React.FC = () => {
       });
     }
   };
+
+  const fetchTempPostList = async () => {
+    try {
+      const data = await tempPostList();
+
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTempPostList();
+  }, []);
 
   return (
     <Wrapper>

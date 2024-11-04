@@ -146,6 +146,19 @@ export const tempCreatePost = async (payload: PostPayload): Promise<PatchPostRes
 };
 
 /**
+ * GET /posts/temp temp post list 조회
+ * @requires Authorization Bearer {access-token}
+ * @param payload postform 양식
+ * @returns 생성된 temp post list 조회
+ */
+export const tempPostList = async () => {
+  const URL = `/posts/temp`;
+  const { data } = await httpClient.get(URL);
+
+  return data;
+};
+
+/**
  * POST /posts/{postId}/categories
  * @requires Authorization Bearer {access-token}
  * @param payload category[]

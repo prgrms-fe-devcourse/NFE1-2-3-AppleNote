@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation } from "react-router-dom";
-import { fetchPostsByCategoryId, fetchPostsByPage, Post } from "./postApi";
-import PaginationComponent from "../../common/components/PaginationComponent";
-import HorizontalPostCard from "../../common/components/HorizontalPostCard";
-import CategorySection from "../../common/components/CategorySection";
-import DesktopCategoryWrapper from "../../common/components/DesktopCategoryWrapper";
-import FaBarsWrapper from "../../common/components/FaBarsWrapper";
+import { fetchPostsByCategoryId, fetchPostsByPage, Post } from "@components/main/postApi";
+import PaginationComponent from "@common/components/PaginationComponent";
+import HorizontalPostCard from "@common/components/HorizontalPostCard";
+import { fetchCategories } from "@components/category/categoryApi";
+import CategorySection from "@common/components/CategorySection";
+import DesktopCategoryWrapper from "@common/components/DesktopCategoryWrapper";
+import FaBarsWrapper from "@common/components/FaBarsWrapper";
 import Category from "@components/category/Category";
 
 const PostListPage: React.FC = () => {
   const { categoryId: paramCategoryId } = useParams<{ categoryId?: string }>();
   const location = useLocation();
 
-  // State 또는 URL 파라미터로부터 categoryId와 categoryName 설정
-  const [categoryId, setCategoryId] = useState(
-    location.state?.categoryId || paramCategoryId || null
-  );
-  const [categoryName, setCategoryName] = useState(location.state?.categoryName || "전체 포스트");
+  // 초기 상태 설정: useParams 우선 사용, 없으면 location.state 사용
+  const initialCategoryId = paramCategoryId || location.state?.categoryId || null;
+  const initialCategoryName = location.state?.categoryName || "전체 포스트";
+
+  const [categoryId, setCategoryId] = useState<string | null>(initialCategoryId);
+  const [categoryName, setCategoryName] = useState<string>(initialCategoryName);
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -27,8 +29,32 @@ const PostListPage: React.FC = () => {
   const [initialRightOffset, setInitialRightOffset] = useState(0);
   const postsPerPage = 4;
 
+  // 카테고리 목록과 초기 상태를 로드하는 함수
+  const [categories, setCategories] = useState<{ categoryId: string; name: string }[]>([]);
+
+  const loadCategories = async () => {
+    try {
+      const data = await fetchCategories();
+
+      setCategories(data.payload);
+
+      // 초기 로드: paramCategoryId나 location.state.categoryId가 없는 경우 전체 목록 로드
+      if (!initialCategoryId && data.payload.length > 0) {
+        setCategoryId(null);
+        setCategoryName("전체 포스트");
+        loadPosts(null);
+      }
+    } catch (error) {
+      console.error("Failed to load categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
   // 포스트 데이터 로드 함수 정의
-  const loadPosts = async () => {
+  const loadPosts = async (categoryId: string | null) => {
     try {
       const fetchedPosts = categoryId
         ? await fetchPostsByCategoryId(categoryId)
@@ -53,9 +79,16 @@ const PostListPage: React.FC = () => {
     }
   };
 
+  // 카테고리 변경 시 상태를 업데이트하는 함수
+  const onCategoryChange = async (newCategoryId: string | null, newCategoryName: string) => {
+    setCategoryId(newCategoryId);
+    setCategoryName(newCategoryName);
+    await loadPosts(newCategoryId);
+  };
+
   // 카테고리 ID 또는 페이지 변경 시 포스트 로드
   useEffect(() => {
-    loadPosts();
+    loadPosts(categoryId);
   }, [categoryId, currentPage]);
 
   useEffect(() => {
@@ -93,17 +126,27 @@ const PostListPage: React.FC = () => {
         </HorizontalPostGrid>
         <DesktopCategoryWrapper marginTop={0}>
           <Category
-            setSelectedCategoryId={setCategoryId}
-            setSelectedCategoryName={setCategoryName} // 카테고리 이름 설정 함수 전달
-            onCategoryChange={loadPosts}
+            setSelectedCategoryId={(id) =>
+              onCategoryChange(
+                id,
+                categories.find((cat) => cat.categoryId === id)?.name || "전체 포스트"
+              )
+            }
+            setSelectedCategoryName={setCategoryName}
+            onCategoryChange={onCategoryChange}
           />
         </DesktopCategoryWrapper>
         <FaBarsWrapper
           isSticky={isSticky}
           rightOffset={isSticky ? rightOffset : initialRightOffset}
-          setSelectedCategoryId={setCategoryId}
+          setSelectedCategoryId={(id) =>
+            onCategoryChange(
+              id,
+              categories.find((cat) => cat.categoryId === id)?.name || "전체 포스트"
+            )
+          }
           setSelectedCategoryName={setCategoryName}
-          onCategoryChange={loadPosts}
+          onCategoryChange={onCategoryChange}
         />
       </ContentWrapper>
       <PaginationComponent

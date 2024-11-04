@@ -6,6 +6,7 @@ import { LuPencilLine } from "react-icons/lu";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { fetchAllPosts } from "@components/main/postApi";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,7 +81,7 @@ const PostPage = () => {
           })}
         </PostInfo>
       </PostInfoWrapper>
-      <Image src={postInfo?.payload.images[0]} />
+      <Image src={getThumbnailSrc(postInfo?.payload.images)} />
       <Content>{postInfo?.payload.content}</Content>
       <IconWrapper>
         <LuPencilLine

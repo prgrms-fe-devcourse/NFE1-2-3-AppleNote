@@ -136,6 +136,7 @@ const CreatePostPage: React.FC = () => {
         <TitleInput
           onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
           type="text"
+          value={state.title}
         />
 
         <ImageWrapper>
@@ -155,7 +156,10 @@ const CreatePostPage: React.FC = () => {
         </ImageWrapper>
 
         <Title>본문</Title>
-        <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+        <ContentText
+          onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
+          value={state.content}
+        />
 
         <ButtonWrapper>
           <Button
@@ -202,7 +206,12 @@ const CreatePostPage: React.FC = () => {
             <ModalTitle>임시 저장된 글 목록</ModalTitle>
             {postList.map((post) => (
               <PostRow key={post.postId}>
-                <PostInfo>
+                <PostInfo
+                  onClick={() => {
+                    dispatch({ type: "SET_TITLE", payload: post.title });
+                    dispatch({ type: "SET_CONTENT", payload: post.content });
+                    setTempModalOpen(false);
+                  }}>
                   <PostTitle>{post.title || "제목없음"}</PostTitle>
                   <PostDate>
                     {new Date(post.createdAt).toLocaleDateString("ko-KR", {

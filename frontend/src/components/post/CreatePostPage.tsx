@@ -345,7 +345,10 @@ const TempCount = styled.div``;
 
 const RightContent = styled.div``;
 
-const LeftContent = styled.div``;
+const LeftContent = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+`;
 
 const PreviewContent = styled.div`
   margin-top: 10px;
@@ -393,7 +396,7 @@ const ButtonWrapper = styled.div`
 const ImageWrapper = styled.div`
   width: 600px;
   height: 300px;
-  background-color: gray;
+  background-color: #b3b2b2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -435,6 +438,7 @@ const ContentText = styled.textarea`
 
 const TitleInput = styled.input`
   width: 600px;
+  margin-bottom: 5px;
 `;
 
 const Title = styled.div`
@@ -448,7 +452,8 @@ const Wrapper = styled.div`
   display: inline-flex;
   align-items: center;
   flex-direction: row;
-  gap: 10px;
+  gap: 50px;
+  justify-content: center;
 `;
 
 export default CreatePostPage;

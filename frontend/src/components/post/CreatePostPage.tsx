@@ -7,6 +7,7 @@ import styled from "styled-components";
 import {
   createPost,
   createPostCagegory,
+  Post,
   PostPayload,
   tempCreatePost,
   tempPostList,
@@ -52,6 +53,8 @@ const CreatePostPage: React.FC = () => {
     deleteModalOpen: false,
   });
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [postList, setPostList] = useState<Post[]>([]);
+  const [tempModalOpen, setTempModalOpen] = useState(false);
 
   const savePostData = async () => {
     try {
@@ -81,6 +84,7 @@ const CreatePostPage: React.FC = () => {
       };
 
       await tempCreatePost(payload);
+      await fetchTempPostList();
     } catch (error) {
       console.error(error);
     }
@@ -105,7 +109,7 @@ const CreatePostPage: React.FC = () => {
     try {
       const data = await tempPostList();
 
-      console.log(data);
+      setPostList(data.payload);
     } catch (error) {
       console.error(error);
     }
@@ -156,12 +160,17 @@ const CreatePostPage: React.FC = () => {
             }}>
             삭제
           </Button>
-          <Button
-            onClick={() => {
-              tempSavePostData();
-            }}>
-            임시저장
-          </Button>
+          <TempButton>
+            <div
+              onClick={() => {
+                tempSavePostData();
+              }}>
+              임시저장
+            </div>
+            {postList.length !== 0 && (
+              <TempCount onClick={() => setTempModalOpen(true)}>| {postList.length}</TempCount>
+            )}
+          </TempButton>
           <Button
             onClick={() => {
               dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
@@ -177,6 +186,33 @@ const CreatePostPage: React.FC = () => {
         />
       </RightContent>
 
+      {tempModalOpen && (
+        <ModalOverlay onClick={() => setTempModalOpen(false)}>
+          <TempPostModal onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>임시 저장된 글 목록</ModalTitle>
+            {postList.map((post) => (
+              <PostRow key={post.postId}>
+                <PostInfo>
+                  <PostTitle>{post.title || "제목없음"}</PostTitle>
+                  <PostDate>
+                    {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </PostDate>
+                </PostInfo>
+                <DeleteButton
+                  onClick={() => {
+                    /* 삭제 기능 구현 예정 */
+                  }}>
+                  x
+                </DeleteButton>
+              </PostRow>
+            ))}
+          </TempPostModal>
+        </ModalOverlay>
+      )}
       {state.deleteModalOpen && (
         <ModalOverlay
           onClick={() => {
@@ -222,6 +258,61 @@ const CreatePostPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+const TempPostModal = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const ModalTitle = styled.h3`
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+const PostRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+`;
+
+const PostInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const PostTitle = styled.span`
+  font-weight: bold;
+`;
+
+const PostDate = styled.span`
+  font-size: 12px;
+  color: gray;
+`;
+
+const DeleteButton = styled.button`
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+`;
+
+const TempButton = styled.div`
+  cursor: pointer;
+  display: inline-flex;
+  gap: 5px;
+`;
+
+const TempCount = styled.div``;
 
 const RightContent = styled.div``;
 

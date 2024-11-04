@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { fetchBannerImage } from "./bannerApi";
-import { useBannerModal } from "@components/myPage/BannerModalContext";
+import { useModal } from "@components/myPage/Context/ModalContext";
 
 const DEFAULT_BANNER_IMAGE = "/default-banner-image.png"; // 기본 배너 이미지 경로
 
 const Banner: React.FC = () => {
   const [bannerImage, setBannerImage] = useState<string | null>(null);
-  const { isBannerModalOpen } = useBannerModal();
+  const { isOpen } = useModal();
 
   // 배너 이미지 API 호출 및 설정
   useEffect(() => {
@@ -22,7 +22,7 @@ const Banner: React.FC = () => {
     };
 
     getBannerImage();
-  }, [isBannerModalOpen]);
+  }, [isOpen]);
 
   return <StyledBanner src={bannerImage || DEFAULT_BANNER_IMAGE} alt="Banner Image" />;
 };

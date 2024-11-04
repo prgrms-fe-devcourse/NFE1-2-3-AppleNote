@@ -1,22 +1,24 @@
-import React, { useReducer } from "react";
+import { Category } from "@components/category/categoryApi";
+import SelectCategory from "@components/category/SelectCategory";
+import { useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost } from "./postAPI";
+import { createPost, createPostCagegory, PostPayload } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
   deleteModalOpen: boolean;
   title: string;
   content: string;
-  image: string | null;
+  image: { files: File; urls: string } | null;
 };
 type Action =
   | { type: "TOGGLE_PREVIEW_MODAL"; payload: boolean }
   | { type: "TOGGLE_DELETE_MODAL"; payload: boolean }
   | { type: "SET_TITLE"; payload: string }
   | { type: "SET_CONTENT"; payload: string }
-  | { type: "SET_IMAGE"; payload: string | null };
+  | { type: "SET_IMAGE"; payload: { files: File; urls: string } | null };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -43,79 +45,97 @@ const CreatePostPage: React.FC = () => {
     previewModalOpen: false,
     deleteModalOpen: false,
   });
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
   const savePostData = async () => {
     try {
-      const payload = {
+      const payload: PostPayload = {
         title: state.title,
         content: state.content,
-        images: state.image,
+        images: state.image ? [state.image.files] : undefined,
       };
       const data = await createPost(payload);
 
-      navigate(`/posts/${data.payload.postId}`);
+      if (selectedCategory) {
+        await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
+        navigate(`/posts/${data.payload.postId}`);
+      }
     } catch (error) {
-      // eslint-disable-next-line
       console.error(error);
     }
   };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
 
-      dispatch({ type: "SET_IMAGE", payload: imageUrl });
+      dispatch({
+        type: "SET_IMAGE",
+        payload: {
+          files: file,
+          urls: imageUrl,
+        },
+      });
     }
   };
 
   return (
     <Wrapper>
-      <Title>제목</Title>
-      <TitleInput
-        onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
-        type="text"
-      />
-
-      <ImageWrapper>
-        <ImageInput
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+      <LeftContent>
+        <Title>제목</Title>
+        <TitleInput
+          onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
+          type="text"
         />
-        {!state.image && (
-          <PlaceholderText>
-            <FaPlus size={50} />
-            <div>이미지 추가하기</div>
-          </PlaceholderText>
-        )}
-        {state.image && <Image src={state.image} alt="Uploaded preview" />}
-      </ImageWrapper>
 
-      <Title>본문</Title>
-      <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+        <ImageWrapper>
+          <ImageInput
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+          />
+          {!state.image && (
+            <PlaceholderText>
+              <FaPlus size={50} />
+              <div>이미지 추가하기</div>
+            </PlaceholderText>
+          )}
+          {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
+        </ImageWrapper>
 
-      <ButtonWrapper>
-        <Button
-          onClick={() => {
-            savePostData();
-          }}>
-          확인
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
-          }}>
-          삭제
-        </Button>
-        <Button>임시저장</Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
-          }}>
-          미리보기
-        </Button>
-      </ButtonWrapper>
+        <Title>본문</Title>
+        <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+
+        <ButtonWrapper>
+          <Button
+            onClick={() => {
+              savePostData();
+            }}>
+            확인
+          </Button>
+          <Button
+            onClick={() => {
+              dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
+            }}>
+            삭제
+          </Button>
+          <Button>임시저장</Button>
+          <Button
+            onClick={() => {
+              dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
+            }}>
+            미리보기
+          </Button>
+        </ButtonWrapper>
+      </LeftContent>
+      <RightContent>
+        <SelectCategory
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      </RightContent>
 
       {state.deleteModalOpen && (
         <ModalOverlay
@@ -154,7 +174,7 @@ const CreatePostPage: React.FC = () => {
               e.stopPropagation();
             }}>
             {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
-            {state.image && <PreviewImg src={state.image} />}
+            {state.image && <PreviewImg src={state.image.urls} />}
             {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>
@@ -162,6 +182,10 @@ const CreatePostPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+const RightContent = styled.div``;
+
+const LeftContent = styled.div``;
 
 const PreviewContent = styled.div``;
 const PreviewImg = styled.img`
@@ -261,7 +285,7 @@ const Wrapper = styled.div`
   width: 100%;
   display: inline-flex;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 `;
 

@@ -39,7 +39,7 @@ const PostPage = () => {
     <Wrapper>
       <Title>{postInfo?.payload.title}</Title>
       <PostInfoWrapper>
-        <PostInfo>{postInfo?.payload.categories}</PostInfo>
+        <PostInfo>{postInfo?.payload.categories[0].name}</PostInfo>
         <PostInfo>
           {new Date(postInfo?.payload.createdAt as Date).toLocaleDateString("ko-KR", {
             year: "numeric",

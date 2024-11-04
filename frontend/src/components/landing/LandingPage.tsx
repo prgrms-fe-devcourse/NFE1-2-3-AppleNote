@@ -30,38 +30,49 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <Container>
-      <GlobalStyle />
-      <LeftSection>
-        <VerticalLine />
-        <Title>APPLE</Title>
-        <Title>NOTE</Title>
-        <AppleImageContainer onClick={toggleImagePosition}>
-          <AppleImage src={Apple1} alt="Apple1" />
-        </AppleImageContainer>
-      </LeftSection>
-      <RightSection>
-        <Div1>
-          <Image1 src={Apple4} alt="Apple3" />
-          <ButtonGroup>
-            <Button onClick={handleLogin}>Login</Button>
-            <Button onClick={handleSignup}>SignUp</Button>
-          </ButtonGroup>
-        </Div1>
-        <Image2 src={Apple3} alt="Apple4" />
-        <Subtitle1>Place For</Subtitle1>
-        <Subtitle2>BETTER RECORDS.</Subtitle2>
-        <ImageContainer>
-          <Image3 src={Paper} alt="Paper" />
-        </ImageContainer>
-      </RightSection>
-    </Container>
+    <Wrapper>
+      <Container>
+        <GlobalStyle />
+        <LeftSection>
+          <VerticalLine />
+          <Title>APPLE</Title>
+          <Title>NOTE</Title>
+          <AppleImageContainer onClick={toggleImagePosition}>
+            <AppleImage src={Apple1} alt="Apple1" />
+          </AppleImageContainer>
+        </LeftSection>
+        <RightSection>
+          <Div1>
+            <Image1 src={Apple4} alt="Apple3" />
+            <ButtonGroup>
+              <Button onClick={handleLogin}>Login</Button>
+              <Button onClick={handleSignup}>SignUp</Button>
+            </ButtonGroup>
+          </Div1>
+          <Image2 src={Apple3} alt="Apple4" />
+          <Subtitle1>Place For</Subtitle1>
+          <Subtitle2>BETTER RECORDS.</Subtitle2>
+          <ImageContainer>
+            <Image3 src={Paper} alt="Paper" />
+          </ImageContainer>
+        </RightSection>
+      </Container>
+    </Wrapper>
   );
 };
 
 export default LandingPage;
 
 // Styled Components
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  height: 100vh; /* 화면 전체 높이 */
+  width: 100%;
+  min-width: 700px;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -70,24 +81,27 @@ const Container = styled.div`
   flex-direction: row;
   background-color: #fff;
   min-width: 700px;
+  max-width: 3000px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     flex-direction: column; /* 작은 화면에서는 세로로 배치 */
-    height: auto;
+    height: 100vh;
   }
 `;
 
 const LeftSection = styled.div`
   display: flex;
   margin: 0 auto; /* 중앙 정렬 */
-  min-width: 40vw;
+  padding: 15px 15px; /* 좌우 패딩 */
+  width: 40vw;
+  max-width: 1300px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
   align-items: center;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     width: 90%;
   }
 `;
@@ -99,7 +113,7 @@ const Title = styled.h1`
   color: #333;
   font-family: "Merriweather", serif;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1200px) {
     font-size: 6rem; /* 작은 화면에서는 폰트 크기 축소 */
   }
 `;
@@ -125,7 +139,7 @@ const VerticalLine = styled.div`
   height: 98%;
   background-color: #333;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     display: none;
   }
 `;
@@ -139,6 +153,10 @@ const RightSection = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+
+  @media (max-width: 1120px) {
+    padding: 0px 0px;
+  }
 `;
 
 const Div1 = styled.div`
@@ -155,7 +173,7 @@ const Image1 = styled.img`
   z-index: 1;
   min-width: 500px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     width: 90%;
     min-width: 200px;
     margin-left: -20px;
@@ -170,18 +188,12 @@ const ButtonGroup = styled.div`
   flex-direction: row;
   margin-top: -25%;
   margin-left: -20px;
-
-  /* @media (max-width: 2400px) {
-    bottom: 100px;
-    left: 0px;
-    width: 30%;
-  } */
 `;
 
 const Button = styled.button`
   position: relative;
   width: 140px;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 600;
   color: black;
   background-color: transparent;
@@ -191,7 +203,7 @@ const Button = styled.button`
   font-family: "Merriweather", serif;
 
   @media (max-width: 2433px) {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 `;
 
@@ -200,7 +212,12 @@ const Image2 = styled.img`
   width: 50%;
   object-fit: cover;
   margin-top: -30%;
-  margin-left: 55%;
+  margin-left: 45%;
+  max-width: 1000px;
+
+  @media (max-width: 1120px) {
+    display: none;
+  }
 `;
 
 const Subtitle1 = styled.h2`
@@ -216,7 +233,7 @@ const Subtitle1 = styled.h2`
     text-align: center; /* 텍스트 가운데 정렬 */
     font-size: 2rem;
   }
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     margin-left: 3vw;
     text-align: center; /* 텍스트 가운데 정렬 */
   }
@@ -252,7 +269,7 @@ const ImageContainer = styled.div`
   min-width: 400px;
   margin-top: -85px;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     width: 100%; /* 작은 화면에서 너비 조정 */
     margin-top: 0;
     margin-left: 0;
@@ -263,7 +280,7 @@ const Image3 = styled.img`
   position: relative;
   object-fit: cover;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1120px) {
     width: 100%;
   }
 `;

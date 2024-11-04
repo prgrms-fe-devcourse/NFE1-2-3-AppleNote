@@ -6,12 +6,14 @@ import ThemeToggleButton from "@common/components/ThemeToggleButton";
 import LogoSection from "@common/components/LogoSection";
 import UploadButton from "@common/components/UploadButton";
 import SettingsButton from "@common/components/SettingsButton";
+import { useModal } from "@components/myPage/Context/ModalContext";
 
 // 기본 프로필 이미지 경로
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
 const Header: React.FC = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const { isOpen } = useModal();
 
   // 사용자 정보 API 호출 및 프로필 이미지 설정
   useEffect(() => {
@@ -19,14 +21,14 @@ const Header: React.FC = () => {
       try {
         const data = await fetchUserData();
 
-        setProfileImage(data.profileImage);
+        setProfileImage(data);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
     };
 
     getUserData();
-  }, []);
+  }, [isOpen]);
 
   return (
     <StyledHeader>

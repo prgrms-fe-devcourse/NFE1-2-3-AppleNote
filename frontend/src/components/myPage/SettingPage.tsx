@@ -9,14 +9,13 @@ import { useNavigate } from "react-router-dom";
 import NameEditModal from "./modals/NameEditModal";
 import ProfileEditModal from "./modals/ProfileEditModal";
 import BannerEditModal from "./modals/BannerEditModal";
-import { useBannerModal } from "./BannerModalContext";
+import { useModal } from "./Context/ModalContext";
 const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 const SettingPage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<boolean>(false);
-  const [isImageModalOpen, setImageModalOpen] = useState(false);
-  const { isBannerModalOpen, setBannerModalOpen } = useBannerModal();
-  const [isNameModalOpen, setNameModalOpen] = useState(false);
+  const { isOpen, setOpen } = useModal(); // 모달 상태 관리
+  const [modalType, setModalType] = useState<"none" | "image" | "name" | "banner">("none");
 
   const navigate = useNavigate();
 
@@ -28,7 +27,7 @@ const SettingPage = () => {
     };
 
     fetchUser();
-  }, [isImageModalOpen, isNameModalOpen, isBannerModalOpen]);
+  }, [isOpen]);
 
   const changePw = () => {
     setStatus(true);
@@ -51,16 +50,16 @@ const SettingPage = () => {
       }
     }
   };
-  const editImg = () => {
-    setImageModalOpen(true); // 프로필 이미지 모달 열기
+  const openModal = (type: "image" | "name" | "banner") => {
+    setModalType(type);
+    setOpen(true); // 모달 열기
   };
 
-  const editName = () => {
-    setNameModalOpen(true); // 이름 모달 열기
+  const closeModal = () => {
+    setOpen(false); // 모달 닫기
+    setModalType("none"); // 모달 종류 초기화
   };
-  const editBanner = () => {
-    setBannerModalOpen(true); // 배너 이미지 모달 열기
-  };
+
   const { logout } = useAuth();
 
   const handleLogout = () => {
@@ -82,7 +81,7 @@ const SettingPage = () => {
   return (
     <>
       <BtnWrapper>
-        <BannerEditBtn onClick={editBanner}>
+        <BannerEditBtn onClick={() => openModal("banner")}>
           <img src={edit} />
         </BannerEditBtn>
       </BtnWrapper>
@@ -94,14 +93,14 @@ const SettingPage = () => {
             <ImgWrapper>
               <UserImg src={user?.profileImage ?? DEFAULT_PROFILE_IMAGE} />
 
-              <ImgEditBtn onClick={editImg}>
+              <ImgEditBtn onClick={() => openModal("image")}>
                 <img src={edit} />
               </ImgEditBtn>
             </ImgWrapper>
             <UserProfile>
               <UserNameWrapper>
                 <UserName>{user?.name}</UserName>
-                <NameEditBtn onClick={editName}>
+                <NameEditBtn onClick={() => openModal("name")}>
                   <img src={edit} />
                 </NameEditBtn>
               </UserNameWrapper>
@@ -112,27 +111,9 @@ const SettingPage = () => {
               <Button onClick={handleLogout}>로그아웃</Button>
             </UserProfile>
           </ProfileWrapper>
-          {isBannerModalOpen && (
-            <BannerEditModal
-              onClose={() => {
-                setBannerModalOpen(false);
-              }}
-            />
-          )}
-          {isImageModalOpen && (
-            <ProfileEditModal
-              onClose={() => {
-                setImageModalOpen(false);
-              }}
-            />
-          )}
-          {isNameModalOpen && (
-            <NameEditModal
-              onClose={() => {
-                setNameModalOpen(false);
-              }}
-            />
-          )}
+          {isOpen && modalType === "banner" && <BannerEditModal onClose={closeModal} />}
+          {isOpen && modalType === "image" && <ProfileEditModal onClose={closeModal} />}
+          {isOpen && modalType === "name" && <NameEditModal onClose={closeModal} />}
         </Wrapper>
       )}
     </>

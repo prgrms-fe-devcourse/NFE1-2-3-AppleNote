@@ -2,21 +2,21 @@ import React, { useEffect, useReducer } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { fetchPost, patchPost } from "./postAPI";
+import { fetchPost, patchPost, PostPayload } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
   deleteModalOpen: boolean;
   title: string;
   content: string;
-  image: string | null;
+  image: { files: File; urls: string } | null;
 };
 type Action =
   | { type: "TOGGLE_PREVIEW_MODAL"; payload: boolean }
   | { type: "TOGGLE_DELETE_MODAL"; payload: boolean }
   | { type: "SET_TITLE"; payload: string }
   | { type: "SET_CONTENT"; payload: string }
-  | { type: "SET_IMAGE"; payload: string | null };
+  | { type: "SET_IMAGE"; payload: { files: File; urls: string } | null };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -51,7 +51,12 @@ const EditPostPage: React.FC = () => {
 
       dispatch({ type: "SET_TITLE", payload: data.payload.title });
       dispatch({ type: "SET_CONTENT", payload: data.payload.content });
-      dispatch({ type: "SET_IMAGE", payload: data.payload.images[0] });
+      if (data.payload.images && data.payload.images.length > 0) {
+        dispatch({
+          type: "SET_IMAGE",
+          payload: { files: {} as File, urls: data.payload.images[0] },
+        });
+      }
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
@@ -59,10 +64,10 @@ const EditPostPage: React.FC = () => {
   };
   const updatePostData = async () => {
     try {
-      const payload = {
+      const payload: PostPayload = {
         title: state.title,
         content: state.content,
-        images: state.image,
+        images: state.image ? [state.image.files] : undefined,
       };
       const data = await patchPost(id as string, payload);
 
@@ -77,7 +82,13 @@ const EditPostPage: React.FC = () => {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
 
-      dispatch({ type: "SET_IMAGE", payload: imageUrl });
+      dispatch({
+        type: "SET_IMAGE",
+        payload: {
+          files: file,
+          urls: imageUrl,
+        },
+      });
     }
   };
 
@@ -108,7 +119,7 @@ const EditPostPage: React.FC = () => {
             <div>이미지 추가하기</div>
           </PlaceholderText>
         )}
-        {state.image && <Image src={state.image} alt="Uploaded preview" />}
+        {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
       </ImageWrapper>
 
       <Title>본문</Title>
@@ -176,7 +187,7 @@ const EditPostPage: React.FC = () => {
               e.stopPropagation();
             }}>
             {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
-            {state.image && <PreviewImg src={state.image} />}
+            {state.image && <PreviewImg src={state.image.urls} />}
             {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>

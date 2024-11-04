@@ -4,8 +4,9 @@ export interface User {
   profileImage: string | null;
 }
 
-export const fetchUserData = async (): Promise<User> => {
-  const response = await httpClient.get<User>("/users/me");
+export const fetchUserData = async (): Promise<string | null> => {
+  const URL = "users/me";
+  const { data } = await httpClient.get<{ payload: User }>(URL);
 
-  return response.data;
+  return data.payload.profileImage;
 };

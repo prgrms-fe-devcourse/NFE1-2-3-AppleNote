@@ -4,7 +4,7 @@ import { useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost, createPostCagegory, PostPayload } from "./postAPI";
+import { createPost, createPostCagegory, PostPayload, tempCreatePost } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -60,6 +60,23 @@ const CreatePostPage: React.FC = () => {
         await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
         navigate(`/posts/${data.payload.postId}`);
       }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const tempSavePostData = async () => {
+    try {
+      const payload: PostPayload = {
+        title: state.title,
+        content: state.content,
+        images: state.image ? [state.image.files] : undefined,
+        temp: true,
+      };
+
+      const data = await tempCreatePost(payload);
+
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
@@ -121,7 +138,12 @@ const CreatePostPage: React.FC = () => {
             }}>
             삭제
           </Button>
-          <Button>임시저장</Button>
+          <Button
+            onClick={() => {
+              tempSavePostData();
+            }}>
+            임시저장
+          </Button>
           <Button
             onClick={() => {
               dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });

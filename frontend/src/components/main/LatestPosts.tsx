@@ -46,15 +46,19 @@ const LatestPosts: React.FC = () => {
         <MoreButton onClick={handleMoreButtonClick} />
       </Header>
       <PostsGridWrapper>
-        <PostsGrid>
-          {posts.map((post) => (
-            <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
-              <Thumbnail src={getThumbnailSrc(post.images)} alt={post.title} />
-              <PostTitle>{post.title}</PostTitle>
-              <PostContent>{post.content}</PostContent>
-            </PostCard>
-          ))}
-        </PostsGrid>
+        {posts.length > 0 ? (
+          <PostsGrid>
+            {posts.map((post) => (
+              <PostCard key={post.postId} onClick={() => handlePostClick(post.postId)}>
+                <Thumbnail src={getThumbnailSrc(post.images)} alt={post.title} />
+                <PostTitle>{post.title}</PostTitle>
+                <PostContent>{post.content}</PostContent>
+              </PostCard>
+            ))}
+          </PostsGrid>
+        ) : (
+          <NoPostsMessage>아직 등록된 포스트가 존재하지 않습니다.</NoPostsMessage>
+        )}
       </PostsGridWrapper>
       <Divider />
     </Container>
@@ -156,6 +160,14 @@ const PostContent = styled.p`
   text-overflow: ellipsis;
   white-space: normal;
   font-size: clamp(1rem, 1.5vw, 1.2rem); /* 최소 1rem, 최대 1.2rem */
+`;
+
+// NoPostsMessage 스타일 추가
+const NoPostsMessage = styled.div`
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  padding: 2rem;
 `;
 
 const Divider = styled.hr`

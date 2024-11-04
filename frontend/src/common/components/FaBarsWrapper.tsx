@@ -6,21 +6,39 @@ import Category from "@components/category/Category";
 interface FaBarsWrapperProps {
   isSticky: boolean;
   rightOffset: number;
+  setSelectedCategoryId: (id: string) => void;
+  setSelectedCategoryName: (name: string) => void;
+  onCategoryChange: () => void;
 }
 
-const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({ isSticky, rightOffset }) => {
+const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
+  isSticky,
+  rightOffset,
+  setSelectedCategoryId,
+  setSelectedCategoryName,
+  onCategoryChange,
+}) => {
   const [isCategoryVisible, setIsCategoryVisible] = useState(false);
 
   const toggleCategory = () => {
-    setIsCategoryVisible(!isCategoryVisible);
+    setIsCategoryVisible((prev) => !prev);
+  };
+
+  // 드롭다운 항목 클릭 시 드롭다운을 닫지 않도록 설정
+  const handleDropdownClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
   };
 
   return (
     <Wrapper isSticky={isSticky} rightOffset={rightOffset} onClick={toggleCategory}>
       <FaBars size={24} />
       {isCategoryVisible && (
-        <Dropdown>
-          <Category />
+        <Dropdown onClick={handleDropdownClick}>
+          <Category
+            setSelectedCategoryId={setSelectedCategoryId}
+            setSelectedCategoryName={setSelectedCategoryName}
+            onCategoryChange={onCategoryChange}
+          />
         </Dropdown>
       )}
     </Wrapper>

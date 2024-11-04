@@ -10,7 +10,6 @@ import {
 import { FaCog, FaTrash } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
 
 // 컴포넌트의 상태 유형 정의
 type CategoryState = {
@@ -72,9 +71,18 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
   }
 };
 
-const Category: React.FC = () => {
+interface CategoryProps {
+  setSelectedCategoryId: (id: string) => void;
+  setSelectedCategoryName: (name: string) => void;
+  onCategoryChange: () => void;
+}
+
+const Category: React.FC<CategoryProps> = ({
+  setSelectedCategoryId,
+  setSelectedCategoryName,
+  onCategoryChange,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const navigate = useNavigate(); // navigate 훅 사용
 
   // API 호출에서 발생하는 에러 처리 함수
   const handleApiError = (error: unknown) => {
@@ -90,6 +98,7 @@ const Category: React.FC = () => {
       const data = await fetchCategories();
 
       dispatch({ type: "SET_CATEGORIES", payload: data.payload });
+      onCategoryChange(); // 카테고리 변경 시 데이터 동기화
     } catch (error) {
       handleApiError(error);
     } finally {
@@ -109,6 +118,7 @@ const Category: React.FC = () => {
         await reloadCategories();
         dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: "" });
         dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: false });
+        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
       } catch (error) {
         handleApiError(error);
       }
@@ -149,6 +159,7 @@ const Category: React.FC = () => {
         });
         await reloadCategories();
         dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
+        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
       } catch (error) {
         handleApiError(error);
       }
@@ -161,6 +172,7 @@ const Category: React.FC = () => {
       try {
         await deleteCategory(categoryId);
         await reloadCategories();
+        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
       } catch (error) {
         handleApiError(error);
       }
@@ -172,9 +184,9 @@ const Category: React.FC = () => {
     dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
   };
 
-  // 카테고리 클릭 시 포스트 목록으로 이동
-  const handleCategoryClick = (categoryId: string) => {
-    navigate(`/posts/${categoryId}`);
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedCategoryName(categoryName);
   };
 
   if (state.loading) return <div>Loading...</div>;
@@ -216,7 +228,7 @@ const Category: React.FC = () => {
                 onBlur={handleEditBlur}
               />
             ) : (
-              <CategoryName onClick={() => handleCategoryClick(category.categoryId)}>
+              <CategoryName onClick={() => handleCategoryClick(category.categoryId, category.name)}>
                 {category.name}
               </CategoryName>
             )}
@@ -302,6 +314,7 @@ const CategoryName = styled.span`
   word-wrap: break-word; // 단어 줄바꿈 설정
   white-space: normal; // 줄바꿈을 허용하도록 설정
   overflow-wrap: break-word; // 단어가 너무 길 경우 줄바꿈
+  cursor: pointer; // 카테고리 선택 부분이므로 포인터 설정
 `;
 
 const EditButton = styled(CiEdit)`

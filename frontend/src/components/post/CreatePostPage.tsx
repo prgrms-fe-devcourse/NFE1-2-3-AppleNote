@@ -7,6 +7,7 @@ import styled from "styled-components";
 import {
   createPost,
   createPostCagegory,
+  deletePost,
   Post,
   PostPayload,
   tempCreatePost,
@@ -115,6 +116,15 @@ const CreatePostPage: React.FC = () => {
     }
   };
 
+  const deleteTempPost = async (id: string) => {
+    try {
+      await deletePost(id);
+      await fetchTempPostList();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchTempPostList();
   }, []);
@@ -133,7 +143,7 @@ const CreatePostPage: React.FC = () => {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+            isModalOpen={state.previewModalOpen || state.deleteModalOpen || tempModalOpen}
           />
           {!state.image && (
             <PlaceholderText>
@@ -204,7 +214,7 @@ const CreatePostPage: React.FC = () => {
                 </PostInfo>
                 <DeleteButton
                   onClick={() => {
-                    /* 삭제 기능 구현 예정 */
+                    deleteTempPost(post.postId);
                   }}>
                   x
                 </DeleteButton>

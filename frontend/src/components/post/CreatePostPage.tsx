@@ -210,6 +210,11 @@ const CreatePostPage: React.FC = () => {
                   onClick={() => {
                     dispatch({ type: "SET_TITLE", payload: post.title });
                     dispatch({ type: "SET_CONTENT", payload: post.content });
+                    dispatch({
+                      type: "SET_IMAGE",
+                      payload:
+                        post.images.length > 0 ? { files: {} as File, urls: post.images[0] } : null,
+                    });
                     setTempModalOpen(false);
                   }}>
                   <PostTitle>{post.title || "제목없음"}</PostTitle>

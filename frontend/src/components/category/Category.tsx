@@ -74,7 +74,7 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
 interface CategoryProps {
   setSelectedCategoryId: (id: string) => void;
   setSelectedCategoryName: (name: string) => void;
-  onCategoryChange: (categoryId: string, categoryName: string) => void; // categoryId 인수 추가
+  onCategoryChange: (categoryId: string, categoryName: string) => void;
 }
 
 const Category: React.FC<CategoryProps> = ({
@@ -163,6 +163,11 @@ const Category: React.FC<CategoryProps> = ({
         });
         dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
         await reloadCategories();
+
+        // 선택된 카테고리가 수정 대상일 경우, CategorySection에 반영
+        if (categoryId === state.isEditing) {
+          onCategoryChange(categoryId, state.editCategoryName);
+        }
       } catch (error) {
         handleApiError(error);
       }

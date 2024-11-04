@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { fetchLatestPosts, Post } from "./postApi";
 import MoreButton from "@common/components/MoreButton";
-import DefaultThumbnail from "../../assets/images/default-thumbnail.jpg";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 const LatestPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -23,11 +23,6 @@ const LatestPosts: React.FC = () => {
 
     getPosts();
   }, []);
-
-  // 썸네일 이미지 소스를 가져오는 함수
-  const getThumbnailSrc = (images: string[]): string => {
-    return images[0] || DefaultThumbnail;
-  };
 
   // 포스트 클릭 핸들러
   const handlePostClick = (postId: string) => {

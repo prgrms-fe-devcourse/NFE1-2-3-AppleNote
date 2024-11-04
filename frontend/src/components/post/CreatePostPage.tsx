@@ -69,8 +69,8 @@ const CreatePostPage: React.FC = () => {
 
       if (selectedCategory) {
         await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
-        navigate(`/posts/${data.payload.postId}`);
       }
+      navigate(`/posts/${data.payload.postId}`);
     } catch (error) {
       console.error(error);
     }

@@ -70,7 +70,7 @@ export const GlobalStyle = createGlobalStyle<BodyProps>`
         font-family: "Merriweather", "Gowun Batang",serif;
         font-weight: 600;
         font-style: normal;
-        
+
         background-color: ${({ theme }) => theme.background.primary};
         color: ${({ theme }) => theme.text.primary};
          ${({ isThemeChanging }) =>

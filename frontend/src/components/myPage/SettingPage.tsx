@@ -82,60 +82,61 @@ const SettingPage = () => {
 
   return (
     <>
-      <BtnWrapper>
-        <BannerEditBtn onClick={() => openModal("banner")}>
-          <img src={edit} />
-        </BannerEditBtn>
-      </BtnWrapper>
       {status ? (
         <ChangePw setStatus={setStatus} /> // status가 true이면 ChangePw 컴포넌트 렌더링
       ) : (
-        <Wrapper>
-          <ProfileWrapper>
-            <ImgWrapper>
-              <UserImg src={user?.profileImage ?? DEFAULT_PROFILE_IMAGE} />
+        <>
+          <BtnWrapper>
+            <BannerEditBtn onClick={() => openModal("banner")}>
+              <img src={edit} />
+            </BannerEditBtn>
+          </BtnWrapper>
+          <Wrapper>
+            <ProfileWrapper>
+              <ImgWrapper>
+                <UserImg src={user?.profileImage ?? DEFAULT_PROFILE_IMAGE} />
 
-              <ImgEditBtn onClick={() => openModal("image")}>
-                <img src={edit} />
-              </ImgEditBtn>
-            </ImgWrapper>
-            <UserProfile>
-              <UserNameWrapper>
-                <UserName>{user?.name}</UserName>
-                <NameEditBtn onClick={() => openModal("name")}>
+                <ImgEditBtn onClick={() => openModal("image")}>
                   <img src={edit} />
-                </NameEditBtn>
-              </UserNameWrapper>
+                </ImgEditBtn>
+              </ImgWrapper>
+              <UserProfile>
+                <UserNameWrapper>
+                  <UserName>{user?.name}</UserName>
+                  <NameEditBtn onClick={() => openModal("name")}>
+                    <img src={edit} />
+                  </NameEditBtn>
+                </UserNameWrapper>
 
-              <UserEmail>{user?.email}</UserEmail>
-              <Button onClick={changePw}>Change Password</Button>
-              <Button onClick={signout}>Delete Account</Button>
-              <Button onClick={handleLogout}>Logout</Button>
-            </UserProfile>
-          </ProfileWrapper>
-          {isOpen && modalType === "banner" && <BannerEditModal onClose={closeModal} />}
-          {isOpen && modalType === "image" && <ProfileEditModal onClose={closeModal} />}
-          {isOpen && modalType === "name" && <NameEditModal onClose={closeModal} />}
-        </Wrapper>
+                <UserEmail>{user?.email}</UserEmail>
+                <Button onClick={changePw}>Change Password</Button>
+                <Button onClick={signout}>Delete Account</Button>
+                <Button onClick={handleLogout}>Logout</Button>
+              </UserProfile>
+            </ProfileWrapper>
+            {isOpen && modalType === "banner" && <BannerEditModal onClose={closeModal} />}
+            {isOpen && modalType === "image" && <ProfileEditModal onClose={closeModal} />}
+            {isOpen && modalType === "name" && <NameEditModal onClose={closeModal} />}
+          </Wrapper>
+        </>
       )}
     </>
   );
 };
 const BtnWrapper = styled.div`
-  margin-top: -2.3%;
-  margin-right: -16px;
+  margin-top: -5vh;
 `;
 const Wrapper = styled.div`
-  margin-top: -3%;
+  margin-top: -5.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 500px;
+  height: 50vh;
 `;
 const ImgWrapper = styled.div`
   position: relative;
-  margin-right: 100px;
+  margin-right: 5vw;
   display: flex;
   flex-direction: column;
 `;

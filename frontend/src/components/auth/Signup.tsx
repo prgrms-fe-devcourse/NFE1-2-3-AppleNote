@@ -299,7 +299,7 @@ const Submit = () => {
         onSuccess: async () => {
           try {
             // "other" 카테고리 생성 요청
-            const categoryResponse = await createCategory({ name: "Other" });
+            const categoryResponse = await createCategory({ name: "Others" });
 
             console.log("Category created:", categoryResponse); // 생성된 카테고리 확인
 

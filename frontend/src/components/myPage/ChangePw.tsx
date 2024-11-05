@@ -93,7 +93,7 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
 };
 
 const Wrapper = styled.div`
-  margin-top: -3%;
+  margin-top: -5.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,16 +106,14 @@ const Container = styled.div`
   align-items: center;
 
   width: 50%;
-  margin: 20px;
 `;
 
 const InputWrapper = styled.div`
-  margin-bottom: 15px;
+  margin-bottom: 2vh;
   width: 100%;
 `;
 
 const Label = styled.label`
-  margin-bottom: 5px;
   font-weight: bold;
 `;
 

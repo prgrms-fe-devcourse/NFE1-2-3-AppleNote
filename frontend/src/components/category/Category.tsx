@@ -222,7 +222,7 @@ const Category: React.FC<CategoryProps> = ({
         />
       )}
       <List>
-        {state.categories.map((category) => (
+        {state.categories.map((category, index) => (
           <ListItem key={category.categoryId}>
             {state.isEditing === category.categoryId ? (
               <Input
@@ -242,7 +242,7 @@ const Category: React.FC<CategoryProps> = ({
                 {category.name}
               </CategoryName>
             )}
-            {state.cogClicked && !state.isEditing && (
+            {state.cogClicked && !state.isEditing && index !== 0 && (
               <>
                 <EditButton onClick={() => handleEditCategory(category.categoryId, category.name)}>
                   <CiEdit />

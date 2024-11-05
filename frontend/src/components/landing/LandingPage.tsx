@@ -58,8 +58,11 @@ const Wrapper = styled.div`
   justify-content: center; /* 수평 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
   height: 100vh; /* 화면 전체 높이 */
-  width: 100%;
+  width: 100vw;
   min-width: 700px;
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  overflow-x: auto; /* 가로 스크롤 방지 */
+  background-color: white;
 `;
 
 const Container = styled.div`

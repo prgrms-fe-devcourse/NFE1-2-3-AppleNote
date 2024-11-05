@@ -18,11 +18,9 @@ interface CustomTheme {
   };
   logo: {
     primary: {
-      background: string;
       text: string;
     };
     secondary: {
-      background: string;
       text: string;
     };
   };
@@ -53,11 +51,9 @@ export const lightTheme: DefaultTheme = {
   },
   logo: {
     primary: {
-      background: "#000000",
-      text: "#ffffff",
+      text: "#000000",
     },
     secondary: {
-      background: "#ffffff",
       text: "#000000",
     },
   },
@@ -88,11 +84,9 @@ export const darkTheme: DefaultTheme = {
   },
   logo: {
     primary: {
-      background: "#ffffff",
-      text: "#000000",
+      text: "#ffffff",
     },
     secondary: {
-      background: "#121212",
       text: "#ffffff",
     },
   },

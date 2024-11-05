@@ -72,7 +72,7 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
 
           <ButtonWrapper>
             <Button onClick={handleConfirm}>Confirm</Button>
-            <Button onClick={handleDefault}>Close</Button>
+            <Button onClick={handleDefault}>Delete</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

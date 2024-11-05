@@ -93,6 +93,7 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
 };
 
 const Wrapper = styled.div`
+  margin-top: -3%;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,8 +1,10 @@
-import React, { useEffect, useReducer } from "react";
+import { Category } from "@components/category/categoryApi";
+import SelectCategory from "@components/category/SelectCategory";
+import React, { useCallback, useEffect, useReducer } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { fetchPost, patchPost, PostPayload } from "./postAPI";
+import { fetchPost, patchPost, PostPayload, fetchPostCategories, deletePost } from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -10,13 +12,15 @@ type State = {
   title: string;
   content: string;
   image: { files: File; urls: string } | null;
+  selectedCategory: Category | null;
 };
 type Action =
   | { type: "TOGGLE_PREVIEW_MODAL"; payload: boolean }
   | { type: "TOGGLE_DELETE_MODAL"; payload: boolean }
   | { type: "SET_TITLE"; payload: string }
   | { type: "SET_CONTENT"; payload: string }
-  | { type: "SET_IMAGE"; payload: { files: File; urls: string } | null };
+  | { type: "SET_IMAGE"; payload: { files: File; urls: string } | null }
+  | { type: "SET_CATEGORY"; payload: Category | null };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -30,6 +34,8 @@ const reducer = (state: State, action: Action): State => {
       return { ...state, content: action.payload };
     case "SET_IMAGE":
       return { ...state, image: action.payload };
+    case "SET_CATEGORY":
+      return { ...state, selectedCategory: action.payload };
     default:
       return state;
   }
@@ -43,6 +49,7 @@ const EditPostPage: React.FC = () => {
     image: null,
     previewModalOpen: false,
     deleteModalOpen: false,
+    selectedCategory: null,
   });
 
   const fetchPostData = async () => {
@@ -68,6 +75,7 @@ const EditPostPage: React.FC = () => {
         title: state.title,
         content: state.content,
         images: state.image ? [state.image.files] : undefined,
+        categoryId: state.selectedCategory?.categoryId,
       };
       const data = await patchPost(id as string, payload);
 
@@ -92,63 +100,106 @@ const EditPostPage: React.FC = () => {
     }
   };
 
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(id as string);
+      navigate(-1);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchPostCategory = async () => {
+    try {
+      const categories = await fetchPostCategories(id as string);
+
+      if (categories.payload.length > 0) {
+        dispatch({ type: "SET_CATEGORY", payload: categories.payload[0] });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchPostData();
+    fetchPostCategory();
     // eslint-disable-next-line
   }, []);
 
   return (
     <Wrapper>
-      <Title>제목</Title>
-      <TitleInput
-        value={state.title}
-        onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
-        type="text"
-      />
+      <ContentWrapper>
+        <LeftContent>
+          <Title>제목</Title>
+          <TitleInput
+            value={state.title}
+            onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
+            type="text"
+          />
 
-      <ImageWrapper>
-        <ImageInput
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          isModalOpen={state.previewModalOpen || state.deleteModalOpen}
-        />
-        {!state.image && (
-          <PlaceholderText>
-            <FaPlus size={50} />
-            <div>이미지 추가하기</div>
-          </PlaceholderText>
-        )}
-        {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
-      </ImageWrapper>
+          <ImageWrapper>
+            <ImageInput
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+            />
+            {!state.image && (
+              <PlaceholderText>
+                <FaPlus size={50} />
+                <div>이미지 추가하기</div>
+              </PlaceholderText>
+            )}
+            {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
+          </ImageWrapper>
 
-      <Title>본문</Title>
-      <ContentText
-        value={state.content}
-        onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
-      />
+          <Title>본문</Title>
+          <ContentText
+            value={state.content}
+            onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
+          />
 
-      <ButtonWrapper>
-        <Button
-          onClick={() => {
-            updatePostData();
-          }}>
-          확인
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
-          }}>
-          삭제
-        </Button>
-        <Button>임시저장</Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
-          }}>
-          미리보기
-        </Button>
-      </ButtonWrapper>
+          <ButtonWrapper>
+            <Button
+              onClick={() => {
+                updatePostData();
+              }}>
+              확인
+            </Button>
+            <Button
+              onClick={() => {
+                dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
+              }}>
+              삭제
+            </Button>
+            <Button>임시저장</Button>
+            <Button
+              onClick={() => {
+                dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
+              }}>
+              미리보기
+            </Button>
+          </ButtonWrapper>
+        </LeftContent>
+        <RightContent>
+          <SelectCategory
+            selectedCategory={state.selectedCategory}
+            setSelectedCategory={useCallback(
+              (value: Category | null | ((prev: Category | null) => Category | null)) => {
+                if (typeof value === "function") {
+                  const category = value(state.selectedCategory);
+
+                  dispatch({ type: "SET_CATEGORY", payload: category });
+                } else {
+                  dispatch({ type: "SET_CATEGORY", payload: value });
+                }
+              },
+              [state.selectedCategory]
+            )}
+          />
+        </RightContent>
+      </ContentWrapper>
 
       {state.deleteModalOpen && (
         <ModalOverlay
@@ -163,7 +214,7 @@ const EditPostPage: React.FC = () => {
             <ButtonWrapper>
               <Button
                 onClick={() => {
-                  navigate(-1);
+                  handleDeletePost();
                 }}>
                 Yes
               </Button>
@@ -290,12 +341,26 @@ const Title = styled.div`
   color: gray;
 `;
 
+const LeftContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const RightContent = styled.div``;
+const ContentWrapper = styled.div`
+  display: flex;
+  gap: 50px;
+  align-items: center;
+`;
+
 const Wrapper = styled.div`
   width: 100%;
   display: inline-flex;
   align-items: center;
-  flex-direction: column;
-  gap: 10px;
+  flex-direction: row;
+  gap: 50px;
+  justify-content: center;
 `;
 
 export default EditPostPage;

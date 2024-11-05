@@ -288,8 +288,8 @@ const Button = styled.button`
   font-size: 20px;
   padding: 0;
   width: 130px;
-  background-color: #ffffff;
   border-radius: 5px;
+  background: white;
 
   &:hover {
     cursor: pointer;
@@ -302,6 +302,7 @@ const Input = styled.input`
   width: 100%;
   margin-top: 5px;
   border: 1px solid #ccc;
+  background: none;
   border-radius: 5px;
 `;
 

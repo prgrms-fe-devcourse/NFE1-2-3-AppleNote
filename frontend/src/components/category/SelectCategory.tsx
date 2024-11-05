@@ -92,8 +92,22 @@ const SelectCategory = ({ selectedCategory, setSelectedCategory }: SelectCategor
     dispatch({ type: "SET_LOADING", payload: true });
     try {
       const data = await fetchCategories();
+      // "Others" 카테고리 확인
+      let othersCategory = data.payload.find((cat) => cat.name === "Others");
 
-      dispatch({ type: "SET_CATEGORIES", payload: data.payload });
+      // "Others" 카테고리가 없으면 생성
+      if (!othersCategory) {
+        await createCategory({ name: "Others" });
+        const updatedData = await fetchCategories();
+
+        othersCategory = updatedData.payload.find((cat) => cat.name === "Others");
+        dispatch({ type: "SET_CATEGORIES", payload: updatedData.payload });
+      } else {
+        dispatch({ type: "SET_CATEGORIES", payload: data.payload });
+      }
+      if (!selectedCategory && othersCategory) {
+        setSelectedCategory(othersCategory);
+      }
     } catch (error) {
       handleApiError(error);
     } finally {

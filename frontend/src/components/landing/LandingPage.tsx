@@ -1,21 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 import Apple1 from "../../assets/images/apple.png";
 import Apple3 from "../../assets/images/apple3.jpg";
 import Apple4 from "../../assets/images/apple4.jpg";
 import Paper from "../../assets/images/paper.png";
-
-const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans+KR:wght@900&display=swap');
-
-  body {
-    margin: 0;
-    font-family: 'Libre Baskerville';
-    background-color: #fff;
-    color: #333;
-  }
-`;
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,7 +21,6 @@ const LandingPage: React.FC = () => {
   return (
     <Wrapper>
       <Container>
-        <GlobalStyle />
         <LeftSection>
           <VerticalLine />
           <Title>APPLE</Title>
@@ -111,7 +99,6 @@ const Title = styled.h1`
   font-size: 7.5rem;
   font-weight: 700;
   color: #333;
-  font-family: "Merriweather", serif;
 
   @media (max-width: 1200px) {
     font-size: 6rem; /* 작은 화면에서는 폰트 크기 축소 */
@@ -200,7 +187,6 @@ const Button = styled.button`
   border: none;
   transition: 0.3s;
   cursor: pointer;
-  font-family: "Merriweather", serif;
 
   @media (max-width: 2433px) {
     font-size: 1.5rem;
@@ -226,7 +212,6 @@ const Subtitle1 = styled.h2`
   font-size: 3rem;
   font-weight: 700;
   color: #333;
-  font-family: "Merriweather", serif;
 
   @media (max-width: 1800px) {
     margin-left: 3vw;
@@ -246,7 +231,6 @@ const Subtitle2 = styled.h2`
   font-size: 3rem;
   font-weight: 700;
   color: #333;
-  font-family: "Merriweather", serif;
   border-bottom: 1.5px solid;
 
   @media (max-width: 1800px) {

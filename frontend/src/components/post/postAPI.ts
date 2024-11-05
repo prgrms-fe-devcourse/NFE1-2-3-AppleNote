@@ -89,7 +89,7 @@ export const patchPost = async (id: string, payload: PostPayload): Promise<Patch
     });
   }
 
-  const { data } = await httpClientMultipart.post(URL, formData);
+  const { data } = await httpClientMultipart.patch(URL, formData);
 
   return data;
 };

@@ -54,7 +54,7 @@ const LatestPosts: React.FC = () => {
             ))}
           </PostsGrid>
         ) : (
-          <NoPostsMessage>아직 등록된 포스트가 존재하지 않습니다.</NoPostsMessage>
+          <NoPostsMessage>No registered post exists yet.</NoPostsMessage>
         )}
       </PostsGridWrapper>
       <Divider />

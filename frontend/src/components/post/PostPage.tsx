@@ -91,7 +91,7 @@ const PostPage = () => {
           onClick={() => {
             navigate(`/edit-post/${id}`);
           }}
-          size={30}
+          size={25}
         />
         <FaRegTrashCan
           // onClick={() => {
@@ -99,7 +99,7 @@ const PostPage = () => {
           // }}
           // size={30}
           onClick={() => setDeleteModalOpen(true)} // Update this line
-          size={30}
+          size={23}
         />
       </IconWrapper>
 
@@ -137,9 +137,11 @@ const NaviWrapper = styled.div`
   margin-top: 50px;
 `;
 const IconWrapper = styled.div`
-  width: 600px;
+  width: 70px;
   display: flex;
+  margin-left: 650px;
   gap: 15px;
+  margin-bottom: 70px;
 `;
 const ModalOverlay = styled.div`
   position: fixed;
@@ -165,7 +167,6 @@ const ButtonWrapper = styled.div`
   display: inline-flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 20px;
 `;
 
 const Button = styled.div`
@@ -173,10 +174,17 @@ const Button = styled.div`
   padding: 5px 15px;
 `;
 
-const Content = styled.div``;
+const Content = styled.div`
+  margin-top: 70px;
+  margin-bottom: 70px;
+  width: 750px;
+  height: auto;
+`;
+
 const Image = styled.img`
+  margin-top: 70px;
   width: 600px;
-  height: 300px;
+  height: 400px;
   object-fit: cover;
 `;
 
@@ -191,6 +199,7 @@ const PostInfoWrapper = styled.div`
   gap: 20px;
 `;
 const Title = styled.div`
+  margin-top: 100px;
   font-size: 30px;
   font-weight: 900;
 `;

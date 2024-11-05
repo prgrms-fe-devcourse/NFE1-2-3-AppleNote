@@ -62,6 +62,7 @@ const Wrapper = styled.div`
   min-width: 700px;
   overflow-y: auto; /* 세로 스크롤 가능 */
   overflow-x: auto; /* 가로 스크롤 방지 */
+  background-color: white;
 `;
 
 const Container = styled.div`

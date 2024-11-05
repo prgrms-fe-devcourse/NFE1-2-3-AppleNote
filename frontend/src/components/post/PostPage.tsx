@@ -77,7 +77,7 @@ const PostPage = () => {
           <PostInfo>{postInfo?.payload.categories[0].name}</PostInfo>
         )}
         <PostInfo>
-          {new Date(postInfo?.payload.createdAt as Date).toLocaleDateString("ko-KR", {
+          {new Date(postInfo?.payload.createdAt as Date).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",

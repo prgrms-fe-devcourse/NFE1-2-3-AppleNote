@@ -46,11 +46,11 @@ const CategorySection: React.FC<CategorySectionProps> = ({ title, small }) => {
 
   return (
     <Container>
-      <Title ref={titleRef} small={small} margin={additionalWidth / 2}>
+      <Title ref={titleRef} $small={small} $margin={additionalWidth / 2}>
         {title}
       </Title>
       <DividerWrapper>
-        <Divider small={small} width={dividerWidth} />
+        <Divider $small={small} $width={dividerWidth} />
       </DividerWrapper>
     </Container>
   );
@@ -65,14 +65,15 @@ const Container = styled.div`
   gap: 0.5rem; /* Title과 Divider 사이의 간격 */
 `;
 
-const Title = styled.h2<{ small?: boolean; margin: number }>`
+// isSmall이라는 내부 prop을 통해 small을 관리하고, 실제 DOM에는 전달되지 않도록 합니다.
+const Title = styled.h2<{ $small?: boolean; $margin: number }>`
   font-size: clamp(2rem, 3vw, 3rem);
   font-weight: bold;
-  margin-left: ${({ margin }) => `${margin}px`};
-  margin-right: ${({ margin }) => `${margin}px`};
+  margin-left: ${({ $margin }) => `${$margin}px`};
+  margin-right: ${({ $margin }) => `${$margin}px`};
 
-  ${({ small }) =>
-    small &&
+  ${({ $small }) =>
+    $small &&
     css`
       font-size: clamp(1.5rem, 2.5vw, 2rem);
     `}

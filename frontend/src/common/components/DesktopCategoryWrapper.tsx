@@ -10,12 +10,12 @@ const DesktopCategoryWrapper: React.FC<DesktopCategoryWrapperProps> = ({
   children,
   marginTop = 200,
 }) => {
-  return <Wrapper marginTop={marginTop}>{children}</Wrapper>;
+  return <Wrapper $marginTop={marginTop}>{children}</Wrapper>;
 };
 
-const Wrapper = styled.div<{ marginTop: number }>`
+const Wrapper = styled.div<{ $marginTop: number }>`
   display: block;
-  margin-top: ${({ marginTop }) => marginTop}px;
+  margin-top: ${({ $marginTop }) => $marginTop}px;
 
   @media (max-width: 768px) {
     display: none;

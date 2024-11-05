@@ -145,7 +145,7 @@ const CreatePostPage: React.FC = () => {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            isModalOpen={state.previewModalOpen || state.deleteModalOpen || tempModalOpen}
+            $isModalOpen={state.previewModalOpen || state.deleteModalOpen || tempModalOpen}
           />
           {!state.image && (
             <PlaceholderText>
@@ -403,14 +403,14 @@ const ImageWrapper = styled.div`
   position: relative;
 `;
 
-const ImageInput = styled.input<{ isModalOpen: boolean }>`
+const ImageInput = styled.input<{ $isModalOpen: boolean }>`
   width: 600px;
   height: 100%;
   opacity: 0;
   position: absolute;
   cursor: pointer;
   z-index: 2;
-  pointer-events: ${(props) => (props.isModalOpen ? "none" : "auto")};
+  pointer-events: ${(props) => (props.$isModalOpen ? "none" : "auto")};
 `;
 
 const Image = styled.img`

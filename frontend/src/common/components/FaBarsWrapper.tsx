@@ -36,7 +36,7 @@ const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
   };
 
   return (
-    <Wrapper isSticky={isSticky} rightOffset={rightOffset} onClick={toggleCategory}>
+    <Wrapper $isSticky={isSticky} $rightOffset={rightOffset} onClick={toggleCategory}>
       <FaBars size={24} />
       {isCategoryVisible && (
         <Dropdown onClick={handleDropdownClick}>
@@ -51,10 +51,10 @@ const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
   );
 };
 
-const Wrapper = styled.div<{ isSticky: boolean; rightOffset: number }>`
-  position: ${({ isSticky }) => (isSticky ? "fixed" : "absolute")};
-  top: ${({ isSticky }) => (isSticky ? "20px" : "auto")};
-  right: ${({ rightOffset }) => `${rightOffset}px`};
+const Wrapper = styled.div<{ $isSticky: boolean; $rightOffset: number }>`
+  position: ${({ $isSticky }) => ($isSticky ? "fixed" : "absolute")};
+  top: ${({ $isSticky }) => ($isSticky ? "20px" : "auto")};
+  right: ${({ $rightOffset }) => `${$rightOffset}px`};
   cursor: pointer;
   z-index: 20;
 

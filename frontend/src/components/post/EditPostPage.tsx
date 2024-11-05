@@ -1,6 +1,6 @@
 import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import React, { useCallback, useEffect, useReducer } from "react";
+import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -51,6 +51,7 @@ const EditPostPage: React.FC = () => {
     deleteModalOpen: false,
     selectedCategory: null,
   });
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const fetchPostData = async () => {
     try {
@@ -93,6 +94,10 @@ const EditPostPage: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
+
+      if (state.image?.urls) {
+        URL.revokeObjectURL(state.image.urls);
+      }
 
       dispatch({
         type: "SET_IMAGE",
@@ -144,6 +149,7 @@ const EditPostPage: React.FC = () => {
 
           <ImageWrapper>
             <ImageInput
+              ref={inputRef}
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
@@ -155,7 +161,24 @@ const EditPostPage: React.FC = () => {
                 <div>이미지 추가하기</div>
               </PlaceholderText>
             )}
-            {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
+            {state.image && (
+              <>
+                <Image src={state.image.urls} alt="Uploaded preview" />
+                <DeleteIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (state.image?.urls) {
+                      URL.revokeObjectURL(state.image.urls);
+                    }
+                    dispatch({ type: "SET_IMAGE", payload: null });
+                    if (inputRef.current) {
+                      inputRef.current.value = "";
+                    }
+                  }}>
+                  x
+                </DeleteIcon>
+              </>
+            )}
           </ImageWrapper>
 
           <Title>본문</Title>
@@ -250,6 +273,19 @@ const EditPostPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+const DeleteIcon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #979696;
+  font-weight: bold;
+  padding: 4px;
+  cursor: pointer;
+  z-index: 3;
+  pointer-events: auto;
+  font-size: 20px;
+`;
 
 const PreviewContent = styled.div``;
 const PreviewImg = styled.img`

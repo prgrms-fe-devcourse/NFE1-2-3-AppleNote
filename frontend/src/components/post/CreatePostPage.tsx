@@ -1,6 +1,6 @@
 import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -57,6 +57,7 @@ const CreatePostPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [postList, setPostList] = useState<Post[]>([]);
   const [tempModalOpen, setTempModalOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const savePostData = async () => {
     try {
@@ -100,6 +101,10 @@ const CreatePostPage: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
+
+      if (state.image?.urls) {
+        URL.revokeObjectURL(state.image.urls);
+      }
 
       dispatch({
         type: "SET_IMAGE",
@@ -146,6 +151,7 @@ const CreatePostPage: React.FC = () => {
 
         <ImageWrapper>
           <ImageInput
+            ref={inputRef}
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
@@ -157,7 +163,24 @@ const CreatePostPage: React.FC = () => {
               <div>Add Image</div>
             </PlaceholderText>
           )}
-          {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
+          {state.image && (
+            <>
+              <Image src={state.image.urls} alt="Uploaded preview" />
+              <DeleteIcon
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (state.image?.urls) {
+                    URL.revokeObjectURL(state.image.urls);
+                  }
+                  dispatch({ type: "SET_IMAGE", payload: null });
+                  if (inputRef.current) {
+                    inputRef.current.value = "";
+                  }
+                }}>
+                x
+              </DeleteIcon>
+            </>
+          )}
         </ImageWrapper>
 
         <Title>Text</Title>
@@ -291,6 +314,19 @@ const CreatePostPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+const DeleteIcon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #979696;
+  font-weight: bold;
+  padding: 4px;
+  cursor: pointer;
+  z-index: 3;
+  pointer-events: auto;
+  font-size: 20px;
+`;
 
 const TempPostModal = styled.div`
   background: white;

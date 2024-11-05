@@ -99,7 +99,7 @@ const EditPostPage: React.FC = () => {
 
   return (
     <Wrapper>
-      <Title>제목</Title>
+      <Title>Title</Title>
       <TitleInput
         value={state.title}
         onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
@@ -116,13 +116,13 @@ const EditPostPage: React.FC = () => {
         {!state.image && (
           <PlaceholderText>
             <FaPlus size={50} />
-            <div>이미지 추가하기</div>
+            <div>Add Image</div>
           </PlaceholderText>
         )}
         {state.image && <Image src={state.image.urls} alt="Uploaded preview" />}
       </ImageWrapper>
 
-      <Title>본문</Title>
+      <Title>Text</Title>
       <ContentText
         value={state.content}
         onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
@@ -133,20 +133,20 @@ const EditPostPage: React.FC = () => {
           onClick={() => {
             updatePostData();
           }}>
-          확인
+          Confirm
         </Button>
         <Button
           onClick={() => {
             dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
           }}>
-          삭제
+          Delete
         </Button>
-        <Button>임시저장</Button>
+        <Button>Draft</Button>
         <Button
           onClick={() => {
             dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
           }}>
-          미리보기
+          Preview
         </Button>
       </ButtonWrapper>
 

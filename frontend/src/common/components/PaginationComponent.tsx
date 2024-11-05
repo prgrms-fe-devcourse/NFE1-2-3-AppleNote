@@ -28,7 +28,7 @@ const PaginationComponent: React.FC<PaginationProps> = ({
       {Array.from({ length: totalPages }, (_, index) => (
         <PageNumber
           key={index}
-          isActive={index + 1 === currentPage}
+          $isActive={index + 1 === currentPage}
           onClick={() => handleClick(index + 1)}>
           {index + 1}
         </PageNumber>
@@ -44,12 +44,12 @@ const PaginationWrapper = styled.div`
   gap: 0.2rem;
 `;
 
-const PageNumber = styled.span<{ isActive: boolean }>`
+const PageNumber = styled.span<{ $isActive: boolean }>`
   margin: 0 0.1rem;
   padding: 0.3rem 0.3rem;
   cursor: pointer;
-  font-weight: ${({ isActive }) => (isActive ? "bold" : "normal")};
-  pointer-events: ${({ isActive }) => (isActive ? "none" : "auto")};
+  font-weight: ${({ $isActive }) => ($isActive ? "bold" : "normal")};
+  pointer-events: ${({ $isActive }) => ($isActive ? "none" : "auto")};
   transition: text-decoration 0.3s;
 
   &:hover {

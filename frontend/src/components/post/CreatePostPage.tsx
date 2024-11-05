@@ -1,10 +1,19 @@
 import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { createPost, createPostCagegory, PostPayload } from "./postAPI";
+import {
+  createPost,
+  createPostCagegory,
+  deletePost,
+  Post,
+  PostPayload,
+  tempCreatePost,
+  tempPostList,
+} from "./postAPI";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 type State = {
   previewModalOpen: boolean;
@@ -46,6 +55,8 @@ const CreatePostPage: React.FC = () => {
     deleteModalOpen: false,
   });
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [postList, setPostList] = useState<Post[]>([]);
+  const [tempModalOpen, setTempModalOpen] = useState(false);
 
   const savePostData = async () => {
     try {
@@ -58,8 +69,24 @@ const CreatePostPage: React.FC = () => {
 
       if (selectedCategory) {
         await createPostCagegory(data.payload.postId, [selectedCategory?.categoryId as string]);
-        navigate(`/posts/${data.payload.postId}`);
       }
+      navigate(`/posts/${data.payload.postId}`);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const tempSavePostData = async () => {
+    try {
+      const payload: PostPayload = {
+        title: state.title,
+        content: state.content,
+        images: state.image ? [state.image.files] : undefined,
+        temp: true,
+      };
+
+      await tempCreatePost(payload);
+      await fetchTempPostList();
     } catch (error) {
       console.error(error);
     }
@@ -80,6 +107,29 @@ const CreatePostPage: React.FC = () => {
     }
   };
 
+  const fetchTempPostList = async () => {
+    try {
+      const data = await tempPostList();
+
+      setPostList(data.payload);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteTempPost = async (id: string) => {
+    try {
+      await deletePost(id);
+      await fetchTempPostList();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTempPostList();
+  }, []);
+
   return (
     <Wrapper>
       <LeftContent>
@@ -87,6 +137,7 @@ const CreatePostPage: React.FC = () => {
         <TitleInput
           onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
           type="text"
+          value={state.title}
         />
 
         <ImageWrapper>
@@ -94,7 +145,7 @@ const CreatePostPage: React.FC = () => {
             type="file"
             accept="image/*"
             onChange={handleImageUpload}
-            isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+            isModalOpen={state.previewModalOpen || state.deleteModalOpen || tempModalOpen}
           />
           {!state.image && (
             <PlaceholderText>
@@ -106,7 +157,10 @@ const CreatePostPage: React.FC = () => {
         </ImageWrapper>
 
         <Title>본문</Title>
-        <ContentText onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })} />
+        <ContentText
+          onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
+          value={state.content}
+        />
 
         <ButtonWrapper>
           <Button
@@ -121,7 +175,17 @@ const CreatePostPage: React.FC = () => {
             }}>
             삭제
           </Button>
-          <Button>임시저장</Button>
+          <TempButton>
+            <div
+              onClick={() => {
+                tempSavePostData();
+              }}>
+              임시저장
+            </div>
+            {postList.length !== 0 && (
+              <TempCount onClick={() => setTempModalOpen(true)}>| {postList.length}</TempCount>
+            )}
+          </TempButton>
           <Button
             onClick={() => {
               dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
@@ -137,6 +201,43 @@ const CreatePostPage: React.FC = () => {
         />
       </RightContent>
 
+      {tempModalOpen && (
+        <ModalOverlay onClick={() => setTempModalOpen(false)}>
+          <TempPostModal onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>임시 저장된 글 목록</ModalTitle>
+            {postList.map((post) => (
+              <PostRow key={post.postId}>
+                <PostInfo
+                  onClick={() => {
+                    dispatch({ type: "SET_TITLE", payload: post.title });
+                    dispatch({ type: "SET_CONTENT", payload: post.content });
+                    dispatch({
+                      type: "SET_IMAGE",
+                      payload:
+                        post.images.length > 0 ? { files: {} as File, urls: post.images[0] } : null,
+                    });
+                    setTempModalOpen(false);
+                  }}>
+                  <PostTitle>{post.title || "제목없음"}</PostTitle>
+                  <PostDate>
+                    {new Date(post.createdAt).toLocaleDateString("ko-KR", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </PostDate>
+                </PostInfo>
+                <DeleteButton
+                  onClick={() => {
+                    deleteTempPost(post.postId);
+                  }}>
+                  x
+                </DeleteButton>
+              </PostRow>
+            ))}
+          </TempPostModal>
+        </ModalOverlay>
+      )}
       {state.deleteModalOpen && (
         <ModalOverlay
           onClick={() => {
@@ -174,7 +275,11 @@ const CreatePostPage: React.FC = () => {
               e.stopPropagation();
             }}>
             {state.title !== "" && <PreviewTitle>{state.title}</PreviewTitle>}
-            {state.image && <PreviewImg src={state.image.urls} />}
+            {state.image ? (
+              <PreviewImg src={state.image.urls} />
+            ) : (
+              <PreviewImg src={getThumbnailSrc(undefined)} />
+            )}
             {state.content !== "" && <PreviewContent>{state.content}</PreviewContent>}
           </ModalWrapper>
         </ModalOverlay>
@@ -183,11 +288,71 @@ const CreatePostPage: React.FC = () => {
   );
 };
 
+const TempPostModal = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const ModalTitle = styled.h3`
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+`;
+
+const PostRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+`;
+
+const PostInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const PostTitle = styled.span`
+  font-weight: bold;
+`;
+
+const PostDate = styled.span`
+  font-size: 12px;
+  color: gray;
+`;
+
+const DeleteButton = styled.button`
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+`;
+
+const TempButton = styled.div`
+  cursor: pointer;
+  display: inline-flex;
+  gap: 5px;
+`;
+
+const TempCount = styled.div``;
+
 const RightContent = styled.div``;
 
-const LeftContent = styled.div``;
+const LeftContent = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+`;
 
-const PreviewContent = styled.div``;
+const PreviewContent = styled.div`
+  margin-top: 10px;
+`;
 const PreviewImg = styled.img`
   width: 600px;
   height: 300px;
@@ -231,7 +396,7 @@ const ButtonWrapper = styled.div`
 const ImageWrapper = styled.div`
   width: 600px;
   height: 300px;
-  background-color: gray;
+  background-color: #b3b2b2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,6 +438,7 @@ const ContentText = styled.textarea`
 
 const TitleInput = styled.input`
   width: 600px;
+  margin-bottom: 5px;
 `;
 
 const Title = styled.div`
@@ -286,7 +452,8 @@ const Wrapper = styled.div`
   display: inline-flex;
   align-items: center;
   flex-direction: row;
-  gap: 10px;
+  gap: 50px;
+  justify-content: center;
 `;
 
 export default CreatePostPage;

@@ -35,6 +35,7 @@ export type PostPayload = {
   title?: string;
   content?: string;
   images?: (File | string)[];
+  temp?: boolean;
 };
 
 export type CreatePostCagegoryResponse = {
@@ -114,6 +115,45 @@ export const createPost = async (payload: PostPayload): Promise<PatchPostRespons
   }
 
   const { data } = await httpClientMultipart.post(URL, formData);
+
+  return data;
+};
+
+/**
+ * POST /posts temp post data 생성하기
+ * @requires Authorization Bearer {access-token}
+ * @param payload postform 양식
+ * @returns 생성된 temp post data
+ */
+export const tempCreatePost = async (payload: PostPayload): Promise<PatchPostResponse> => {
+  const URL = `/posts`;
+  const formData = new FormData();
+
+  if (payload.title) formData.append("title", payload.title);
+  if (payload.content) formData.append("content", payload.content);
+  if (payload.images && Array.isArray(payload.images)) {
+    payload.images.forEach((image) => {
+      if (image instanceof File) {
+        formData.append("images", image);
+      }
+    });
+  }
+  if (payload.temp) formData.append("temp", payload.temp.toString());
+
+  const { data } = await httpClientMultipart.post(URL, formData);
+
+  return data;
+};
+
+/**
+ * GET /posts/temp temp post list 조회
+ * @requires Authorization Bearer {access-token}
+ * @param payload postform 양식
+ * @returns 생성된 temp post list 조회
+ */
+export const tempPostList = async () => {
+  const URL = `/posts/temp`;
+  const { data } = await httpClient.get(URL);
 
   return data;
 };

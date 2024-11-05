@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import LogoImage from "@assets/icons/Logo.png";
 
 const LogoSection: React.FC = () => {
   const navigate = useNavigate();
@@ -11,10 +12,13 @@ const LogoSection: React.FC = () => {
 
   return (
     <StyledLogoSection onClick={handleLogoClick}>
-      <LogoText>
-        <AppleText>Apple</AppleText>
-        <NoteText>Note.</NoteText>
-      </LogoText>
+      <LogoContainer>
+        <Logo src={LogoImage} alt="Apple Note Logo" />
+        <Text>
+          <AppleText>AppleNote</AppleText>
+          <NoteText>EST.2024</NoteText>
+        </Text>
+      </LogoContainer>
     </StyledLogoSection>
   );
 };
@@ -35,20 +39,38 @@ const StyledLogoSection = styled.div`
   }
 `;
 
+/* 로고 이미지 스타일 */
+const Logo = styled.img`
+  width: 70px; /* 로고 이미지 너비 설정 */
+  height: 70px; /* 로고 이미지 높이 설정 */
+  margin-right: 8px; /* 텍스트와 간격 설정 */
+  margin-top: -15px;
+`;
+
 /* 텍스트 기반 로고 */
-const LogoText = styled.div`
+const LogoContainer = styled.div`
   display: flex;
-  align-items: baseline;
+  flex-direction: row;
+  align-items: center;
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: bold;
+  margin-left: -25px;
 
   @media (max-width: 520px) {
     font-size: clamp(1.2rem, 2vw, 1.5rem);
   }
 `;
+/* 텍스트 기반 로고 */
+const Text = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-weight: bold;
+  margin-left: -10px;
+`;
 
 const AppleText = styled.span`
-  background-color: ${({ theme }) => theme.logo.primary.background};
+  font-size: clamp(1.5rem, 1.7rem, 2rem);
   color: ${({ theme }) => theme.logo.primary.text};
   transition:
     background-color 0.3s,
@@ -56,7 +78,7 @@ const AppleText = styled.span`
 `;
 
 const NoteText = styled.span`
-  background-color: ${({ theme }) => theme.logo.secondary.background};
+  font-size: clamp(7px, 10px, 1.2rem);
   color: ${({ theme }) => theme.logo.secondary.text};
   transition:
     background-color 0.3s,

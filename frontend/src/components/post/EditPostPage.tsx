@@ -201,8 +201,6 @@ const EditPostPage: React.FC = () => {
         </RightContent>
       </ContentWrapper>
 
-     
-
       {state.deleteModalOpen && (
         <ModalOverlay
           onClick={() => {

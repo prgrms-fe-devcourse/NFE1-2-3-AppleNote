@@ -226,9 +226,6 @@ export class UserController {
 
       const uploadedImages = await this.userService.getUrl(fileArrays); // getUrl 호출
 
-      console.log(fileArrays);
-      console.log(uploadedImages);
-
       // 프로필 이미지 변경
       const updateData: UserSchemaType = {
         name: user.name,

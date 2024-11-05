@@ -45,7 +45,7 @@ const SearchForm = styled.form`
 const SearchBarWrapper = styled.div`
   position: relative;
   width: 100%; /* 부모 요소에 맞게 가변 */
-  max-width: 300px;
+  max-width: 200px;
   min-width: 100px; /* 최소 너비 100px 유지 */
   display: flex;
   align-items: center;

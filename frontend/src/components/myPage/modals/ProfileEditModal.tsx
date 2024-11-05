@@ -59,7 +59,7 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>Change Profile Image</h3>
+            <h3>Profile Image</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
@@ -72,7 +72,7 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
 
           <ButtonWrapper>
             <Button onClick={handleConfirm}>Confirm</Button>
-            <Button onClick={handleDefault}>Delete</Button>
+            <Button onClick={handleDefault}>Close</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

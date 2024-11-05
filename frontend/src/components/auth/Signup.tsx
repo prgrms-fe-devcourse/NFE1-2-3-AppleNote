@@ -19,6 +19,7 @@ import { useAuth, useAuthForm } from "./useAuth";
 import { requestCheckEmail, requestSignup } from "./api";
 import { AuthOptionSubText } from "./Text";
 import useFetch from "@common/hooks/useFetch";
+import { createCategory } from "@components/category/categoryApi";
 
 const Signup = () => {
   return (
@@ -295,8 +296,19 @@ const Submit = () => {
     // 회원가입이 성공한 시점
     if (isFulfilled) {
       login(data, {
-        onSuccess: () => {
-          navigate("/login", { replace: true });
+        onSuccess: async () => {
+          try {
+            // "other" 카테고리 생성 요청
+            const categoryResponse = await createCategory({ name: "Other" });
+
+            console.log("Category created:", categoryResponse); // 생성된 카테고리 확인
+
+            navigate("/login", { replace: true });
+          } catch (error) {
+            console.error("Category creation error:", error); // 카테고리 생성 에러 로그
+
+            dispatch.message("Failed to create category."); // 사용자에게 에러 메시지
+          }
         },
       });
     }

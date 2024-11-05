@@ -35,7 +35,7 @@ const Header: React.FC = () => {
       <LogoSection />
       <ThemeToggleButton />
       <SearchAndIconsSection>
-        <SearchBar placeholder="검색어를 입력하세요" />
+        <SearchBar placeholder="Enter a search term" />
         <UploadButton />
         <ProfileIcon src={profileImage || DEFAULT_PROFILE_IMAGE} alt="Profile Icon" />
         <SettingsButton />

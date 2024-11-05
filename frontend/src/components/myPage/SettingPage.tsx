@@ -122,10 +122,11 @@ const SettingPage = () => {
   );
 };
 const BtnWrapper = styled.div`
-  margin-top: -25px;
+  margin-top: -2.3%;
   margin-right: -16px;
 `;
 const Wrapper = styled.div`
+  margin-top: -3%;
   display: flex;
   justify-content: center;
   align-items: center;

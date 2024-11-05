@@ -314,10 +314,12 @@ export class UserController {
       const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
       const updateData: UserSchemaType = {
-        name: user.name || "",
-        email: user.email || "",
-        description: user.description || "",
+        name: user.name,
+        email: user.email,
+        description: user.description,
         password: hashedNewPassword,
+        profileImage: user.profileImage || "",
+        bannerImage: user.bannerImage || "",
       };
 
       // 비밀번호 업데이트

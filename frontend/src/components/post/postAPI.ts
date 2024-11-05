@@ -181,15 +181,10 @@ export const createPostCagegory = async (postId: string, payload: string[]) => {
   return data;
 };
 
-/**
- * GET /posts/:id/categories post의 카테고리 정보 가져오기
- * @requires Authorization Bearer {access-token}
- * @param postId
- * @returns post categories data
- */
-export const fetchPostCategories = async (postId: string): Promise<FetchPostCategoriesResponse> => {
+export const deletePostCategory = async (postId: string, payload: string[]) => {
   const URL = `/posts/${postId}/categories`;
-  const { data } = await httpClient.get(URL);
+
+  const { data } = await httpClient.delete(URL, { data: { categories: payload } });
 
   return data;
 };

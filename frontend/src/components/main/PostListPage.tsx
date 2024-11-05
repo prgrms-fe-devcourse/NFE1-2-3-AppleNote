@@ -41,7 +41,7 @@ const PostListPage: React.FC = () => {
       // 초기 로드: paramCategoryId나 location.state.categoryId가 없는 경우 전체 목록 로드
       if (!initialCategoryId && data.payload.length > 0) {
         setCategoryId(null);
-        setCategoryName("전체 포스트");
+        setCategoryName("All");
         loadPosts(null);
       }
     } catch (error) {

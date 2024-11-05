@@ -13,6 +13,7 @@ const PostPage = () => {
   const navigate = useNavigate();
   const [postInfo, setPostInfo] = useState<FetchPostResponse>();
   const [idList, setIdList] = useState<string[]>([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const fetchPostData = async () => {
     try {
@@ -93,12 +94,26 @@ const PostPage = () => {
           size={30}
         />
         <FaRegTrashCan
-          onClick={() => {
-            deletePostData();
-          }}
+          // onClick={() => {
+          //   deletePostData();
+          // }}
+          // size={30}
+          onClick={() => setDeleteModalOpen(true)} // Update this line
           size={30}
         />
       </IconWrapper>
+
+      {deleteModalOpen && (
+        <ModalOverlay onClick={() => setDeleteModalOpen(false)}>
+          <ModalWrapper onClick={(e) => e.stopPropagation()}>
+            <div>삭제하시겠습니까?</div>
+            <ButtonWrapper>
+              <Button onClick={deletePostData}>Yes</Button>
+              <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
+            </ButtonWrapper>
+          </ModalWrapper>
+        </ModalOverlay>
+      )}
       <NaviWrapper>
         <NaviContent>
           <IoIosArrowBack onClick={goToPreviousPost} size={50} color="#fff" />
@@ -125,6 +140,37 @@ const IconWrapper = styled.div`
   width: 600px;
   display: flex;
   gap: 15px;
+`;
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+`;
+
+const ModalWrapper = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+`;
+
+const ButtonWrapper = styled.div`
+  display: inline-flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const Button = styled.div`
+  cursor: pointer;
+  padding: 5px 15px;
 `;
 
 const Content = styled.div``;

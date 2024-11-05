@@ -63,7 +63,11 @@ const CreatePostPage: React.FC = () => {
       const payload: PostPayload = {
         title: state.title,
         content: state.content,
-        images: state.image ? [state.image.files] : undefined,
+        images: state.image
+          ? Object.keys(state.image.files).length !== 0
+            ? [state.image.files]
+            : [state.image.urls]
+          : undefined,
       };
       const data = await createPost(payload);
 

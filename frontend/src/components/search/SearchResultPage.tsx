@@ -52,7 +52,7 @@ const SearchResultPage: React.FC = () => {
       <SearchResultHeader searchQuery={searchQuery} />
       <PostsGrid posts={paginatedPosts} />
 
-      {filteredPosts.length === 0 && <NoResultsMessage>검색 결과가 없습니다.</NoResultsMessage>}
+      {filteredPosts.length === 0 && <NoResultsMessage>No search results found.</NoResultsMessage>}
       {/* 페이지네이션 컴포넌트 */}
       <PaginationComponent
         totalPosts={filteredPosts.length}

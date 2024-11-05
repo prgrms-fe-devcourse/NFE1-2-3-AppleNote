@@ -116,7 +116,7 @@ const CategoryLatestPosts: React.FC = () => {
           {posts.length > 0 ? (
             posts.map((post) => <HorizontalPostCard key={post.postId} post={post} />)
           ) : (
-            <NoPostsMessage>해당 카테고리에는 아직 포스트가 존재하지 않습니다.</NoPostsMessage>
+            <NoPostsMessage>No registered post exists yet.</NoPostsMessage>
           )}
         </HorizontalPostGrid>
         <DesktopCategoryWrapper marginTop={0}>
@@ -174,7 +174,6 @@ const HorizontalPostGrid = styled.div`
   margin-right: 50px;
 `;
 
-// NoPostsMessage 스타일 추가
 const NoPostsMessage = styled.div`
   font-size: 1.2rem;
   color: #666;

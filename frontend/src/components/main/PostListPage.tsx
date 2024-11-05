@@ -17,7 +17,7 @@ const PostListPage: React.FC = () => {
   const [categoryId, setCategoryId] = useState(
     location.state?.categoryId || paramCategoryId || null
   );
-  const [categoryName, setCategoryName] = useState(location.state?.categoryName || "전체 포스트");
+  const [categoryName, setCategoryName] = useState(location.state?.categoryName || "ALL");
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [totalPosts, setTotalPosts] = useState(0);
@@ -88,7 +88,7 @@ const PostListPage: React.FC = () => {
           {posts.length > 0 ? (
             posts.map((post) => <HorizontalPostCard key={post.postId} post={post} />)
           ) : (
-            <NoPostsMessage>해당 카테고리에는 아직 포스트가 존재하지 않습니다.</NoPostsMessage>
+            <NoPostsMessage>No registered post exists yet.</NoPostsMessage>
           )}
         </HorizontalPostGrid>
         <DesktopCategoryWrapper marginTop={0}>
@@ -121,6 +121,7 @@ const Container = styled.div`
   max-width: 1205px;
   margin: 0 auto;
   padding: 1rem;
+  padding-bottom: 2rem;
 
   @media (max-width: 768px) {
     padding: 1rem;
@@ -146,7 +147,6 @@ const HorizontalPostGrid = styled.div`
   margin-right: 50px;
 `;
 
-// NoPostsMessage 스타일 추가
 const NoPostsMessage = styled.div`
   font-size: 1.2rem;
   color: #666;

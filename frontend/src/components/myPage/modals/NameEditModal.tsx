@@ -26,15 +26,15 @@ const NameEditModal: React.FC<NameEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>이름 변경</h3>
+            <h3>Name</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
           </Header>
           <Input type="text" value={name} onChange={(e) => setNewName(e.target.value.trim())} />
           <ButtonWrapper>
-            <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={onClose}>닫기</Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
+            <Button onClick={onClose}>Close</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

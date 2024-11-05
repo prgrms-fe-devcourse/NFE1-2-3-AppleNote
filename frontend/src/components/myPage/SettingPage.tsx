@@ -106,9 +106,9 @@ const SettingPage = () => {
               </UserNameWrapper>
 
               <UserEmail>{user?.email}</UserEmail>
-              <Button onClick={changePw}>비밀번호 변경</Button>
-              <Button onClick={signout}>회원 탈퇴</Button>
-              <Button onClick={handleLogout}>로그아웃</Button>
+              <Button onClick={changePw}>Change password</Button>
+              <Button onClick={signout}>Delete Account</Button>
+              <Button onClick={handleLogout}>Logout</Button>
             </UserProfile>
           </ProfileWrapper>
           {isOpen && modalType === "banner" && <BannerEditModal onClose={closeModal} />}

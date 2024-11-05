@@ -7,6 +7,8 @@ import { CustomThemeProvider } from "@common/styles/ThemeProvider";
 import { AuthProvider } from "@components/auth/AuthContext.tsx";
 import { ModalProvider } from "@components/myPage/Context/ModalContext.tsx";
 
+import GlobalStyle from "@components/setting/GlobalStyle";
+
 const enableMocking = async () => {
   if (process.env.NODE_ENV !== "development" || import.meta.env.VITE_MSW_ENABLED !== "true") {
     return;
@@ -22,6 +24,7 @@ const enableMocking = async () => {
 enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
+      <GlobalStyle />
       <CustomThemeProvider>
         <AuthProvider>
           <ModalProvider>

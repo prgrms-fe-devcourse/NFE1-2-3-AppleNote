@@ -46,7 +46,7 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>배너 이미지 변경</h3>
+            <h3>Banner Image</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
@@ -58,8 +58,8 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
           />
 
           <ButtonWrapper>
-            <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={handleDefault}>삭제</Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
+            <Button onClick={handleDefault}>Close</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

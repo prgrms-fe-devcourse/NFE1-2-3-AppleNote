@@ -9,7 +9,7 @@ interface SearchResultHeaderProps {
 const SearchResultHeader: React.FC<SearchResultHeaderProps> = ({ searchQuery }) => (
   <HeaderContainer>
     <FaSearch size={30} />
-    <SearchResultText>Search results for"{searchQuery}"</SearchResultText>
+    <SearchResultText>Search results for "{searchQuery}"</SearchResultText>
   </HeaderContainer>
 );
 

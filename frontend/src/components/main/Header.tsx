@@ -76,7 +76,7 @@ const ProfileIcon = styled.img`
   background-color: #ccc;
 
   /* 화면 너비가 520px 이하일 때 숨기기 */
-  @media (max-width: 520px) {
+  @media (max-width: 630px) {
     display: none;
   }
 `;

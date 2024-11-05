@@ -1,5 +1,6 @@
 import User, { IUser, IUserWithId } from "@src/models/userModel";
 import { UserSchemaType } from "@src/types";
+import { IFileService } from "./fileService";
 
 export interface IUserService {
   createUser(data: UserSchemaType): Promise<IUserWithId>;
@@ -8,9 +9,11 @@ export interface IUserService {
   getUserByEmail(email: string): Promise<IUserWithId | null>;
   updateUser(userId: string, data: UserSchemaType): Promise<IUser | null>;
   deleteUser(userId: string): Promise<boolean>;
+  getUrl(files: Express.Multer.File[]): Promise<string[]>;
 }
 
 export class UserService implements IUserService {
+  constructor(private fileService: IFileService) {}
   async createUser(data: UserSchemaType): Promise<IUserWithId> {
     const userExist = await User.findOne({ email: data.email });
 
@@ -59,6 +62,11 @@ export class UserService implements IUserService {
     };
 
     return mappedUser;
+  }
+  async getUrl(files: Express.Multer.File[]): Promise<string[]> {
+    const uploadedImages = await this.fileService.uploadImageList(files); // 업로드된 이미지 리스트를 기다림
+
+    return uploadedImages; // 첫 번째 이미지 URL을 반환
   }
 
   async updateUser(_id: string, data: Partial<UserSchemaType>): Promise<IUser | null> {

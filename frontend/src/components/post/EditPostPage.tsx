@@ -156,7 +156,7 @@ const EditPostPage: React.FC = () => {
     <Wrapper>
       <ContentWrapper>
         <LeftContent>
-          <Title>제목</Title>
+          <Title>Title</Title>
           <TitleInput
             value={state.title}
             onChange={(e) => dispatch({ type: "SET_TITLE", payload: e.target.value })}
@@ -197,7 +197,7 @@ const EditPostPage: React.FC = () => {
             )}
           </ImageWrapper>
 
-          <Title>본문</Title>
+          <Title>Text</Title>
           <ContentText
             value={state.content}
             onChange={(e) => dispatch({ type: "SET_CONTENT", payload: e.target.value })}
@@ -208,20 +208,20 @@ const EditPostPage: React.FC = () => {
               onClick={() => {
                 updatePostData();
               }}>
-              확인
+              Confirm
             </Button>
             <Button
               onClick={() => {
                 navigate(-1);
               }}>
-              취소
+              Cancel
             </Button>
-            <Button>임시저장</Button>
+
             <Button
               onClick={() => {
                 dispatch({ type: "TOGGLE_PREVIEW_MODAL", payload: true });
               }}>
-              미리보기
+              Preview
             </Button>
           </ButtonWrapper>
         </LeftContent>

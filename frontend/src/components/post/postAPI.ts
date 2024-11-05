@@ -36,6 +36,7 @@ export type PostPayload = {
   content?: string;
   images?: (File | string)[];
   temp?: boolean;
+  categoryId?: string;
 };
 
 export type CreatePostCagegoryResponse = {
@@ -43,6 +44,10 @@ export type CreatePostCagegoryResponse = {
   payload: string[];
 };
 
+export type FetchPostCategoriesResponse = {
+  statusCode: number;
+  payload: { categoryId: string; name: string }[];
+};
 /**
  * GET /posts/:id post data 가져오기
  * @requires Authorization Bearer {access-token}
@@ -168,6 +173,19 @@ export const createPostCagegory = async (postId: string, payload: string[]) => {
   const URL = `/posts/${postId}/categories`;
 
   const { data } = await httpClient.post(URL, { categories: payload });
+
+  return data;
+};
+
+/**
+ * GET /posts/:id/categories post의 카테고리 정보 가져오기
+ * @requires Authorization Bearer {access-token}
+ * @param postId
+ * @returns post categories data
+ */
+export const fetchPostCategories = async (postId: string): Promise<FetchPostCategoriesResponse> => {
+  const URL = `/posts/${postId}/categories`;
+  const { data } = await httpClient.get(URL);
 
   return data;
 };

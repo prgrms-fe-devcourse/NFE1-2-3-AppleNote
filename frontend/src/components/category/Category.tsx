@@ -280,7 +280,8 @@ const Title = styled.h1`
 `;
 
 const CogIcon = styled(FaCog)`
-  margin-top: 5px; /* 아이콘을 아래로 10px 내림 */
+  margin-left: 5px;
+  margin-top: 7px; /* 아이콘을 아래로 10px 내림 */
   cursor: pointer;
 `;
 
@@ -302,7 +303,6 @@ const Input = styled.input`
   width: 100%;
   margin-top: 5px;
   border: 1px solid #ccc;
-  background: none;
   border-radius: 5px;
 `;
 
@@ -323,8 +323,11 @@ const ListItem = styled.li`
 const CategoryName = styled.span`
   flex-grow: 1; // 가능한 공간을 모두 차지하게 설정
   word-wrap: break-word; // 단어 줄바꿈 설정
-  white-space: normal; // 줄바꿈을 허용하도록 설정
-  overflow-wrap: break-word; // 단어가 너무 길 경우 줄바꿈
+  white-space: nowrap; // 줄바꿈을 허용하지 않음
+  overflow: hidden; // 범위를 벗어난 텍스트 숨김
+  text-overflow: ellipsis; // 생략 표시 (…) 추가
+  max-width: 130px; // 최대 너비 설정
+  cursor: pointer; // 카테고리 선택 부분이므로 포인터 설정
   cursor: pointer; // 카테고리 선택 부분이므로 포인터 설정
 `;
 

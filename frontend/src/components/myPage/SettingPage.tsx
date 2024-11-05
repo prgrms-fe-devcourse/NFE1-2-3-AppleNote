@@ -124,7 +124,7 @@ const SettingPage = () => {
   );
 };
 const BtnWrapper = styled.div`
-  margin-top: -5vh;
+  margin-top: -2vh;
 `;
 const Wrapper = styled.div`
   margin-top: -5.5vh;

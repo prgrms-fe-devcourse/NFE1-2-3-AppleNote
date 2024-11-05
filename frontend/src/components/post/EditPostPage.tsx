@@ -4,7 +4,14 @@ import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { fetchPost, patchPost, PostPayload, fetchPostCategories, deletePost } from "./postAPI";
+import {
+  fetchPost,
+  patchPost,
+  PostPayload,
+  deletePost,
+  createPostCagegory,
+  deletePostCategory,
+} from "./postAPI";
 
 type State = {
   previewModalOpen: boolean;
@@ -65,11 +72,27 @@ const EditPostPage: React.FC = () => {
           payload: { files: {} as File, urls: data.payload.images[0] },
         });
       }
+
+      await deleteCategory(data.payload.categories);
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
     }
   };
+
+  const deleteCategory = async (
+    payload: {
+      categoryId: string;
+      name: string;
+    }[]
+  ) => {
+    try {
+      await deletePostCategory(id as string, [payload[0].categoryId]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const updatePostData = async () => {
     try {
       const payload: PostPayload = {
@@ -83,6 +106,12 @@ const EditPostPage: React.FC = () => {
         categoryId: state.selectedCategory?.categoryId,
       };
       const data = await patchPost(id as string, payload);
+
+      if (state.selectedCategory) {
+        await createPostCagegory(data.payload.postId, [
+          state.selectedCategory?.categoryId as string,
+        ]);
+      }
 
       navigate(`/posts/${data.payload.postId}`);
     } catch (error) {
@@ -118,21 +147,8 @@ const EditPostPage: React.FC = () => {
     }
   };
 
-  const fetchPostCategory = async () => {
-    try {
-      const categories = await fetchPostCategories(id as string);
-
-      if (categories.payload.length > 0) {
-        dispatch({ type: "SET_CATEGORY", payload: categories.payload[0] });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     fetchPostData();
-    fetchPostCategory();
     // eslint-disable-next-line
   }, []);
 
@@ -196,9 +212,9 @@ const EditPostPage: React.FC = () => {
             </Button>
             <Button
               onClick={() => {
-                dispatch({ type: "TOGGLE_DELETE_MODAL", payload: true });
+                navigate(-1);
               }}>
-              삭제
+              취소
             </Button>
             <Button>임시저장</Button>
             <Button

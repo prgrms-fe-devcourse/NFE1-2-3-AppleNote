@@ -67,6 +67,10 @@ export const GlobalStyle = createGlobalStyle<BodyProps>`
     }
 
     body {
+        font-family: "Merriweather", "Gowun Batang",serif;
+        font-weight: 600;
+        font-style: normal;
+        
         background-color: ${({ theme }) => theme.background.primary};
         color: ${({ theme }) => theme.text.primary};
          ${({ isThemeChanging }) =>
@@ -77,4 +81,11 @@ export const GlobalStyle = createGlobalStyle<BodyProps>`
                color 0.3s ease;
            `}
     }
+    h2 {
+        font-weight: 600; // 원하시는 두께로 조정
+        }
+    h3 {
+        font-weight: 600; // 원하시는 두께로 조정
+        }
+
 `;

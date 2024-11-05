@@ -61,8 +61,18 @@ export class UserService implements IUserService {
     return mappedUser;
   }
 
-  async updateUser(_id: string, data: UserSchemaType): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(_id, data, {
+  async updateUser(_id: string, data: Partial<UserSchemaType>): Promise<IUser | null> {
+    const updateData: UserSchemaType = {
+      name: data.name || "",
+      email: data.email || "",
+      description: data.description || "",
+      password: data.password || "",
+      profileImage: data.profileImage || "",
+      bannerImage: data.bannerImage || "",
+    };
+
+    // MongoDB에서 업데이트 수행
+    return await User.findByIdAndUpdate(_id, updateData, {
       new: true,
       runValidators: true,
     });

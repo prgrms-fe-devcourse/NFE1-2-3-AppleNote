@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Post } from "../../components/main/postApi";
+import { Post } from "@components/main/postApi";
 import { useNavigate } from "react-router-dom";
 import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
@@ -94,6 +94,12 @@ const Category = styled.span`
 `;
 
 const Title = styled.h2`
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
   margin: 0.2rem 0 0.5rem;
   font-size: clamp(1.4rem, 2vw, 1.7rem);
 

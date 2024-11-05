@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useCategory } from "@components/main/HomePage";
-import { fetchLatestPostsByCategoryId, Post } from "./postApi";
-import HorizontalPostCard from "../../common/components/HorizontalPostCard";
-import { fetchCategories } from "../category/categoryApi";
+import { fetchLatestPostsByCategoryId, Post } from "@components/main/postApi";
+import HorizontalPostCard from "@common/components/HorizontalPostCard";
+import { fetchCategories } from "@components/category/categoryApi";
 import { useNavigate } from "react-router-dom";
-import CategorySection from "../../common/components/CategorySection";
-import DesktopCategoryWrapper from "../../common/components/DesktopCategoryWrapper";
-import FaBarsWrapper from "../../common/components/FaBarsWrapper";
+import CategorySection from "@common/components/CategorySection";
+import DesktopCategoryWrapper from "@common/components/DesktopCategoryWrapper";
+import FaBarsWrapper from "@common/components/FaBarsWrapper";
 import Category from "@components/category/Category";
 import MoreButton from "@common/components/MoreButton";
 
@@ -21,6 +21,42 @@ const CategoryLatestPosts: React.FC = () => {
   const [initialRightOffset, setInitialRightOffset] = useState(0);
   const navigate = useNavigate();
 
+  // 카테고리 선택 시 호출하는 함수
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    const category = categories.find((cat) => cat.categoryId === categoryId);
+
+    if (category) {
+      setSelectedCategoryName(category.name);
+      loadPosts(categoryId); // 선택된 카테고리의 포스트를 즉시 로드
+    }
+  };
+
+  // 카테고리 목록과 초기 상태를 로드하는 함수
+  const loadCategories = async () => {
+    try {
+      const data = await fetchCategories();
+
+      setCategories(data.payload);
+
+      // 첫 번째 카테고리를 초기 선택으로 설정
+      if (data.payload.length > 0) {
+        const initialCategoryId = data.payload[0].categoryId;
+
+        setSelectedCategoryId(initialCategoryId);
+        setSelectedCategoryName(data.payload[0].name);
+        loadPosts(initialCategoryId); // 초기 선택된 카테고리의 포스트 로드
+      }
+    } catch (error) {
+      console.error("Failed to load categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  // 카테고리가 선택되거나 생성된 후 포스트를 로드
   const loadPosts = async (categoryId: string) => {
     try {
       const fetchedPosts = await fetchLatestPostsByCategoryId(categoryId);
@@ -31,54 +67,11 @@ const CategoryLatestPosts: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await fetchCategories();
-
-        setCategories(data.payload);
-
-        if (data.payload.length > 0) {
-          const initialCategoryId = data.payload[0].categoryId;
-
-          setSelectedCategoryId(initialCategoryId);
-          setSelectedCategoryName(data.payload[0].name);
-          loadPosts(initialCategoryId);
-        }
-      } catch (error) {
-        console.error("Failed to load categories:", error);
-      }
-    };
-
-    loadCategories();
-  }, [setSelectedCategoryId]);
-
-  useEffect(() => {
-    if (selectedCategoryId) {
-      loadPosts(selectedCategoryId);
-      const category = categories.find((cat) => cat.categoryId === selectedCategoryId);
-
-      if (category) setSelectedCategoryName(category.name);
-    }
-  }, [selectedCategoryId, categories]);
-
-  const handleCategorySelect = (categoryId: string) => {
-    setSelectedCategoryId(categoryId);
-    const category = categories.find((cat) => cat.categoryId === categoryId);
-
-    if (category) setSelectedCategoryName(category.name);
-    loadPosts(categoryId);
-  };
-
+  // MoreButton 클릭 시 해당 카테고리 페이지로 이동
   const handleMoreButtonClick = () => {
-    const category = categories.find((cat) => cat.categoryId === selectedCategoryId);
-
-    if (category) {
-      navigate(`/categories/${category.categoryId}`, {
-        state: {
-          categoryId: category.categoryId,
-          categoryName: category.name,
-        },
+    if (selectedCategoryId) {
+      navigate(`/posts`, {
+        state: { categoryId: selectedCategoryId, categoryName: selectedCategoryName },
       });
     }
   };
@@ -105,6 +98,13 @@ const CategoryLatestPosts: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isSticky]);
 
+  // 카테고리 변경 시 호출될 함수
+  const onCategoryChange = (categoryId: string, categoryName: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedCategoryName(categoryName);
+    loadPosts(categoryId);
+  };
+
   return (
     <Container>
       <CategorySection title={selectedCategoryName} small />
@@ -123,7 +123,7 @@ const CategoryLatestPosts: React.FC = () => {
           <Category
             setSelectedCategoryId={handleCategorySelect}
             setSelectedCategoryName={setSelectedCategoryName}
-            onCategoryChange={() => selectedCategoryId && loadPosts(selectedCategoryId)}
+            onCategoryChange={onCategoryChange}
           />
         </DesktopCategoryWrapper>
         <FaBarsWrapper
@@ -131,7 +131,7 @@ const CategoryLatestPosts: React.FC = () => {
           rightOffset={isSticky ? rightOffset : initialRightOffset}
           setSelectedCategoryId={handleCategorySelect}
           setSelectedCategoryName={setSelectedCategoryName}
-          onCategoryChange={() => selectedCategoryId && loadPosts(selectedCategoryId)}
+          onCategoryChange={onCategoryChange}
         />
       </ContentWrapper>
     </Container>

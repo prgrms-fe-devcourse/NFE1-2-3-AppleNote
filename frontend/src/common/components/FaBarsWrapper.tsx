@@ -8,7 +8,7 @@ interface FaBarsWrapperProps {
   rightOffset: number;
   setSelectedCategoryId: (id: string) => void;
   setSelectedCategoryName: (name: string) => void;
-  onCategoryChange: () => void;
+  onCategoryChange: (categoryId: string, categoryName: string) => void;
 }
 
 const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
@@ -29,6 +29,12 @@ const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
     event.stopPropagation();
   };
 
+  const handleCategorySelect = (categoryId: string, categoryName: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedCategoryName(categoryName);
+    onCategoryChange(categoryId, categoryName); // 선택한 카테고리 ID를 전달
+  };
+
   return (
     <Wrapper isSticky={isSticky} rightOffset={rightOffset} onClick={toggleCategory}>
       <FaBars size={24} />
@@ -37,7 +43,7 @@ const FaBarsWrapper: React.FC<FaBarsWrapperProps> = ({
           <Category
             setSelectedCategoryId={setSelectedCategoryId}
             setSelectedCategoryName={setSelectedCategoryName}
-            onCategoryChange={onCategoryChange}
+            onCategoryChange={handleCategorySelect}
           />
         </Dropdown>
       )}

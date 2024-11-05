@@ -13,10 +13,10 @@ const NameEditModal: React.FC<NameEditModalProps> = ({ onClose }) => {
     const isChangeSuccessful = await changeName({ name });
 
     if (isChangeSuccessful) {
-      alert("이름이 변경되었습니다.");
+      alert("The name has been changed.");
       onClose();
     } else {
-      alert("이름 변경에 실패했습니다.");
+      alert("Failed to change the name.");
     }
   };
 

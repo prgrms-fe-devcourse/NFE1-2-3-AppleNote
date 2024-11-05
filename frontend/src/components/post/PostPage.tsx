@@ -5,11 +5,15 @@ import styled from "styled-components";
 import { LuPencilLine } from "react-icons/lu";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { fetchAllPosts } from "@components/main/postApi";
+import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
 const PostPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [postInfo, setPostInfo] = useState<FetchPostResponse>();
+  const [idList, setIdList] = useState<string[]>([]);
+
   const fetchPostData = async () => {
     try {
       const data = await fetchPost(id as string);
@@ -20,6 +24,7 @@ const PostPage = () => {
       console.error(error);
     }
   };
+
   const deletePostData = async () => {
     try {
       await deletePost(id as string);
@@ -30,16 +35,46 @@ const PostPage = () => {
     }
   };
 
+  const fetchPostList = async () => {
+    try {
+      const data = await fetchAllPosts();
+      const postIds = data.map((post: { postId: string }) => post.postId);
+
+      setIdList(postIds);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+    }
+  };
+
+  const goToPreviousPost = () => {
+    const currentIndex = idList.indexOf(id as string);
+
+    if (currentIndex > 0) {
+      navigate(`/posts/${idList[currentIndex - 1]}`);
+    }
+  };
+
+  const goToNextPost = () => {
+    const currentIndex = idList.indexOf(id as string);
+
+    if (currentIndex < idList.length - 1) {
+      navigate(`/posts/${idList[currentIndex + 1]}`);
+    }
+  };
+
   useEffect(() => {
     fetchPostData();
+    fetchPostList();
     // eslint-disable-next-line
-  }, []);
+  }, [id]);
 
   return (
     <Wrapper>
       <Title>{postInfo?.payload.title}</Title>
       <PostInfoWrapper>
-        <PostInfo>{postInfo?.payload.categories[0].name}</PostInfo>
+        {postInfo?.payload.categories.length !== 0 && (
+          <PostInfo>{postInfo?.payload.categories[0].name}</PostInfo>
+        )}
         <PostInfo>
           {new Date(postInfo?.payload.createdAt as Date).toLocaleDateString("ko-KR", {
             year: "numeric",
@@ -48,7 +83,7 @@ const PostPage = () => {
           })}
         </PostInfo>
       </PostInfoWrapper>
-      <Image src={postInfo?.payload.images[0]} />
+      <Image src={getThumbnailSrc(postInfo?.payload.images)} />
       <Content>{postInfo?.payload.content}</Content>
       <IconWrapper>
         <LuPencilLine
@@ -66,26 +101,10 @@ const PostPage = () => {
       </IconWrapper>
       <NaviWrapper>
         <NaviContent>
-          <IoIosArrowBack
-            onClick={() => {
-              if (id) {
-                navigate(`/posts/${Number(id) - 1}`);
-              }
-            }}
-            size={50}
-            color="#fff"
-          />
+          <IoIosArrowBack onClick={goToPreviousPost} size={50} color="#fff" />
         </NaviContent>
         <NaviContent>
-          <IoIosArrowForward
-            onClick={() => {
-              if (id) {
-                navigate(`/posts/${Number(id) + 1}`);
-              }
-            }}
-            size={50}
-            color="#fff"
-          />
+          <IoIosArrowForward onClick={goToNextPost} size={50} color="#fff" />
         </NaviContent>
       </NaviWrapper>
     </Wrapper>

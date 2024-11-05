@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchUserData } from "./headerApi";
+import { fetchUserData } from "@components/main/headerApi";
 import SearchBar from "@common/components/SearchBar";
 import ThemeToggleButton from "@common/components/ThemeToggleButton";
 import LogoSection from "@common/components/LogoSection";

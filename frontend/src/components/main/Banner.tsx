@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchBannerImage } from "./bannerApi";
+import { fetchBannerImage } from "@components/main/bannerApi";
 import { useModal } from "@components/myPage/Context/ModalContext";
 
 const DEFAULT_BANNER_IMAGE = "/default-banner-image.png"; // 기본 배너 이미지 경로
@@ -30,8 +30,10 @@ const Banner: React.FC = () => {
 const StyledBanner = styled.img`
   width: 100%;
   height: 300px;
-  object-fit: cover;
-  margin-top: 1rem;
+  object-fit: contain;
+  display: block;
+  margin: 1rem auto;
+  background-color: transparent;
 `;
 
 export default Banner;

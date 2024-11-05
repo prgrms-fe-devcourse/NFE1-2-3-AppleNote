@@ -1,4 +1,3 @@
-import { FirebaseStorage } from "@src/config/FirebaseStorage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserSchemaType } from "@src/types";
@@ -6,13 +5,9 @@ import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
 import { IUserService } from "@src/services/userService";
 import { IUserWithId } from "@src/models/userModel";
-import { FileService } from "@src/services/fileService";
 
 export class UserController {
-  constructor(
-    private userService: IUserService,
-    private firebaseStorage = new FirebaseStorage()
-  ) {}
+  constructor(private userService: IUserService) {}
 
   async check(req: Request, res: Response) {
     try {
@@ -227,15 +222,20 @@ export class UserController {
         return res.status(400).json(createErrorResponse(400, "File is required"));
       }
 
+      const fileArrays = Object.values(files).flat() as Express.Multer.File[]; // 모든 파일 배열을 하나로 결합
+
+      const uploadedImages = await this.userService.getUrl(fileArrays); // getUrl 호출
+
+      console.log(fileArrays);
+      console.log(uploadedImages);
+
       // 프로필 이미지 변경
       const updateData: UserSchemaType = {
         name: user.name,
         email: user.email,
         description: user.description,
         password: user.password,
-        profileImage: isDelete
-          ? ""
-          : (await new FileService(this.firebaseStorage).uploadImageList(files))[0],
+        profileImage: isDelete ? "" : uploadedImages[0] || "",
         bannerImage: user.bannerImage || "",
       };
 
@@ -268,7 +268,13 @@ export class UserController {
       if (!files) {
         return res.status(400).json(createErrorResponse(400, "File is required"));
       }
+      let uploadedImages: string[] = [];
 
+      if (files) {
+        const fileArrays = Object.values(files).flat() as Express.Multer.File[]; // 모든 파일 배열을 하나로 결합
+
+        uploadedImages = await this.userService.getUrl(fileArrays);
+      }
       // 배너 이미지 변경
       const updateData: UserSchemaType = {
         name: user.name,
@@ -276,9 +282,7 @@ export class UserController {
         description: user.description,
         password: user.password,
         profileImage: user.profileImage || "",
-        bannerImage: isDelete // isdelete가 true면 빈값으로, 아니라면 files의 0번 인덱스로 업데이트
-          ? ""
-          : (await new FileService(this.firebaseStorage).uploadImageList(files))[0],
+        bannerImage: isDelete ? "" : uploadedImages[0] || "",
       };
 
       await this.userService.updateUser(userId, updateData);

@@ -197,46 +197,42 @@ const SelectCategory = ({ selectedCategory, setSelectedCategory }: SelectCategor
         />
       )}
       <List>
-        {state.categories
-          .slice()
-          .reverse()
-          .map((category) => (
-            <ListItem key={category.categoryId}>
-              <Radio
-                type="radio"
-                name="category"
-                checked={selectedCategory?.categoryId === category.categoryId}
-                onChange={() => handleRadioChange(category)}
+        {state.categories.map((category) => (
+          <ListItem key={category.categoryId}>
+            <Radio
+              type="radio"
+              name="category"
+              checked={selectedCategory?.categoryId === category.categoryId}
+              onChange={() => handleRadioChange(category)}
+            />
+            {state.isEditing === category.categoryId ? (
+              <Input
+                type="text"
+                value={state.editCategoryName}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SET_EDITING",
+                    payload: { id: category.categoryId, name: e.target.value },
+                  })
+                }
+                onKeyDown={(e) => handleEditKeyPress(e, category.categoryId)}
+                onBlur={handleEditBlur}
               />
-              {state.isEditing === category.categoryId ? (
-                <Input
-                  type="text"
-                  value={state.editCategoryName}
-                  onChange={(e) =>
-                    dispatch({
-                      type: "SET_EDITING",
-                      payload: { id: category.categoryId, name: e.target.value },
-                    })
-                  }
-                  onKeyDown={(e) => handleEditKeyPress(e, category.categoryId)}
-                  onBlur={handleEditBlur}
-                />
-              ) : (
-                <CategoryName>{category.name}</CategoryName>
-              )}
-              {state.cogClicked && !state.isEditing && (
-                <>
-                  <EditButton
-                    onClick={() => handleEditCategory(category.categoryId, category.name)}>
-                    <CiEdit />
-                  </EditButton>
-                  <DeleteButton onClick={() => handleDeleteCategory(category.categoryId)}>
-                    <FaTrash />
-                  </DeleteButton>
-                </>
-              )}
-            </ListItem>
-          ))}
+            ) : (
+              <CategoryName>{category.name}</CategoryName>
+            )}
+            {state.cogClicked && !state.isEditing && (
+              <>
+                <EditButton onClick={() => handleEditCategory(category.categoryId, category.name)}>
+                  <CiEdit />
+                </EditButton>
+                <DeleteButton onClick={() => handleDeleteCategory(category.categoryId)}>
+                  <FaTrash />
+                </DeleteButton>
+              </>
+            )}
+          </ListItem>
+        ))}
       </List>
     </Container>
   );

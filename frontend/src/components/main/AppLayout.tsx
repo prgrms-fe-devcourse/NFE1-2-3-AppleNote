@@ -56,6 +56,7 @@ const LayoutContainer = styled.div`
 const MainContent = styled.main`
   flex: 1; /* 남은 공간을 모두 차지 */
   padding: 1rem;
+  margin-bottom: 150px;
 `;
 
 export default AppLayout;

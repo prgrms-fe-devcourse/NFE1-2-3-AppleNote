@@ -10,11 +10,11 @@ interface PasswordForm {
   oldPassword: string;
   newPassword: string;
 }
-interface ProfileForm {
-  profileImage: string;
+export interface ProfileForm {
+  profileImage: File | null;
 }
-interface BannerForm {
-  bannerImage: string;
+export interface BannerForm {
+  bannerImage: File | null;
 }
 interface NameForm {
   name: string;
@@ -48,8 +48,16 @@ export const changePassword = async (payload: PasswordForm): Promise<boolean> =>
 export const changeProfile = async (payload: ProfileForm): Promise<boolean> => {
   try {
     const URL = `/users/profile`;
+    const formData = new FormData();
 
-    const { data } = await httpClient.patch(URL, payload);
+    // 파일이 존재할 경우에만 추가
+    if (payload.profileImage) {
+      formData.append("images", payload.profileImage);
+    } else {
+      formData.append("deleteImages", "true");
+    }
+
+    const { data } = await httpClient.patch(URL, formData);
 
     return data.payload.isChange;
   } catch {
@@ -61,8 +69,14 @@ export const changeProfile = async (payload: ProfileForm): Promise<boolean> => {
 export const changeBanner = async (payload: BannerForm): Promise<boolean> => {
   try {
     const URL = `/users/banner`;
+    const formData = new FormData();
 
-    const { data } = await httpClient.patch(URL, payload);
+    if (payload.bannerImage) {
+      formData.append("images", payload.bannerImage);
+    } else {
+      formData.append("deleteImages", "true");
+    }
+    const { data } = await httpClient.patch(URL, formData);
 
     return data.payload.isChange;
   } catch {

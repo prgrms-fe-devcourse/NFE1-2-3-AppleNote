@@ -33,20 +33,22 @@ const SettingPage = () => {
     setStatus(true);
   };
   const signout = async () => {
-    const confirmed = window.confirm("회원탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다."); // 회원탈퇴 확인
+    const confirmed = window.confirm(
+      "Are you sure to delete your account? This action cannot be undone."
+    ); // 회원탈퇴 확인
 
     if (confirmed) {
       try {
         const isDeleted = await deleteUser();
 
         if (isDeleted === true) {
-          alert("회원탈퇴 완료");
+          alert("Account deletion completed");
           navigate("/");
         } else {
-          alert("회원 탈퇴에 실패했습니다.");
+          alert("Failed to delete the account.");
         }
       } catch {
-        alert("회원 탈퇴 중 오류 발생");
+        alert("An error occurred during account deletion.");
       }
     }
   };
@@ -63,16 +65,16 @@ const SettingPage = () => {
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    const confirmed = window.confirm("로그아웃하시겠습니까?"); // 로그아웃 확인
+    const confirmed = window.confirm("Are you sure to logout?"); // 로그아웃 확인
 
     if (confirmed) {
       logout({
         onSuccess: () => {
-          alert("로그아웃 되었습니다.");
+          alert("You have been logged out.");
           navigate("/");
         },
         onFailure: () => {
-          alert("로그아웃 실패");
+          alert("Logout failed.");
         },
       });
     }
@@ -106,9 +108,9 @@ const SettingPage = () => {
               </UserNameWrapper>
 
               <UserEmail>{user?.email}</UserEmail>
-              <Button onClick={changePw}>비밀번호 변경</Button>
-              <Button onClick={signout}>회원 탈퇴</Button>
-              <Button onClick={handleLogout}>로그아웃</Button>
+              <Button onClick={changePw}>Change Password</Button>
+              <Button onClick={signout}>Delete Account</Button>
+              <Button onClick={handleLogout}>Logout</Button>
             </UserProfile>
           </ProfileWrapper>
           {isOpen && modalType === "banner" && <BannerEditModal onClose={closeModal} />}

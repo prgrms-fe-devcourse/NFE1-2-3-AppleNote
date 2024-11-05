@@ -24,16 +24,27 @@ const Banner: React.FC = () => {
     getBannerImage();
   }, [isOpen]);
 
-  return <StyledBanner src={bannerImage || DEFAULT_BANNER_IMAGE} alt="Banner Image" />;
+  return (
+    <BannerContainer>
+      <StyledBanner src={bannerImage || DEFAULT_BANNER_IMAGE} alt="Banner Image" />
+    </BannerContainer>
+  );
 };
 
-const StyledBanner = styled.img`
+const BannerContainer = styled.div`
   width: 100%;
-  height: 300px;
-  object-fit: contain;
+  height: clamp(200px, 20vw, 300px); /* 최소 높이 200px, 최대 높이 300px */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const StyledBanner = styled.img`
+  width: auto;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  margin: 1rem auto;
-  background-color: transparent;
 `;
 
 export default Banner;

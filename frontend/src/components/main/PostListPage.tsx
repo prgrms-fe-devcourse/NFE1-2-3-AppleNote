@@ -129,7 +129,7 @@ const PostListPage: React.FC = () => {
             setSelectedCategoryId={(id) =>
               onCategoryChange(
                 id,
-                categories.find((cat) => cat.categoryId === id)?.name || "전체 포스트"
+                categories.find((cat) => cat.categoryId === id)?.name || "All Posts"
               )
             }
             setSelectedCategoryName={setCategoryName}
@@ -142,7 +142,7 @@ const PostListPage: React.FC = () => {
           setSelectedCategoryId={(id) =>
             onCategoryChange(
               id,
-              categories.find((cat) => cat.categoryId === id)?.name || "전체 포스트"
+              categories.find((cat) => cat.categoryId === id)?.name || "All Posts"
             )
           }
           setSelectedCategoryName={setCategoryName}

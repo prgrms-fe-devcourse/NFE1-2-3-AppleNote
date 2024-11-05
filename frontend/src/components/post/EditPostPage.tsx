@@ -74,7 +74,11 @@ const EditPostPage: React.FC = () => {
       const payload: PostPayload = {
         title: state.title,
         content: state.content,
-        images: state.image ? [state.image.files] : undefined,
+        images: state.image
+          ? Object.keys(state.image.files).length !== 0
+            ? [state.image.files]
+            : [state.image.urls]
+          : undefined,
         categoryId: state.selectedCategory?.categoryId,
       };
       const data = await patchPost(id as string, payload);
@@ -143,7 +147,7 @@ const EditPostPage: React.FC = () => {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              isModalOpen={state.previewModalOpen || state.deleteModalOpen}
+              $isModalOpen={state.previewModalOpen || state.deleteModalOpen}
             />
             {!state.image && (
               <PlaceholderText>
@@ -200,8 +204,6 @@ const EditPostPage: React.FC = () => {
           />
         </RightContent>
       </ContentWrapper>
-
-     
 
       {state.deleteModalOpen && (
         <ModalOverlay

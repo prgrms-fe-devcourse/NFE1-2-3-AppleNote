@@ -90,6 +90,8 @@ export const patchPost = async (id: string, payload: PostPayload): Promise<Patch
     payload.images.forEach((image) => {
       if (image instanceof File) {
         formData.append("images", image);
+      } else if (typeof image === "string") {
+        formData.append("images", image);
       }
     });
   }

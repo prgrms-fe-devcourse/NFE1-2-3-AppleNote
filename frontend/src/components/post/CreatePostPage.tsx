@@ -1,4 +1,4 @@
-import { Category, fetchCategories } from "@components/category/categoryApi";
+import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
 import { useEffect, useReducer, useState } from "react";
 import { FaPlus } from "react-icons/fa";
@@ -57,23 +57,6 @@ const CreatePostPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [postList, setPostList] = useState<Post[]>([]);
   const [tempModalOpen, setTempModalOpen] = useState(false);
-
-  useEffect(() => {
-    const initializeOthersCategory = async () => {
-      try {
-        const data = await fetchCategories();
-        const othersCategory = data.payload.find((cat) => cat.name === "Others");
-
-        if (othersCategory) {
-          setSelectedCategory(othersCategory);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    initializeOthersCategory();
-  }, []);
 
   const savePostData = async () => {
     try {

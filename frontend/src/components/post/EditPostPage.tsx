@@ -174,7 +174,7 @@ const EditPostPage: React.FC = () => {
             {!state.image && (
               <PlaceholderText>
                 <FaPlus size={50} />
-                <div>이미지 추가하기</div>
+                <div>Add Image</div>
               </PlaceholderText>
             )}
             {state.image && (
@@ -253,7 +253,7 @@ const EditPostPage: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation();
             }}>
-            <div>삭제하시겠습니까?</div>
+            <div>Are you sure you want to delete this?</div>
             <ButtonWrapper>
               <Button
                 onClick={() => {
@@ -303,11 +303,16 @@ const DeleteIcon = styled.div`
   font-size: 20px;
 `;
 
-const PreviewContent = styled.div``;
+const PreviewContent = styled.div`
+  margin-top: 10px;
+  width: 600px;
+  margin-top: 40px;
+`;
 const PreviewImg = styled.img`
   width: 600px;
   height: 300px;
   object-fit: cover;
+  margin-top: 40px;
 `;
 const PreviewTitle = styled.div`
   font-size: 30px;
@@ -315,10 +320,13 @@ const PreviewTitle = styled.div`
 `;
 
 const ModalWrapper = styled.div`
-  background: white;
+  background-color: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ModalOverlay = styled.div`

@@ -62,6 +62,11 @@ const SearchAndIconsSection = styled.div`
   align-items: center;
   margin-left: auto;
   gap: 1rem;
+
+  /* 화면이 좁아질 때 로고와 다른 요소 간의 간격 조정 */
+  @media (max-width: 520px) {
+    gap: 0.5rem;
+  }
 `;
 
 /* 프로필 아이콘 및 설정 버튼 */

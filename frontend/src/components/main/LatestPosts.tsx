@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { fetchLatestPosts, Post } from "./postApi";
+import { fetchLatestPosts, Post } from "@components/main/postApi";
 import MoreButton from "@common/components/MoreButton";
 import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 
@@ -29,9 +29,11 @@ const LatestPosts: React.FC = () => {
     navigate(`/posts/${postId}`);
   };
 
-  // MoreButton 클릭 핸들러
+  // MoreButton 클릭 핸들러 - 전체 포스트 목록을 표시하도록 설정
   const handleMoreButtonClick = () => {
-    navigate("/posts"); // 전체 포스트 목록 페이지로 이동
+    navigate("/posts", {
+      state: { categoryId: null, categoryName: "전체 포스트" },
+    });
   };
 
   return (
@@ -138,7 +140,7 @@ const Thumbnail = styled.img`
 
 const PostTitle = styled.h3`
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

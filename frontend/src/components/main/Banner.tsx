@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { fetchBannerImage } from "./bannerApi";
+import { fetchBannerImage } from "@components/main/bannerApi";
 import { useModal } from "@components/myPage/Context/ModalContext";
 
 const DEFAULT_BANNER_IMAGE = "/default-banner-image.png"; // 기본 배너 이미지 경로

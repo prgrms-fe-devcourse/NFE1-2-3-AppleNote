@@ -74,7 +74,7 @@ const reducer = (state: CategoryState, action: Action): CategoryState => {
 interface CategoryProps {
   setSelectedCategoryId: (id: string) => void;
   setSelectedCategoryName: (name: string) => void;
-  onCategoryChange: () => void;
+  onCategoryChange: (categoryId: string, categoryName: string) => void;
 }
 
 const Category: React.FC<CategoryProps> = ({
@@ -98,7 +98,6 @@ const Category: React.FC<CategoryProps> = ({
       const data = await fetchCategories();
 
       dispatch({ type: "SET_CATEGORIES", payload: data.payload });
-      onCategoryChange(); // 카테고리 변경 시 데이터 동기화
     } catch (error) {
       handleApiError(error);
     } finally {
@@ -115,14 +114,19 @@ const Category: React.FC<CategoryProps> = ({
     if (event.key === "Enter" && state.newCategoryName) {
       try {
         await createCategory({ name: state.newCategoryName });
-        await reloadCategories();
         dispatch({ type: "SET_NEW_CATEGORY_NAME", payload: "" });
         dispatch({ type: "TOGGLE_INPUT_VISIBLE", payload: false });
-        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
+        await reloadCategories();
       } catch (error) {
         handleApiError(error);
       }
     }
+  };
+
+  const handleCategoryClick = (categoryId: string, categoryName: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedCategoryName(categoryName);
+    onCategoryChange(categoryId, categoryName);
   };
 
   // 카테고리 추가 입력 필드 표시 토글
@@ -157,9 +161,13 @@ const Category: React.FC<CategoryProps> = ({
           categoryId,
           name: state.editCategoryName,
         });
-        await reloadCategories();
         dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
-        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
+        await reloadCategories();
+
+        // 선택된 카테고리가 수정 대상일 경우, CategorySection에 반영
+        if (categoryId === state.isEditing) {
+          onCategoryChange(categoryId, state.editCategoryName);
+        }
       } catch (error) {
         handleApiError(error);
       }
@@ -172,7 +180,14 @@ const Category: React.FC<CategoryProps> = ({
       try {
         await deleteCategory(categoryId);
         await reloadCategories();
-        onCategoryChange(); // 카테고리 변경 시 데이터 동기화
+
+        if (state.categories[0]?.categoryId) {
+          const firstCategory = state.categories[0];
+
+          setSelectedCategoryId(firstCategory.categoryId);
+          setSelectedCategoryName(firstCategory.name);
+          onCategoryChange(firstCategory.categoryId, firstCategory.name);
+        }
       } catch (error) {
         handleApiError(error);
       }
@@ -182,11 +197,6 @@ const Category: React.FC<CategoryProps> = ({
   // 수정 모드 해제
   const handleEditBlur = () => {
     dispatch({ type: "SET_EDITING", payload: { id: null, name: "" } });
-  };
-
-  const handleCategoryClick = (categoryId: string, categoryName: string) => {
-    setSelectedCategoryId(categoryId);
-    setSelectedCategoryName(categoryName);
   };
 
   if (state.loading) return <div>Loading...</div>;

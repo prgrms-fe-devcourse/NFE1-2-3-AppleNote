@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useLocation } from "react-router-dom";
-import { fetchAllPosts, Post } from "../main/postApi";
-import PaginationComponent from "../../common/components/PaginationComponent";
-import SearchResultHeader from "./SearchResultHeader";
-import PostsGrid from "./PostsGrid";
+import { fetchAllPosts, Post } from "@components/main/postApi";
+import PaginationComponent from "@common/components/PaginationComponent";
+import SearchResultHeader from "@components/search/SearchResultHeader";
+import PostsGrid from "@components/search/PostsGrid";
 
 const SearchResultPage: React.FC = () => {
   const location = useLocation();

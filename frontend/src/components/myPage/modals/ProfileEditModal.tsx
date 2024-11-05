@@ -3,52 +3,54 @@ import { changeProfile } from "../api/userApi";
 import { useState } from "react";
 
 const closeBtn = "/closeBtn.png";
-const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
+// const DEFAULT_PROFILE_IMAGE = "/default-profile-image.png";
 
 interface ImageEditModalProps {
   onClose: () => void;
 }
 
-//프로필 이미지 수정 모달
+// 프로필 이미지 수정 모달
 const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
   const [fileName, setFileName] = useState("");
-  const [profileImage, setNewImg] = useState("");
+  const [profileImage, setNewImg] = useState<File | null>(null);
 
   // 이미지 선택 핸들러
   const handleImg = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      const fileUrl = URL.createObjectURL(file);
-
-      setNewImg(fileUrl);
+      setNewImg(file);
       setFileName(file.name);
     } else {
-      alert("파일을 선택하지 않았습니다.");
+      alert("No file was selected.");
     }
   };
 
-  //선택한 이미지로 변경
+  // 선택한 이미지로 변경
   const handleConfirm = async () => {
-    const isChangeSuccessful = await changeProfile({ profileImage });
+    if (profileImage) {
+      const isChangeSuccessful = await changeProfile({ profileImage: profileImage });
 
-    if (isChangeSuccessful) {
-      alert("프로필 이미지가 변경되었습니다.");
-      onClose();
+      if (isChangeSuccessful) {
+        alert("The profile image has been changed.");
+        onClose();
+      } else {
+        alert("Failed to change the profile image.");
+      }
     } else {
-      alert("프로필 이미지 변경에 실패했습니다.");
+      alert("Please select an image to change.");
     }
   };
 
   // 기본이미지로 변경
   const handleDefault = async () => {
-    const isChangeSuccessful = await changeProfile({ profileImage: DEFAULT_PROFILE_IMAGE });
+    const isChangeSuccessful = await changeProfile({ profileImage: null });
 
     if (isChangeSuccessful) {
-      alert("프로필 이미지가 변경되었습니다.");
+      alert("The profile image has been changed to the default image.");
       onClose();
     } else {
-      alert("프로필 이미지 변경에 실패했습니다.");
+      alert("Failed to change the profile image.");
     }
   };
 
@@ -57,27 +59,27 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>프로필 이미지 변경</h3>
+            <h3>Change Profile Image</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
           </Header>
           <InputWrapper>
             <Input type="file" id="file-input" accept="image/*" onChange={handleImg} />
-
-            <ButtonStyled htmlFor="file-input">파일 선택</ButtonStyled>
+            <ButtonStyled htmlFor="file-input">Select File</ButtonStyled>
             {fileName && <FileName>{fileName}</FileName>}
           </InputWrapper>
 
           <ButtonWrapper>
-            <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={handleDefault}>삭제</Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
+            <Button onClick={handleDefault}>Delete</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>
     </>
   );
 };
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -100,6 +102,7 @@ const ModalContent = styled.div`
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
+
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
@@ -147,17 +150,20 @@ const ButtonStyled = styled.label`
     color: black;
   }
 `;
+
 const FileName = styled.p`
   margin-top: 10px;
   margin-left: 30px;
   font-size: 0.9rem;
   color: #555;
 `;
+
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 `;
+
 const Button = styled.button`
   padding: 3px 10px;
   border: 0.5px solid #ddd;

@@ -20,11 +20,11 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
 
   const handleConfirm = async () => {
     if (newPassword !== confirmPassword) {
-      return setErrorMessage("새 비밀번호와 비밀번호 확인이 일치하지 않습니다."); // 새 비밀번호와 비밀번호 확인 일치 검증
+      return setErrorMessage("New password and confirm password do not match."); // 새 비밀번호와 비밀번호 확인 일치 검증
     }
     if (!validatePasswordFormat(newPassword)) {
       return setErrorMessage(
-        "새 비밀번호는 최소 8자 이상, 대문자, 소문자, 숫자 및 특수문자를 포함해야 합니다."
+        "New password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters."
       );
     }
 
@@ -36,13 +36,13 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
 
       if (isSuccess === true) {
         setErrorMessage(null);
-        alert("비밀번호가 성공적으로 변경되었습니다.");
+        alert("Password has been successfully changed.");
         setStatus(false);
       } else {
-        setErrorMessage("기존 비밀번호가 일치하지 않습니다.");
+        setErrorMessage("Current password does not match.");
       }
     } catch {
-      setErrorMessage("서버 오류가 발생했습니다.");
+      setErrorMessage("A server error has occurred.");
     }
   };
 
@@ -53,11 +53,11 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
   return (
     <Wrapper>
       <Container>
-        <h2>비밀번호 변경</h2>
+        <h2>Change Password</h2>
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
         <InputWrapper>
-          <Label>기존 비밀번호</Label>
+          <Label>Current Password</Label>
           <Input
             type="password"
             value={currentPassword}
@@ -66,7 +66,7 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
           />
         </InputWrapper>
         <InputWrapper>
-          <Label>새 비밀번호</Label>
+          <Label>New Password</Label>
           <Input
             type="password"
             value={newPassword}
@@ -75,7 +75,7 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
           />
         </InputWrapper>
         <InputWrapper>
-          <Label>새 비밀번호 확인</Label>
+          <Label>Confirm New Password</Label>
           <Input
             type="password"
             value={confirmPassword}
@@ -84,8 +84,8 @@ const ChangePw: React.FC<ChangePwProps> = ({ setStatus }) => {
           />
         </InputWrapper>
         <ButtonWrapper>
-          <Button onClick={handleConfirm}>확인</Button>
-          <Button onClick={handleCancel}>취소</Button>
+          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </ButtonWrapper>
       </Container>
     </Wrapper>

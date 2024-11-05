@@ -13,10 +13,10 @@ const NameEditModal: React.FC<NameEditModalProps> = ({ onClose }) => {
     const isChangeSuccessful = await changeName({ name });
 
     if (isChangeSuccessful) {
-      alert("이름이 변경되었습니다.");
+      alert("The name has been changed.");
       onClose();
     } else {
-      alert("이름 변경에 실패했습니다.");
+      alert("Failed to change the name.");
     }
   };
 
@@ -26,15 +26,15 @@ const NameEditModal: React.FC<NameEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>이름 변경</h3>
+            <h3>Change Name</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
           </Header>
           <Input type="text" value={name} onChange={(e) => setNewName(e.target.value.trim())} />
           <ButtonWrapper>
-            <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={onClose}>닫기</Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
+            <Button onClick={onClose}>Close</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

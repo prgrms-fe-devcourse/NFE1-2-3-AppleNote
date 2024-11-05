@@ -1,3 +1,4 @@
+import { FirebaseStorage } from "@src/config/FirebaseStorage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserSchemaType } from "@src/types";
@@ -5,9 +6,13 @@ import { Request, Response } from "express";
 import { createErrorResponse } from "@src/utils/createError";
 import { IUserService } from "@src/services/userService";
 import { IUserWithId } from "@src/models/userModel";
+import { FileService } from "@src/services/fileService";
 
 export class UserController {
-  constructor(private userService: IUserService) {}
+  constructor(
+    private userService: IUserService,
+    private firebaseStorage = new FirebaseStorage()
+  ) {}
 
   async check(req: Request, res: Response) {
     try {
@@ -186,9 +191,11 @@ export class UserController {
       }
       const updateData: UserSchemaType = {
         name: name,
-        email: user.email || "",
-        description: user.description || "",
-        password: user.password || "",
+        email: user.email,
+        description: user.description,
+        password: user.password,
+        profileImage: user.profileImage || "",
+        bannerImage: user.bannerImage || "",
       };
 
       await this.userService.updateUser(userId, updateData);
@@ -204,7 +211,8 @@ export class UserController {
   // 프로필이미지 변경
   async updateProfile(req: Request, res: Response) {
     try {
-      const { profileImage } = req.body;
+      const isDelete = req.body.deleteImages;
+      const files = req.files;
       const userId = req.user?.userId;
 
       if (!userId) {
@@ -215,12 +223,20 @@ export class UserController {
       if (!user) {
         return res.status(404).json(createErrorResponse(404, "User not found"));
       }
+      if (!files) {
+        return res.status(400).json(createErrorResponse(400, "File is required"));
+      }
+
+      // 프로필 이미지 변경
       const updateData: UserSchemaType = {
-        name: user.name || "",
-        email: user.email || "",
-        description: user.description || "",
-        password: user.password || "",
-        profileImage: profileImage,
+        name: user.name,
+        email: user.email,
+        description: user.description,
+        password: user.password,
+        profileImage: isDelete
+          ? ""
+          : (await new FileService(this.firebaseStorage).uploadImageList(files))[0],
+        bannerImage: user.bannerImage || "",
       };
 
       await this.userService.updateUser(userId, updateData);
@@ -233,10 +249,12 @@ export class UserController {
       return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
+
   //배너 이미지 변경
   async updateBanner(req: Request, res: Response) {
     try {
-      const { bannerImage } = req.body;
+      const isDelete = req.body.deleteImages;
+      const files = req.files;
       const userId = req.user?.userId;
 
       if (!userId) {
@@ -247,12 +265,20 @@ export class UserController {
       if (!user) {
         return res.status(404).json(createErrorResponse(404, "User not found"));
       }
+      if (!files) {
+        return res.status(400).json(createErrorResponse(400, "File is required"));
+      }
+
+      // 배너 이미지 변경
       const updateData: UserSchemaType = {
-        name: user.name || "",
-        email: user.email || "",
-        description: user.description || "",
-        password: user.password || "",
-        bannerImage: bannerImage,
+        name: user.name,
+        email: user.email,
+        description: user.description,
+        password: user.password,
+        profileImage: user.profileImage || "",
+        bannerImage: isDelete // isdelete가 true면 빈값으로, 아니라면 files의 0번 인덱스로 업데이트
+          ? ""
+          : (await new FileService(this.firebaseStorage).uploadImageList(files))[0],
       };
 
       await this.userService.updateUser(userId, updateData);
@@ -265,6 +291,7 @@ export class UserController {
       return res.status(500).json(createErrorResponse(500, `${error}`));
     }
   }
+
   //비밀번호 변경
   async updatePw(req: Request, res: Response) {
     try {

@@ -3,7 +3,7 @@ import { changeBanner } from "../api/userApi";
 import { useState } from "react";
 
 const closeBtn = "/closeBtn.png";
-const DEFAULT_PROFILE_IMAGE = "/default-banner-image.png";
+// const DEFAULT_BANNER_IMAGE = "/default-banner-image.png";
 
 interface ImageEditModalProps {
   onClose: () => void;
@@ -12,43 +12,44 @@ interface ImageEditModalProps {
 //배너 이미지 수정 모달
 const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
   const [fileName, setFileName] = useState("");
-  const [bannerImage, setNewImg] = useState("");
+  const [bannerImage, setNewImg] = useState<File | null>(null);
 
   // 이미지 선택 핸들러
   const handleImg = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      const fileUrl = URL.createObjectURL(file);
-
-      setNewImg(fileUrl);
+      setNewImg(file);
       setFileName(file.name);
     } else {
-      alert("파일을 선택하지 않았습니다.");
+      alert("No file selected.");
     }
   };
 
-  //선택한 이미지로 변경
+  //선택한 이미지 변경
   const handleConfirm = async () => {
-    const isChangeSuccessful = await changeBanner({ bannerImage });
+    if (bannerImage) {
+      const isChangeSuccessful = await changeBanner({ bannerImage: bannerImage });
 
-    if (isChangeSuccessful) {
-      alert("배너 이미지가 변경되었습니다.");
-      onClose();
+      if (isChangeSuccessful) {
+        alert("The banner image has been changed.");
+        onClose();
+      } else {
+        alert("Failed to change the banner image.");
+      }
     } else {
-      alert("배너 이미지 변경에 실패했습니다.");
+      alert("Please select an image to change.");
     }
   };
-
   // 기본이미지로 변경
   const handleDefault = async () => {
-    const isChangeSuccessful = await changeBanner({ bannerImage: DEFAULT_PROFILE_IMAGE });
+    const isChangeSuccessful = await changeBanner({ bannerImage: null });
 
     if (isChangeSuccessful) {
-      alert("배너 이미지가 변경되었습니다.");
+      alert("The banner image has been changed to the default image.");
       onClose();
     } else {
-      alert("배너 이미지 변경에 실패했습니다.");
+      alert("Failed to change the banner image.");
     }
   };
 
@@ -57,7 +58,7 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
       <ModalOverlay>
         <ModalContent>
           <Header>
-            <h3>배너 이미지 변경</h3>
+            <h3>Change Banner Image</h3>
             <CloseButton onClick={onClose}>
               <img src={closeBtn} width="30px" />
             </CloseButton>
@@ -65,12 +66,12 @@ const ProfileEditModal: React.FC<ImageEditModalProps> = ({ onClose }) => {
           <InputWrapper>
             <Input type="file" id="file-input" accept="image/*" onChange={handleImg} />
 
-            <ButtonStyled htmlFor="file-input">파일 선택</ButtonStyled>
+            <ButtonStyled htmlFor="file-input">Select File</ButtonStyled>
             {fileName && <FileName>{fileName}</FileName>}
           </InputWrapper>
           <ButtonWrapper>
-            <Button onClick={handleConfirm}>변경</Button>
-            <Button onClick={handleDefault}>삭제</Button>
+            <Button onClick={handleConfirm}>Confirm</Button>
+            <Button onClick={handleDefault}>Delete</Button>
           </ButtonWrapper>
         </ModalContent>
       </ModalOverlay>

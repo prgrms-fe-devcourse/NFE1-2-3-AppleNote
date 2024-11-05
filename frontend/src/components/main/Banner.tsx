@@ -30,8 +30,10 @@ const Banner: React.FC = () => {
 const StyledBanner = styled.img`
   width: 100%;
   height: 300px;
-  object-fit: cover;
-  margin-top: 1rem;
+  object-fit: contain;
+  display: block;
+  margin: 1rem auto;
+  background-color: transparent;
 `;
 
 export default Banner;

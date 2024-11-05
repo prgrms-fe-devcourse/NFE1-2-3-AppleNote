@@ -231,7 +231,7 @@ const CreatePostPage: React.FC = () => {
       {tempModalOpen && (
         <ModalOverlay onClick={() => setTempModalOpen(false)}>
           <TempPostModal onClick={(e) => e.stopPropagation()}>
-            <ModalTitle>임시 저장된 글 목록</ModalTitle>
+            <ModalTitle>List of saved drafts</ModalTitle>
             {postList.map((post) => (
               <PostRow key={post.postId}>
                 <PostInfo
@@ -274,7 +274,7 @@ const CreatePostPage: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation();
             }}>
-            <div>삭제하시겠습니까?</div>
+            <div>Are you sure you want to delete this?</div>
             <ButtonWrapper>
               <Button
                 onClick={() => {
@@ -392,11 +392,14 @@ const LeftContent = styled.div`
 
 const PreviewContent = styled.div`
   margin-top: 10px;
+  width: 600px;
+  margin-top: 40px;
 `;
 const PreviewImg = styled.img`
   width: 600px;
   height: 300px;
   object-fit: cover;
+  margin-top: 40px;
 `;
 const PreviewTitle = styled.div`
   font-size: 30px;
@@ -408,6 +411,9 @@ const ModalWrapper = styled.div`
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ModalOverlay = styled.div`

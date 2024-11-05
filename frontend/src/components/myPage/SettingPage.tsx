@@ -122,20 +122,19 @@ const SettingPage = () => {
   );
 };
 const BtnWrapper = styled.div`
-  margin-top: -2.3%;
-  margin-right: -16px;
+  margin-top: -2.3vh;
 `;
 const Wrapper = styled.div`
-  margin-top: -3%;
+  margin-top: -5.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 500px;
+  height: 50vh;
 `;
 const ImgWrapper = styled.div`
   position: relative;
-  margin-right: 100px;
+  margin-right: 5vw;
   display: flex;
   flex-direction: column;
 `;

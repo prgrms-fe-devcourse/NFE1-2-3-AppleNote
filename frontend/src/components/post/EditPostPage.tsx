@@ -1,7 +1,7 @@
 import { getThumbnailSrc } from "@common/utils/getThumbnailSrc";
 import { Category } from "@components/category/categoryApi";
 import SelectCategory from "@components/category/SelectCategory";
-import React, { useCallback, useEffect, useReducer, useRef } from "react";
+import React, { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -9,7 +9,6 @@ import {
   fetchPost,
   patchPost,
   PostPayload,
-  deletePost,
   createPostCagegory,
   deletePostCategory,
 } from "./postAPI";
@@ -60,6 +59,7 @@ const EditPostPage: React.FC = () => {
     selectedCategory: null,
   });
   const inputRef = useRef<HTMLInputElement>(null);
+  const [cate, setCate] = useState<Category[]>([]);
 
   const fetchPostData = async () => {
     try {
@@ -74,28 +74,19 @@ const EditPostPage: React.FC = () => {
         });
       }
 
-      await deleteCategory(data.payload.categories);
+      setCate(data.payload.categories);
     } catch (error) {
       // eslint-disable-next-line
       console.error(error);
     }
   };
 
-  const deleteCategory = async (
-    payload: {
-      categoryId: string;
-      name: string;
-    }[]
-  ) => {
-    try {
-      await deletePostCategory(id as string, [payload[0].categoryId]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const updatePostData = async () => {
     try {
+      if (cate[0] !== state.selectedCategory) {
+        await deleteCategory(cate);
+      }
+
       const payload: PostPayload = {
         title: state.title,
         content: state.content,
@@ -138,11 +129,14 @@ const EditPostPage: React.FC = () => {
       });
     }
   };
-
-  const handleDeletePost = async () => {
+  const deleteCategory = async (
+    payload: {
+      categoryId: string;
+      name: string;
+    }[]
+  ) => {
     try {
-      await deletePost(id as string);
-      navigate(-1);
+      await deletePostCategory(id as string, [payload[0].categoryId]);
     } catch (error) {
       console.error(error);
     }
@@ -245,33 +239,6 @@ const EditPostPage: React.FC = () => {
         </RightContent>
       </ContentWrapper>
 
-      {state.deleteModalOpen && (
-        <ModalOverlay
-          onClick={() => {
-            dispatch({ type: "TOGGLE_DELETE_MODAL", payload: false });
-          }}>
-          <ModalWrapper
-            onClick={(e) => {
-              e.stopPropagation();
-            }}>
-            <div>Are you sure you want to delete this?</div>
-            <ButtonWrapper>
-              <Button
-                onClick={() => {
-                  handleDeletePost();
-                }}>
-                Yes
-              </Button>
-              <Button
-                onClick={() => {
-                  dispatch({ type: "TOGGLE_DELETE_MODAL", payload: false });
-                }}>
-                No
-              </Button>
-            </ButtonWrapper>
-          </ModalWrapper>
-        </ModalOverlay>
-      )}
       {state.previewModalOpen && (
         <ModalOverlay
           onClick={() => {

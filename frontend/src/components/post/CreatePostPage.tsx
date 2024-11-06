@@ -65,7 +65,7 @@ const CreatePostPage: React.FC = () => {
         title: state.title,
         content: state.content,
         images: state.image
-          ? Object.keys(state.image.files).length !== 0
+          ? state.image.files && state.image.files instanceof File
             ? [state.image.files]
             : [state.image.urls]
           : undefined,

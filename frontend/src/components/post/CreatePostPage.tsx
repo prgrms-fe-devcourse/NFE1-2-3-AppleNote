@@ -65,7 +65,7 @@ const CreatePostPage: React.FC = () => {
         title: state.title,
         content: state.content,
         images: state.image
-          ? Object.keys(state.image.files).length !== 0
+          ? state.image.files && state.image.files instanceof File
             ? [state.image.files]
             : [state.image.urls]
           : undefined,
@@ -426,7 +426,7 @@ const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  z-index: 10;
 `;
 
 const Button = styled.div`

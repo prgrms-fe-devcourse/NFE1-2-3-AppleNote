@@ -1,50 +1,89 @@
-# React + TypeScript + Vite
+# Apple Note
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Apple Note는 사용자가 개인 블로그를 작성하고 관리할 수 있는 애플리케이션입니다.
 
-Currently, two official plugins are available:
+## 시작하기
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+해당 문서는 프로젝트를 로컬 환경에서 실행하는 방법을 안내합니다.
 
-## Expanding the ESLint configuration
+### 필수 조건
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Node.js (버전 20 이상)
+- npm (Node 패키지 매니저)
 
-- Configure the top-level `parserOptions` property like this:
+## 개발 가이드
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+### 설치
+
+1. 리포지토리를 클론합니다.
+
+```bash
+  git clone https://github.com/prgrms-fe-devcourse/NFE1_2_3_AppleNote.git
+
+  cd NFE1_2_3_AppleNote
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Root 환경에서 필요한 패키지를 설치합니다.
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
+```bash
+  npm install
+```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
+3. prepare 스크립트를 실행합니다.
+
+```bash
+  npm run prepare
+```
+
+4. 각 환경에서 작업할 환경으로 이동합니다. (`frontend`, `backend`)
+
+```bash
+  cd frontend, backend
+```
+
+5. 각 환경에서 필요한 패키지를 설치합니다. (`frontend`, `backend`)
+
+```bash
+  npm install
+```
+
+6. .env 파일을 생성하고 필요한 환경 변수를 설정합니다.
+
+> [!TIP]  
+> `.env` 파일의 예시는 `.env.template` 파일을 참조하세요.
+
+---
+
+### 개발 시작하기
+
+#### **백엔드**
+
+백엔드 서버를 실행하려면 다음 명령어를 사용합니다:
+
+Root
+
+```bash
+  npm run dev:backend
+```
+
+Local (backend)
+
+```bash
+  npm run dev
+```
+
+#### **프론트엔드**
+
+프론트엔드 애플리케이션을 실행하려면 다음 명령어를 사용합니다:
+
+Root
+
+```bash
+  dev:frontend
+```
+
+Local (frontend)
+
+```bash
+  npm run dev
 ```

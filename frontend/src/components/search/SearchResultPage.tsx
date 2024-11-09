@@ -41,6 +41,11 @@ const SearchResultPage: React.FC = () => {
     setFilteredPosts(results);
   }, [searchQuery, posts]);
 
+  // 검색어가 변경될 때 페이지를 1로 리셋
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   // 현재 페이지에 해당하는 포스트 가져오기
   const paginatedPosts = filteredPosts.slice(
     (currentPage - 1) * postsPerPage,

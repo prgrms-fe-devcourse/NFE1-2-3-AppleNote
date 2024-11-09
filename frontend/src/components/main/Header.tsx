@@ -47,13 +47,8 @@ const Header: React.FC = () => {
 const StyledHeader = styled.header`
   display: flex;
   align-items: center;
-  padding: 1rem 2rem;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
-    gap: 0.5rem;
-  }
+  padding: 1rem;
+  gap: 0.5rem;
 `;
 
 /* 검색창 및 아이콘 섹션 */
@@ -73,11 +68,15 @@ const SearchAndIconsSection = styled.div`
 const ProfileIcon = styled.img`
   width: 40px;
   height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
   border-radius: 50%;
   background-color: #ccc;
 
   /* 화면 너비가 520px 이하일 때 숨기기 */
-  @media (max-width: 520px) {
+  @media (max-width: 630px) {
     display: none;
   }
 `;

@@ -83,6 +83,7 @@ const PostListPage: React.FC = () => {
   const onCategoryChange = async (newCategoryId: string | null, newCategoryName: string) => {
     setCategoryId(newCategoryId);
     setCategoryName(newCategoryName);
+    setCurrentPage(1); // 카테고리가 변경될 때 페이지를 1로 설정
     await loadPosts(newCategoryId);
   };
 

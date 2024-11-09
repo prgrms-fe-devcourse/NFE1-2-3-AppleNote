@@ -22,7 +22,7 @@ const StyledButton = styled.button`
   justify-content: space-between; /* 텍스트가 사라질 때 아이콘 중앙 정렬 */
   width: 110px; /* 기본 너비 */
   height: 40px; /* 버튼 높이 고정 */
-  margin-left: 2rem;
+  margin-left: 1rem;
   padding: 10px;
   border: solid;
   border-radius: 30px; /* 기본 모양 */
